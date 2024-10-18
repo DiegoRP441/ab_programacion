@@ -1,0 +1,69 @@
+---
+title: "AB programación: Dataset de estudiantes"
+output: html_notebook
+---
+## Parte 1: carga y exploración de datos.
+```{r}
+library(readr)
+library(skimr)
+library(dplyr)
+```
+
+primero importamos el dataset, ademas importamos la libreria skimr para la mejor visualización de los datos
+```{r message=FALSE, warning=TRUE, paged.print=TRUE, show_col_types=}
+st <- read_csv("estudiantes.csv", show_col_types = FALSE)
+head(st, show_col_types = FALSE)
+```
+vemos que tipos de columnas tenemos, si son numericas o bien son de texto
+```{r}
+str(st)
+```
+
+separamos las columnas númericas de las numéricas para mejor observación de los datos
+```{r}
+numeric_columns <- sapply(st, is.numeric)
+```
+Usamos skim mejor que `summary()` porque da mas información y presentada de forma mas limpia
+
+```{r}
+skim(st[!numeric_columns])
+```
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+skim(st[numeric_columns])
+```
+## Limpieza de datos
+NOTA: Nos lo da skim, pero queria ver como se hacia  
+vemos cuantos valores faltantes tengo por columna. 
+```{r}
+faltantes_por_columna <- colSums(is.na(st))
+print(faltantes_por_columna)
+```
+vemos que tenemos valores faltantes en 3 columnas:`Parental_Education_Level`, `Teacher_Quality`, `Distance_from_Home`  
+como las 3 columnas son categoricas vamos a usar la moda en las 3 para poner el valor que mas se repite. como en r no existe una función que obtenga la moda directamente la creamos nosotros mismos. 
+```{r}
+getmode <- function(v) {
+   uniqv <- unique(v)                     
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+```
+
+```{r}
+st <- st %>%
+  mutate(
+    Teacher_Quality = ifelse(is.na(Teacher_Quality), getmode(Teacher_Quality), Teacher_Quality),
+    Parental_Education_Level = ifelse(is.na(Parental_Education_Level), getmode(Parental_Education_Level), Parental_Education_Level),
+    Distance_from_Home = ifelse(is.na(Distance_from_Home), getmode(Distance_from_Home), Distance_from_Home)
+  )
+
+```
+el %>% esto es el `pipe`, que esta tomando el df `st`y lo paso como entrada a la siguiente función `mutate()`en este caso. Gracias esto nos evitamos escribir mutate para cada columno, permitiendo "fluir" a la función. 
+```{r}
+print(colSums(is.na(st)))
+```
+vemos que tras rellenar los datos ya no quedan datos faltantes. 
+
+
+#aqui viene lo de hacer dummies y separalos los valores que sean necesarios. 
+
+
+

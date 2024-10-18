@@ -1,0 +1,32 @@
+---
+title: "AB programación: Dataset de estudiantes"
+output: html_notebook
+---
+## Parte 1: carga y exploración de datos.
+
+primero importamos el dataset, ademas importamos la libreria skimr para la mejor visualización de los datos
+```{r message=FALSE, warning=TRUE, paged.print=TRUE, show_col_types=}
+library(readr)
+library(skimr)
+st <- read_csv("estudiantes.csv")
+head(st, show_col_types = FALSE)
+```
+separamos las columnas númericas de las numéricas para mejor observación de los datos
+```{r}
+numeric_columns <- sapply(st, is.numeric)
+```
+Usamos skim mejor que `summary()` porque da mas información y presentada de forma mas limpia
+
+```{r}
+skim(st[!numeric_columns])
+```
+```{r}
+skim(st[numeric_columns])
+```
+
+
+
+
+
+
+
