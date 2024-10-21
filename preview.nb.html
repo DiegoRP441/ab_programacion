@@ -1757,10 +1757,12 @@ estudiantes</h1>
 <h2>Parte 1: carga y exploración de datos.</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShyZWFkcilcbmxpYnJhcnkoc2tpbXIpXG5saWJyYXJ5KGRwbHlyKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShyZWFkcilcbmxpYnJhcnkoc2tpbXIpXG5saWJyYXJ5KGRwbHlyKVxubGlicmFyeShlc3F1aXNzZSlcblxuYGBgIn0= -->
 <pre class="r"><code>library(readr)
 library(skimr)
-library(dplyr)</code></pre>
+library(dplyr)
+library(esquisse)
+</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1873,11 +1875,13 @@ Group variables            None                </code></pre>
 </div>
 <!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2tpbShzdFtudW1lcmljX2NvbHVtbnNdKVxuYGBgIn0= -->
 <pre class="r"><code>skim(st[numeric_columns])</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoi4pSA4pSAIERhdGEgU3VtbWFyeSDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgIFZhbHVlcyAgICAgICAgICAgICBcbk5hbWUgICAgICAgICAgICAgICAgICAgICAgIHN0W251bWVyaWNfY29sdW1uc11cbk51bWJlciBvZiByb3dzICAgICAgICAgICAgIDY2MDcgICAgICAgICAgICAgICBcbk51bWJlciBvZiBjb2x1bW5zICAgICAgICAgIDcgICAgICAgICAgICAgICAgICBcbl9fX19fX19fX19fX19fX19fX19fX19fICAgICAgICAgICAgICAgICAgICAgICBcbkNvbHVtbiB0eXBlIGZyZXF1ZW5jeTogICAgICAgICAgICAgICAgICAgICAgICBcbiAgbnVtZXJpYyAgICAgICAgICAgICAgICAgIDcgICAgICAgICAgICAgICAgICBcbl9fX19fX19fX19fX19fX19fX19fX19fXyAgICAgICAgICAgICAgICAgICAgICBcbkdyb3VwIHZhcmlhYmxlcyAgICAgICAgICAgIE5vbmUgICAgICAgICAgICAgICBcblxu4pSA4pSAIFZhcmlhYmxlIHR5cGU6IG51bWVyaWMg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSAXG4gIHNraW1fdmFyaWFibGUgICAgIG5fbWlzc2luZyBjb21wbGV0ZV9yYXRlICBtZWFuICAgIHNkIHAwIHAyNVxuMSBIb3Vyc19TdHVkaWVkICAgICAgICAgICAgIDAgICAgICAgICAgICAgMSAyMC4wICAgNS45OSAgMSAgMTZcbjIgQXR0ZW5kYW5jZSAgICAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgODAuMCAgMTEuNSAgNjAgIDcwXG4zIFNsZWVwX0hvdXJzICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAxICA3LjAzICAxLjQ3ICA0ICAgNlxuNCBQcmV2aW91c19TY29yZXMgICAgICAgICAgIDAgICAgICAgICAgICAgMSA3NS4xICAxNC40ICA1MCAgNjNcbjUgVHV0b3JpbmdfU2Vzc2lvbnMgICAgICAgICAwICAgICAgICAgICAgIDEgIDEuNDkgIDEuMjMgIDAgICAxXG42IFBoeXNpY2FsX0FjdGl2aXR5ICAgICAgICAgMCAgICAgICAgICAgICAxICAyLjk3ICAxLjAzICAwICAgMlxuNyBFeGFtX1Njb3JlICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgMSA2Ny4yICAgMy44OSA1NSAgNjVcbiAgcDUwIHA3NSBwMTAwIGhpc3QgXG4xICAyMCAgMjQgICA0NCDiloHilobilofiloLiloFcbjIgIDgwICA5MCAgMTAwIOKWh+KWh+KWh+KWh+KWh1xuMyAgIDcgICA4ICAgMTAg4paF4paG4paH4paG4paFXG40ICA3NSAgODggIDEwMCDilofilofilofilofilodcbjUgICAxICAgMiAgICA4IOKWh+KWhuKWgeKWgeKWgVxuNiAgIDMgICA0ICAgIDYg4paC4paF4paH4paF4paBXG43ICA2NyAgNjkgIDEwMSDiloLilofiloHiloHiloFcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoi4pSA4pSAIERhdGEgU3VtbWFyeSDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgIFZhbHVlcyAgICAgICAgICAgICBcbk5hbWUgICAgICAgICAgICAgICAgICAgICAgIHN0W251bWVyaWNfY29sdW1uc11cbk51bWJlciBvZiByb3dzICAgICAgICAgICAgIDY2MDcgICAgICAgICAgICAgICBcbk51bWJlciBvZiBjb2x1bW5zICAgICAgICAgIDcgICAgICAgICAgICAgICAgICBcbl9fX19fX19fX19fX19fX19fX19fX19fICAgICAgICAgICAgICAgICAgICAgICBcbkNvbHVtbiB0eXBlIGZyZXF1ZW5jeTogICAgICAgICAgICAgICAgICAgICAgICBcbiAgbnVtZXJpYyAgICAgICAgICAgICAgICAgIDcgICAgICAgICAgICAgICAgICBcbl9fX19fX19fX19fX19fX19fX19fX19fXyAgICAgICAgICAgICAgICAgICAgICBcbkdyb3VwIHZhcmlhYmxlcyAgICAgICAgICAgIE5vbmUgICAgICAgICAgICAgICBcblxu4pSA4pSAIFZhcmlhYmxlIHR5cGU6IG51bWVyaWMg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSAXG4gIHNraW1fdmFyaWFibGUgICAgIG5fbWlzc2luZyBjb21wbGV0ZV9yYXRlICBtZWFuICAgIHNkIHAwIHAyNSBwNTAgcDc1IHAxMDAgaGlzdCBcbjEgSG91cnNfU3R1ZGllZCAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgMjAuMCAgIDUuOTkgIDEgIDE2ICAyMCAgMjQgICA0NCDiloHilobilofiloLiloFcbjIgQXR0ZW5kYW5jZSAgICAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgODAuMCAgMTEuNSAgNjAgIDcwICA4MCAgOTAgIDEwMCDilofilofilofilofilodcbjMgU2xlZXBfSG91cnMgICAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgIDcuMDMgIDEuNDcgIDQgICA2ICAgNyAgIDggICAxMCDiloXilobilofilobiloVcbjQgUHJldmlvdXNfU2NvcmVzICAgICAgICAgICAwICAgICAgICAgICAgIDEgNzUuMSAgMTQuNCAgNTAgIDYzICA3NSAgODggIDEwMCDilofilofilofilofilodcbjUgVHV0b3JpbmdfU2Vzc2lvbnMgICAgICAgICAwICAgICAgICAgICAgIDEgIDEuNDkgIDEuMjMgIDAgICAxICAgMSAgIDIgICAgOCDilofilobiloHiloHiloFcbjYgUGh5c2ljYWxfQWN0aXZpdHkgICAgICAgICAwICAgICAgICAgICAgIDEgIDIuOTcgIDEuMDMgIDAgICAyICAgMyAgIDQgICAgNiDiloLiloXilofiloXiloFcbjcgRXhhbV9TY29yZSAgICAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgNjcuMiAgIDMuODkgNTUgIDY1ICA2NyAgNjkgIDEwMSDiloLilofiloHiloHiloFcbiJ9 -->
 <pre><code>── Data Summary ────────────────────────
                            Values             
 Name                       st[numeric_columns]
@@ -1889,59 +1893,15 @@ Column type frequency:
 ________________________                      
 Group variables            None               
 
-── Variable type: numeric ──────────────────────────────────────
-  skim_variable     n_missing complete_rate  mean    sd p0 p25
-1 Hours_Studied             0             1 20.0   5.99  1  16
-2 Attendance                0             1 80.0  11.5  60  70
-3 Sleep_Hours               0             1  7.03  1.47  4   6
-4 Previous_Scores           0             1 75.1  14.4  50  63
-5 Tutoring_Sessions         0             1  1.49  1.23  0   1
-6 Physical_Activity         0             1  2.97  1.03  0   2
-7 Exam_Score                0             1 67.2   3.89 55  65
-  p50 p75 p100 hist 
-1  20  24   44 ▁▆▇▂▁
-2  80  90  100 ▇▇▇▇▇
-3   7   8   10 ▅▆▇▆▅
-4  75  88  100 ▇▇▇▇▇
-5   1   2    8 ▇▆▁▁▁
-6   3   4    6 ▂▅▇▅▁
-7  67  69  101 ▂▇▁▁▁</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="limpieza-de-datos" class="section level2">
-<h2>Limpieza de datos</h2>
-<p>NOTA: Nos lo da skim, pero queria ver como se hacia<br />
-vemos cuantos valores faltantes tengo por columna.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5mYWx0YW50ZXNfcG9yX2NvbHVtbmEgPC0gY29sU3Vtcyhpcy5uYShzdCkpXG5wcmludChmYWx0YW50ZXNfcG9yX2NvbHVtbmEpXG5gYGAifQ== -->
-<pre class="r"><code>
-faltantes_por_columna &lt;- colSums(is.na(st))
-print(faltantes_por_columna)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgIEhvdXJzX1N0dWRpZWQgICAgICAgICAgICAgICAgIEF0dGVuZGFuY2UgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiAgICAgIFBhcmVudGFsX0ludm9sdmVtZW50ICAgICAgICBBY2Nlc3NfdG9fUmVzb3VyY2VzIFxuICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgXG5FeHRyYWN1cnJpY3VsYXJfQWN0aXZpdGllcyAgICAgICAgICAgICAgICBTbGVlcF9Ib3VycyBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwIFxuICAgICAgICAgICBQcmV2aW91c19TY29yZXMgICAgICAgICAgIE1vdGl2YXRpb25fTGV2ZWwgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiAgICAgICAgICAgSW50ZXJuZXRfQWNjZXNzICAgICAgICAgIFR1dG9yaW5nX1Nlc3Npb25zIFxuICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgXG4gICAgICAgICAgICAgRmFtaWx5X0luY29tZSAgICAgICAgICAgIFRlYWNoZXJfUXVhbGl0eSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgIDc4IFxuICAgICAgICAgICAgICAgU2Nob29sX1R5cGUgICAgICAgICAgICAgUGVlcl9JbmZsdWVuY2UgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiAgICAgICAgIFBoeXNpY2FsX0FjdGl2aXR5ICAgICAgTGVhcm5pbmdfRGlzYWJpbGl0aWVzIFxuICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgXG4gIFBhcmVudGFsX0VkdWNhdGlvbl9MZXZlbCAgICAgICAgIERpc3RhbmNlX2Zyb21fSG9tZSBcbiAgICAgICAgICAgICAgICAgICAgICAgIDkwICAgICAgICAgICAgICAgICAgICAgICAgIDY3IFxuICAgICAgICAgICAgICAgICAgICBHZW5kZXIgICAgICAgICAgICAgICAgIEV4YW1fU2NvcmUgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiJ9 -->
-<pre><code>             Hours_Studied                 Attendance 
-                         0                          0 
-      Parental_Involvement        Access_to_Resources 
-                         0                          0 
-Extracurricular_Activities                Sleep_Hours 
-                         0                          0 
-           Previous_Scores           Motivation_Level 
-                         0                          0 
-           Internet_Access          Tutoring_Sessions 
-                         0                          0 
-             Family_Income            Teacher_Quality 
-                         0                         78 
-               School_Type             Peer_Influence 
-                         0                          0 
-         Physical_Activity      Learning_Disabilities 
-                         0                          0 
-  Parental_Education_Level         Distance_from_Home 
-                        90                         67 
-                    Gender                 Exam_Score 
-                         0                          0 </code></pre>
+── Variable type: numeric ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  skim_variable     n_missing complete_rate  mean    sd p0 p25 p50 p75 p100 hist 
+1 Hours_Studied             0             1 20.0   5.99  1  16  20  24   44 ▁▆▇▂▁
+2 Attendance                0             1 80.0  11.5  60  70  80  90  100 ▇▇▇▇▇
+3 Sleep_Hours               0             1  7.03  1.47  4   6   7   8   10 ▅▆▇▆▅
+4 Previous_Scores           0             1 75.1  14.4  50  63  75  88  100 ▇▇▇▇▇
+5 Tutoring_Sessions         0             1  1.49  1.23  0   1   1   2    8 ▇▆▁▁▁
+6 Physical_Activity         0             1  2.97  1.03  0   2   3   4    6 ▂▅▇▅▁
+7 Exam_Score                0             1 67.2   3.89 55  65  67  69  101 ▂▇▁▁▁</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1983,37 +1943,23 @@ mutate para cada columno, permitiendo “fluir” a la función.</p>
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJpbnQoY29sU3Vtcyhpcy5uYShzdCkpKVxuYGBgIn0= -->
 <pre class="r"><code>print(colSums(is.na(st)))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgIEhvdXJzX1N0dWRpZWQgICAgICAgICAgICAgICAgIEF0dGVuZGFuY2UgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiAgICAgIFBhcmVudGFsX0ludm9sdmVtZW50ICAgICAgICBBY2Nlc3NfdG9fUmVzb3VyY2VzIFxuICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgXG5FeHRyYWN1cnJpY3VsYXJfQWN0aXZpdGllcyAgICAgICAgICAgICAgICBTbGVlcF9Ib3VycyBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwIFxuICAgICAgICAgICBQcmV2aW91c19TY29yZXMgICAgICAgICAgIE1vdGl2YXRpb25fTGV2ZWwgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiAgICAgICAgICAgSW50ZXJuZXRfQWNjZXNzICAgICAgICAgIFR1dG9yaW5nX1Nlc3Npb25zIFxuICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgXG4gICAgICAgICAgICAgRmFtaWx5X0luY29tZSAgICAgICAgICAgIFRlYWNoZXJfUXVhbGl0eSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwIFxuICAgICAgICAgICAgICAgU2Nob29sX1R5cGUgICAgICAgICAgICAgUGVlcl9JbmZsdWVuY2UgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiAgICAgICAgIFBoeXNpY2FsX0FjdGl2aXR5ICAgICAgTGVhcm5pbmdfRGlzYWJpbGl0aWVzIFxuICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgXG4gIFBhcmVudGFsX0VkdWNhdGlvbl9MZXZlbCAgICAgICAgIERpc3RhbmNlX2Zyb21fSG9tZSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwIFxuICAgICAgICAgICAgICAgICAgICBHZW5kZXIgICAgICAgICAgICAgICAgIEV4YW1fU2NvcmUgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiJ9 -->
-<pre><code>             Hours_Studied                 Attendance 
-                         0                          0 
-      Parental_Involvement        Access_to_Resources 
-                         0                          0 
-Extracurricular_Activities                Sleep_Hours 
-                         0                          0 
-           Previous_Scores           Motivation_Level 
-                         0                          0 
-           Internet_Access          Tutoring_Sessions 
-                         0                          0 
-             Family_Income            Teacher_Quality 
-                         0                          0 
-               School_Type             Peer_Influence 
-                         0                          0 
-         Physical_Activity      Learning_Disabilities 
-                         0                          0 
-  Parental_Education_Level         Distance_from_Home 
-                         0                          0 
-                    Gender                 Exam_Score 
-                         0                          0 </code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgIEhvdXJzX1N0dWRpZWQgICAgICAgICAgICAgICAgIEF0dGVuZGFuY2UgICAgICAgUGFyZW50YWxfSW52b2x2ZW1lbnQgICAgICAgIEFjY2Vzc190b19SZXNvdXJjZXMgRXh0cmFjdXJyaWN1bGFyX0FjdGl2aXRpZXMgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiAgICAgICAgICAgICAgIFNsZWVwX0hvdXJzICAgICAgICAgICAgUHJldmlvdXNfU2NvcmVzICAgICAgICAgICBNb3RpdmF0aW9uX0xldmVsICAgICAgICAgICAgSW50ZXJuZXRfQWNjZXNzICAgICAgICAgIFR1dG9yaW5nX1Nlc3Npb25zIFxuICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgXG4gICAgICAgICAgICAgRmFtaWx5X0luY29tZSAgICAgICAgICAgIFRlYWNoZXJfUXVhbGl0eSAgICAgICAgICAgICAgICBTY2hvb2xfVHlwZSAgICAgICAgICAgICBQZWVyX0luZmx1ZW5jZSAgICAgICAgICBQaHlzaWNhbF9BY3Rpdml0eSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwIFxuICAgICBMZWFybmluZ19EaXNhYmlsaXRpZXMgICBQYXJlbnRhbF9FZHVjYXRpb25fTGV2ZWwgICAgICAgICBEaXN0YW5jZV9mcm9tX0hvbWUgICAgICAgICAgICAgICAgICAgICBHZW5kZXIgICAgICAgICAgICAgICAgIEV4YW1fU2NvcmUgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiJ9 -->
+<pre><code>             Hours_Studied                 Attendance       Parental_Involvement        Access_to_Resources Extracurricular_Activities 
+                         0                          0                          0                          0                          0 
+               Sleep_Hours            Previous_Scores           Motivation_Level            Internet_Access          Tutoring_Sessions 
+                         0                          0                          0                          0                          0 
+             Family_Income            Teacher_Quality                School_Type             Peer_Influence          Physical_Activity 
+                         0                          0                          0                          0                          0 
+     Learning_Disabilities   Parental_Education_Level         Distance_from_Home                     Gender                 Exam_Score 
+                         0                          0                          0                          0                          0 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>vemos que tras rellenar los datos ya no quedan datos faltantes.</p>
-<p>#aqui viene lo de hacer dummies y separalos los valores que sean
-necesarios.</p>
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkFCIHByb2dyYW1hY2nDs246IERhdGFzZXQgZGUgZXN0dWRpYW50ZXMiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KIyMgUGFydGUgMTogY2FyZ2EgeSBleHBsb3JhY2nDs24gZGUgZGF0b3MuDQpgYGB7cn0NCmxpYnJhcnkocmVhZHIpDQpsaWJyYXJ5KHNraW1yKQ0KbGlicmFyeShkcGx5cikNCmBgYA0KDQpwcmltZXJvIGltcG9ydGFtb3MgZWwgZGF0YXNldCwgYWRlbWFzIGltcG9ydGFtb3MgbGEgbGlicmVyaWEgc2tpbXIgcGFyYSBsYSBtZWpvciB2aXN1YWxpemFjacOzbiBkZSBsb3MgZGF0b3MNCmBgYHtyIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9VFJVRSwgcGFnZWQucHJpbnQ9VFJVRSwgc2hvd19jb2xfdHlwZXM9fQ0Kc3QgPC0gcmVhZF9jc3YoImVzdHVkaWFudGVzLmNzdiIsIHNob3dfY29sX3R5cGVzID0gRkFMU0UpDQpoZWFkKHN0LCBzaG93X2NvbF90eXBlcyA9IEZBTFNFKQ0KYGBgDQp2ZW1vcyBxdWUgdGlwb3MgZGUgY29sdW1uYXMgdGVuZW1vcywgc2kgc29uIG51bWVyaWNhcyBvIGJpZW4gc29uIGRlIHRleHRvDQpgYGB7cn0NCnN0cihzdCkNCmBgYA0KDQpzZXBhcmFtb3MgbGFzIGNvbHVtbmFzIG7Dum1lcmljYXMgZGUgbGFzIG51bcOpcmljYXMgcGFyYSBtZWpvciBvYnNlcnZhY2nDs24gZGUgbG9zIGRhdG9zDQpgYGB7cn0NCm51bWVyaWNfY29sdW1ucyA8LSBzYXBwbHkoc3QsIGlzLm51bWVyaWMpDQpgYGANClVzYW1vcyBza2ltIG1lam9yIHF1ZSBgc3VtbWFyeSgpYCBwb3JxdWUgZGEgbWFzIGluZm9ybWFjacOzbiB5IHByZXNlbnRhZGEgZGUgZm9ybWEgbWFzIGxpbXBpYQ0KDQpgYGB7cn0NCnNraW0oc3RbIW51bWVyaWNfY29sdW1uc10pDQpgYGANCmBgYHtyIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0UsIHBhZ2VkLnByaW50PUZBTFNFfQ0Kc2tpbShzdFtudW1lcmljX2NvbHVtbnNdKQ0KYGBgDQojIyBMaW1waWV6YSBkZSBkYXRvcw0KTk9UQTogTm9zIGxvIGRhIHNraW0sIHBlcm8gcXVlcmlhIHZlciBjb21vIHNlIGhhY2lhICANCnZlbW9zIGN1YW50b3MgdmFsb3JlcyBmYWx0YW50ZXMgdGVuZ28gcG9yIGNvbHVtbmEuIA0KYGBge3J9DQpmYWx0YW50ZXNfcG9yX2NvbHVtbmEgPC0gY29sU3Vtcyhpcy5uYShzdCkpDQpwcmludChmYWx0YW50ZXNfcG9yX2NvbHVtbmEpDQpgYGANCnZlbW9zIHF1ZSB0ZW5lbW9zIHZhbG9yZXMgZmFsdGFudGVzIGVuIDMgY29sdW1uYXM6YFBhcmVudGFsX0VkdWNhdGlvbl9MZXZlbGAsIGBUZWFjaGVyX1F1YWxpdHlgLCBgRGlzdGFuY2VfZnJvbV9Ib21lYCAgDQpjb21vIGxhcyAzIGNvbHVtbmFzIHNvbiBjYXRlZ29yaWNhcyB2YW1vcyBhIHVzYXIgbGEgbW9kYSBlbiBsYXMgMyBwYXJhIHBvbmVyIGVsIHZhbG9yIHF1ZSBtYXMgc2UgcmVwaXRlLiBjb21vIGVuIHIgbm8gZXhpc3RlIHVuYSBmdW5jacOzbiBxdWUgb2J0ZW5nYSBsYSBtb2RhIGRpcmVjdGFtZW50ZSBsYSBjcmVhbW9zIG5vc290cm9zIG1pc21vcy4gDQpgYGB7cn0NCmdldG1vZGUgPC0gZnVuY3Rpb24odikgew0KICAgdW5pcXYgPC0gdW5pcXVlKHYpICAgICAgICAgICAgICAgICAgICAgDQogICB1bmlxdlt3aGljaC5tYXgodGFidWxhdGUobWF0Y2godiwgdW5pcXYpKSldDQp9DQpgYGANCg0KYGBge3J9DQpzdCA8LSBzdCAlPiUNCiAgbXV0YXRlKA0KICAgIFRlYWNoZXJfUXVhbGl0eSA9IGlmZWxzZShpcy5uYShUZWFjaGVyX1F1YWxpdHkpLCBnZXRtb2RlKFRlYWNoZXJfUXVhbGl0eSksIFRlYWNoZXJfUXVhbGl0eSksDQogICAgUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsID0gaWZlbHNlKGlzLm5hKFBhcmVudGFsX0VkdWNhdGlvbl9MZXZlbCksIGdldG1vZGUoUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsKSwgUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsKSwNCiAgICBEaXN0YW5jZV9mcm9tX0hvbWUgPSBpZmVsc2UoaXMubmEoRGlzdGFuY2VfZnJvbV9Ib21lKSwgZ2V0bW9kZShEaXN0YW5jZV9mcm9tX0hvbWUpLCBEaXN0YW5jZV9mcm9tX0hvbWUpDQogICkNCg0KYGBgDQplbCAlPiUgZXN0byBlcyBlbCBgcGlwZWAsIHF1ZSBlc3RhIHRvbWFuZG8gZWwgZGYgYHN0YHkgbG8gcGFzbyBjb21vIGVudHJhZGEgYSBsYSBzaWd1aWVudGUgZnVuY2nDs24gYG11dGF0ZSgpYGVuIGVzdGUgY2Fzby4gR3JhY2lhcyBlc3RvIG5vcyBldml0YW1vcyBlc2NyaWJpciBtdXRhdGUgcGFyYSBjYWRhIGNvbHVtbm8sIHBlcm1pdGllbmRvICJmbHVpciIgYSBsYSBmdW5jacOzbi4gDQpgYGB7cn0NCnByaW50KGNvbFN1bXMoaXMubmEoc3QpKSkNCmBgYA0KdmVtb3MgcXVlIHRyYXMgcmVsbGVuYXIgbG9zIGRhdG9zIHlhIG5vIHF1ZWRhbiBkYXRvcyBmYWx0YW50ZXMuIA0KDQoNCiNhcXVpIHZpZW5lIGxvIGRlIGhhY2VyIGR1bW1pZXMgeSBzZXBhcmFsb3MgbG9zIHZhbG9yZXMgcXVlIHNlYW4gbmVjZXNhcmlvcy4gDQoNCg0KDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkFCIHByb2dyYW1hY2nDs246IERhdGFzZXQgZGUgZXN0dWRpYW50ZXMiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQojIyBQYXJ0ZSAxOiBjYXJnYSB5IGV4cGxvcmFjacOzbiBkZSBkYXRvcy4NCg0KYGBge3J9DQpsaWJyYXJ5KHJlYWRyKQ0KbGlicmFyeShza2ltcikNCmxpYnJhcnkoZHBseXIpDQpsaWJyYXJ5KGVzcXVpc3NlKQ0KDQpgYGANCg0KcHJpbWVybyBpbXBvcnRhbW9zIGVsIGRhdGFzZXQsIGFkZW1hcyBpbXBvcnRhbW9zIGxhIGxpYnJlcmlhIHNraW1yIHBhcmEgbGEgbWVqb3IgdmlzdWFsaXphY2nDs24gZGUgbG9zIGRhdG9zDQoNCmBgYHtyIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9VFJVRSwgcGFnZWQucHJpbnQ9VFJVRSwgc2hvd19jb2xfdHlwZXM9fQ0Kc3QgPC0gcmVhZF9jc3YoImVzdHVkaWFudGVzLmNzdiIsIHNob3dfY29sX3R5cGVzID0gRkFMU0UpDQpoZWFkKHN0LCBzaG93X2NvbF90eXBlcyA9IEZBTFNFKQ0KYGBgDQoNCnZlbW9zIHF1ZSB0aXBvcyBkZSBjb2x1bW5hcyB0ZW5lbW9zLCBzaSBzb24gbnVtZXJpY2FzIG8gYmllbiBzb24gZGUgdGV4dG8NCg0KYGBge3J9DQpzdHIoc3QpDQpgYGANCg0Kc2VwYXJhbW9zIGxhcyBjb2x1bW5hcyBuw7ptZXJpY2FzIGRlIGxhcyBudW3DqXJpY2FzIHBhcmEgbWVqb3Igb2JzZXJ2YWNpw7NuIGRlIGxvcyBkYXRvcw0KDQpgYGB7cn0NCm51bWVyaWNfY29sdW1ucyA8LSBzYXBwbHkoc3QsIGlzLm51bWVyaWMpDQpgYGANCg0KVXNhbW9zIHNraW0gbWVqb3IgcXVlIGBzdW1tYXJ5KClgIHBvcnF1ZSBkYSBtYXMgaW5mb3JtYWNpw7NuIHkgcHJlc2VudGFkYSBkZSBmb3JtYSBtYXMgbGltcGlhDQoNCmBgYHtyfQ0Kc2tpbShzdFshbnVtZXJpY19jb2x1bW5zXSkNCmBgYA0KDQpgYGB7ciBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFLCBwYWdlZC5wcmludD1GQUxTRX0NCnNraW0oc3RbbnVtZXJpY19jb2x1bW5zXSkNCmBgYA0KdmVtb3MgcXVlIHRlbmVtb3MgdmFsb3JlcyBmYWx0YW50ZXMgZW4gMyBjb2x1bW5hczpgUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsYCwgYFRlYWNoZXJfUXVhbGl0eWAsIGBEaXN0YW5jZV9mcm9tX0hvbWVgXA0KY29tbyBsYXMgMyBjb2x1bW5hcyBzb24gY2F0ZWdvcmljYXMgdmFtb3MgYSB1c2FyIGxhIG1vZGEgZW4gbGFzIDMgcGFyYSBwb25lciBlbCB2YWxvciBxdWUgbWFzIHNlIHJlcGl0ZS4gY29tbyBlbiByIG5vIGV4aXN0ZSB1bmEgZnVuY2nDs24gcXVlIG9idGVuZ2EgbGEgbW9kYSBkaXJlY3RhbWVudGUgbGEgY3JlYW1vcyBub3NvdHJvcyBtaXNtb3MuDQoNCmBgYHtyfQ0KZ2V0bW9kZSA8LSBmdW5jdGlvbih2KSB7DQogICB1bmlxdiA8LSB1bmlxdWUodikgICAgICAgICAgICAgICAgICAgICANCiAgIHVuaXF2W3doaWNoLm1heCh0YWJ1bGF0ZShtYXRjaCh2LCB1bmlxdikpKV0NCn0NCmBgYA0KDQpgYGB7cn0NCnN0IDwtIHN0ICU+JQ0KICBtdXRhdGUoDQogICAgVGVhY2hlcl9RdWFsaXR5ID0gaWZlbHNlKGlzLm5hKFRlYWNoZXJfUXVhbGl0eSksIGdldG1vZGUoVGVhY2hlcl9RdWFsaXR5KSwgVGVhY2hlcl9RdWFsaXR5KSwNCiAgICBQYXJlbnRhbF9FZHVjYXRpb25fTGV2ZWwgPSBpZmVsc2UoaXMubmEoUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsKSwgZ2V0bW9kZShQYXJlbnRhbF9FZHVjYXRpb25fTGV2ZWwpLCBQYXJlbnRhbF9FZHVjYXRpb25fTGV2ZWwpLA0KICAgIERpc3RhbmNlX2Zyb21fSG9tZSA9IGlmZWxzZShpcy5uYShEaXN0YW5jZV9mcm9tX0hvbWUpLCBnZXRtb2RlKERpc3RhbmNlX2Zyb21fSG9tZSksIERpc3RhbmNlX2Zyb21fSG9tZSkNCiAgKQ0KDQpgYGANCg0KZWwgJVw+JSBlc3RvIGVzIGVsIGBwaXBlYCwgcXVlIGVzdGEgdG9tYW5kbyBlbCBkZiBgc3RgeSBsbyBwYXNvIGNvbW8gZW50cmFkYSBhIGxhIHNpZ3VpZW50ZSBmdW5jacOzbiBgbXV0YXRlKClgZW4gZXN0ZSBjYXNvLiBHcmFjaWFzIGVzdG8gbm9zIGV2aXRhbW9zIGVzY3JpYmlyIG11dGF0ZSBwYXJhIGNhZGEgY29sdW1ubywgcGVybWl0aWVuZG8gImZsdWlyIiBhIGxhIGZ1bmNpw7NuLg0KDQpgYGB7cn0NCnByaW50KGNvbFN1bXMoaXMubmEoc3QpKSkNCmBgYA0KDQp2ZW1vcyBxdWUgdHJhcyByZWxsZW5hciBsb3MgZGF0b3MgeWEgbm8gcXVlZGFuIGRhdG9zIGZhbHRhbnRlcy4NCg0K</div>
 
 
 
