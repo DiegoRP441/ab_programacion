@@ -3,7 +3,7 @@ title: "AB programación: Dataset de estudiantes"
 output: html_notebook
 ---
 
-## Parte 1: carga y exploración de datos.
+# Parte 1: carga y exploración de datos.
 
 ```{r}
 library(readr)
@@ -17,7 +17,7 @@ primero importamos el dataset, ademas importamos la libreria skimr para la mejor
 
 ```{r message=FALSE, warning=TRUE, paged.print=TRUE, show_col_types=}
 st <- read_csv("estudiantes.csv", show_col_types = FALSE)
-head(st, show_col_types = FALSE)
+head(st,10, show_col_types = FALSE)
 ```
 
 vemos que tipos de columnas tenemos, si son numericas o bien son de texto
@@ -41,6 +41,8 @@ skim(st[!numeric_columns])
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 skim(st[numeric_columns])
 ```
+# Parte 2: Limpieza de datos
+
 vemos que tenemos valores faltantes en 3 columnas:`Parental_Education_Level`, `Teacher_Quality`, `Distance_from_Home`\
 como las 3 columnas son categoricas vamos a usar la moda en las 3 para poner el valor que mas se repite. como en r no existe una función que obtenga la moda directamente la creamos nosotros mismos.
 
@@ -54,18 +56,87 @@ getmode <- function(v) {
 ```{r}
 st <- st %>%
   mutate(
-    Teacher_Quality = ifelse(is.na(Teacher_Quality), getmode(Teacher_Quality), Teacher_Quality),
+    Teacher_Quality = ifelse(is.na(Teacher_Quality), getmode(Teacher_Quality), Teacher_Quality), #si es NA (TRUE) salta `getmode(columna)`,si es False no cambia nada
     Parental_Education_Level = ifelse(is.na(Parental_Education_Level), getmode(Parental_Education_Level), Parental_Education_Level),
     Distance_from_Home = ifelse(is.na(Distance_from_Home), getmode(Distance_from_Home), Distance_from_Home)
   )
 
 ```
 
-el %\>% esto es el `pipe`, que esta tomando el df `st`y lo paso como entrada a la siguiente función `mutate()`en este caso. Gracias esto nos evitamos escribir mutate para cada columno, permitiendo "fluir" a la función.
+el `%\>%` esto es el `pipe`, que esta tomando el df `st`y lo paso como entrada a la siguiente función `mutate()`en este caso. Gracias esto nos evitamos escribir mutate para cada columna, permitiendo "fluir" a la función.
+
+Comprobamos que no hay valores nulos.
 
 ```{r}
 print(colSums(is.na(st)))
 ```
 
-vemos que tras rellenar los datos ya no quedan datos faltantes.
+## Conversion de valores categoricos en factores de R, gracias a esto conseguimos lo siguiente
 
+-   Los factores permiten a R entender que son datos categoricos y no simples textos\
+-   facilita el analisis estadistico y creación de modelos.\
+-   Permite establcer ordenes especificos entre categorias si es necesario\
+-   Optimiza el uso de memoria de R
+
+```{r}
+st <- st %>%
+  mutate(
+    Parental_Involvement = factor(Parental_Involvement,
+                                levels = c("Low", "Medium", "High"),
+                                ordered = TRUE),
+    Access_to_Resources = factor(Access_to_Resources,
+                               levels = c("Low", "Medium", "High"),
+                               ordered = TRUE),
+    Extracurricular_Activities = factor(Extracurricular_Activities,
+                                      levels = c("No", "Yes")),  
+    Motivation_Level = factor(Motivation_Level,
+                            levels = c("Low", "Medium", "High"),
+                            ordered = TRUE),
+    Internet_Access = factor(Internet_Access,
+                           levels = c("No", "Yes")),  
+    Family_Income = factor(Family_Income,
+                         levels = c("Low", "Medium", "High"),
+                         ordered = TRUE),
+    Teacher_Quality = factor(Teacher_Quality,
+                           levels = c("Low", "Medium", "High"),
+                           ordered = TRUE),
+    School_Type = factor(School_Type),  
+    Peer_Influence = factor(Peer_Influence,
+                          levels = c("Negative", "Neutral", "Positive"),
+                          ordered = TRUE),
+    Learning_Disabilities = factor(Learning_Disabilities,
+                                 levels = c("No", "Yes")),  
+    Parental_Education_Level = factor(Parental_Education_Level,
+                                    levels = c("High School", "College", "Postgraduate"),
+                                    ordered = TRUE),
+    Distance_from_Home = factor(Distance_from_Home,
+                              levels = c("Near", "Moderate", "Far"),
+                              ordered = TRUE),
+    Gender = factor(Gender)  
+  )
+```
+Verificamos que se han convertido en factor. 
+
+```{r}
+str(st)
+```
+
+# Objetivo de estos datos
+
+Trabajaremos con estos datos en dos fases principales.
+
+-   Fase 1: Analisis exploratorio de los datos
+
+    -   `Objetivo principal` Analizar los factores que influyen en el rendimiento académico de los estudiantes, medido a través de sus puntuaciones en exámenes, considerando variables desde la parte económica y personal
+
+    -   `Objetivos especificos`:
+
+        -   Identificar qué variables tienen mayor impacto en las calificaciones de los exámenes
+
+        -   Examinar cómo los factores socioeconómicos (Family_Income, Parental_Education_Level) afectan al rendimiento
+
+        -   Evaluar la influencia de factores escolares (Teacher_Quality, School_Type, Access_to_Resources)
+
+        -   Analizar el impacto de factores personales (Sleep_Hours, Motivation_Level, Learning_Disabilities)
+
+-   Fase 2: Modelo predictivo.
