@@ -41,6 +41,7 @@ skim(st[!numeric_columns])
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 skim(st[numeric_columns])
 ```
+
 # Parte 2: Limpieza de datos
 
 vemos que tenemos valores faltantes en 3 columnas:`Parental_Education_Level`, `Teacher_Quality`, `Distance_from_Home`\
@@ -115,7 +116,8 @@ st <- st %>%
     Gender = factor(Gender)  
   )
 ```
-Verificamos que se han convertido en factor. 
+
+Verificamos que se han convertido en factor.
 
 ```{r}
 str(st)
