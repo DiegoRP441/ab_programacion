@@ -14,6 +14,8 @@ library(readr)
 library(skimr)
 library(dplyr)
 library(esquisse)
+library(reshape2)
+library(ggplot2)
 
 ```
 
@@ -141,22 +143,189 @@ Verificamos que se han convertido en factor.
 str(st)
 ```
 
-# Objetivo de estos datos
+```{r}
+# Guardar el data frame limpio en un archivo CSV
+write.csv(st, "st_clean.csv", row.names = FALSE)
 
-Trabajaremos con estos datos en dos fases principales.
+```
 
--   Fase 1: Análisis exploratorio de los datos
+```{r message=FALSE, warning=TRUE, paged.print=TRUE, show_col_types=}
+st_clean <- read_csv("st_clean.csv", show_col_types = FALSE)
+head(st,10, show_col_types = FALSE)
+```
 
-    -   `Objetivo principal` Analizar los factores que influyen en el rendimiento académico de los estudiantes, medido a través de sus puntuaciones en exámenes, considerando variables desde la parte económica y personal
+# Análisis de los datos
 
-    -   `Objetivos especificos`:
+Primero comprobamos si existe algún tipo de sesgo en los datos que tenemos en genero y recursos.
 
-        -   Identificar qué variables tienen mayor impacto en las calificaciones de los exámenes
+```{r}
+# Variables categóricas que quieres analizar
+categorical_vars <- c("Gender", "Family_Income", "School_Type", "Learning_Disabilities")
 
-        -   Examinar cómo los factores socio económicos (Family_Income, Parental_Education_Level) afectan al rendimiento
+# Crear gráficos de barras para cada variable categórica
+for (var in categorical_vars) {
+  p <- ggplot(st_clean, aes_string(x = var)) +
+    geom_bar(fill = "skyblue") +
+    theme_minimal() +
+    labs(title = paste("Distribución de", var), x = var, y = "Frecuencia") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  print(p)
+}
 
-        -   Evaluar la influencia de factores escolares (Teacher_Quality, School_Type, Access_to_Resources)
+```
 
-        -   Analizar el impacto de factores personales (Sleep_Hours, Motivation_Level, Learning_Disabilities)
+Sesgo:
 
--   Fase 2: Modelo predictivo.
+-   **Género**: La distribución es equilibrada, lo que sugiere un bajo riesgo de sesgo.
+
+<!-- -->
+
+-   **Ingreso Familiar**: Predominan las clases media y baja, lo que puede influir en los análisis.
+
+-   **Tipo de Escuela**: Mayor representación de escuelas públicas, lo cual podría sesgar los resultados si queremos extrapolarlos hacia grupos donde haya una mayoría de escuela privada.
+
+-   **Discapacidades de Aprendizaje**: Baja representación de estudiantes con discapacidades, lo que podría limitar la representatividad de los análisis en este aspecto.
+
+Podríamos concluir que es un análisis que se podría extrapolar hacia el conjunto mayoritario de la población, es decir, gente de clase media sin `learning_disabilities` y que van a la escuela pública sin tener en cuenta el género.
+
+```{r}
+# Cargar paquetes necesarios
+library(ggplot2)
+library(reshape2)
+
+# Calcular la matriz de correlación (usando solo variables numéricas)
+cor_matrix <- cor(st_clean[, sapply(st_clean, is.numeric)], use = "complete.obs")
+
+# Convertir la matriz de correlación en un formato largo para ggplot2
+melted_cor_matrix <- melt(cor_matrix)
+
+# Crear el heatmap con los números visibles en los cuadrados
+ggplot(data = melted_cor_matrix, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = round(value, 2)), color = "black", size = 3) +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1, 1), space = "Lab",
+                       name = "Correlación") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 10, hjust = 1)) +
+  coord_fixed() +
+  labs(title = "Mapa de Correlación de Variables con Números Visible")
+
+```
+
+En este mapa de calor Podemos observar en las variables numéricas cuales son las que tienen mas peso con la nota del examen. que en este caso podemos ver que son `Attendance` y `Hours_Studied`.
+
+### Graficos de todo tipo
+
+### Generales
+
+```{r}
+# Crear histograma
+ggplot(st_clean, aes(x = Exam_Score)) +
+  geom_histogram(binwidth = 2, fill = "skyblue", color = "black") +
+  theme_minimal() +
+  labs(title = "Histograma de Distribución de Exam_Score",
+       x = "nota del Examen",
+       y = "Frecuencia")
+```
+
+```{r}
+# Calcular la mediana y la media
+mediana_exam_score <- median(st_clean$Exam_Score, na.rm = TRUE)
+media_exam_score <- mean(st_clean$Exam_Score, na.rm = TRUE)
+
+# Imprimir los resultados
+cat("Mediana de Exam_Score:", mediana_exam_score, "\n")
+cat("Media de Exam_Score:", media_exam_score, "\n")
+
+```
+
+Podemos ver la distribución de notas de los estudiantes que se concentra entre el 60 y el 70. Ademas podemos decir que es un histograma casi simétrico, la media y la mediana están muy cerca una de otra.
+
+```{r}
+# Crear boxplot
+ggplot(st_clean, aes(x = Gender, y = Exam_Score, fill = Gender)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Diagrama de Caja de Exam_Score por Gender",
+       x = "Género",
+       y = "Puntaje del Examen") +
+  scale_fill_brewer(palette = "Pastel1")
+```
+
+-   la mediana parece similar en ambos géneros.
+
+-   Las cajas que son el rango intercuartilico (Del primer al tercer cuartil), que muestra la dispersión central de los datos. Ambos géneros están igual distribuidos.
+
+-   Rango, los bigotes muestran la variabilidad fuera de los cuartiles. Ambos géneros tienen un rango similar.
+
+-   Valores atípicos: Hay valores atípicos en ambos géneros, lo cual indica que hay alumnos con notas o mas altas o mas bajas que la mayoría.
+
+## Buscamos si el nivel de motivación influye en las variables con correlaciones mas elevadas. 
+
+estas son:
+
+-   `Hours_Studied`
+
+-   `Attendance`
+
+```{r}
+ggplot(st_clean, aes(x = Sleep_Hours, y = Exam_Score, color = Motivation_Level)) +
+  geom_point(alpha = 0.7) +
+  theme_minimal() +
+  labs(title = "Diagrama de Dispersión de Sleep_Hours vs Exam_Score",
+       x = "Horas de Sueño",
+       y = "Puntaje del Examen",
+       color = "Nivel de Motivación") +
+  scale_color_brewer(palette = "Set1")
+```
+
+no hay nada relevante que podamos sacar de aquí. podemos analizar los valores atípicos. la motivación alta no asegura una nota elevada y tampoco dormir poco te asegura una nota alta.
+
+Pero sin embargo si comparamos con un gráfico mas adecuado podemos observar que si que tiene que ver.
+
+```{r}
+# Cargar ggplot2
+library(ggplot2)
+
+# Crear gráfico de densidad para diferentes niveles de motivación
+ggplot(st_clean, aes(x = Exam_Score, fill = Motivation_Level)) +
+  geom_density(alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Gráfico de Densidad de Exam_Score por Nivel de Motivación",
+       x = "Puntaje del Examen",
+       y = "Densidad",
+       fill = "Nivel de Motivación") +
+  scale_fill_manual(values = c("High" = "lightblue", "Medium" = "lightgreen", "Low" = "lightpink"))
+
+
+```
+
+si observamos el gráfico podemos decir que la motivación bajo tiene notas inferiores en comparación con las notas altas.
+
+```{r}
+# Crear gráfico de densidad para diferentes niveles de motivación
+ggplot(st_clean, aes(x = Attendance, fill = Motivation_Level)) +
+  geom_density(alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Gráfico de Densidad de Asistencia por Nivel de Motivación",
+       x = "Attendance",
+       y = "Densidad",
+       fill = "Nivel de Motivación") +
+  scale_fill_manual(values = c("High" = "lightblue", "Medium" = "lightgreen", "Low" = "lightpink"))
+```
+
+```{r}
+# Crear boxplot de Attendance por Motivation_Level
+ggplot(st_clean, aes(x = Motivation_Level, y = Attendance, fill = Motivation_Level)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Diagrama de Caja de Attendance por Nivel de Motivación",
+       x = "Nivel de Motivación",
+       y = "Horas de Asistencia") +
+  scale_fill_manual(values = c("High" = "lightblue", "Medium" = "lightgreen", "Low" = "lightpink"))
+
+```
+
+No hay grandes diferencias entre los niveles de motivación y la asistencia a clase. se puede ver que la mediana de la motivación alta es menor, esta tiene los picos mas altos en dos puntos, asistencia en torno al 70 y al 95. sin embargo la motivación media y baja son mas estables en la asistencia.
