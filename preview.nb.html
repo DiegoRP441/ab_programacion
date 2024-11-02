@@ -1753,20 +1753,51 @@ estudiantes</h1>
 
 
 <!-- rnb-text-begin -->
+<div id="explicación-del-dataset" class="section level2">
+<h2>Explicación del dataset</h2>
+<p>El dataset ha sido sacado de la pagina kaggle: <a href="https://www.kaggle.com/" class="uri">https://www.kaggle.com/</a>.
+De la sección de datasets, específicamente hemos escogido este dataset:
+<a href="https://www.kaggle.com/datasets/lainguyn123/student-performance-factors" class="uri">https://www.kaggle.com/datasets/lainguyn123/student-performance-factors</a>.
+Este conjunto de datos ofrece una visión completa de diversos factores
+que afectan al rendimiento de los estudiantes en los exámenes. Incluye
+información sobre hábitos de estudio, asistencia, participación de los
+padres y otros aspectos que influyen en el éxito académico.</p>
+</div>
 <div id="parte-1-carga-y-exploración-de-datos." class="section level1">
 <h1>Parte 1: carga y exploración de datos.</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShyZWFkcilcbmxpYnJhcnkoc2tpbXIpXG5saWJyYXJ5KGRwbHlyKVxubGlicmFyeShlc3F1aXNzZSlcblxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShyZWFkcilcbmxpYnJhcnkoc2tpbXIpXG5saWJyYXJ5KGRwbHlyKVxuYGBgIn0= -->
 <pre class="r"><code>library(readr)
 library(skimr)
-library(dplyr)
-library(esquisse)
-</code></pre>
+library(dplyr)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5BZGp1bnRhbmRvIGVsIHBhcXVldGU6IOKAmGRwbHly4oCZXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0cyBhcmUgbWFza2VkIGZyb20g4oCYcGFja2FnZTpzdGF0c+KAmTpcblxuICAgIGZpbHRlciwgbGFnXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0cyBhcmUgbWFza2VkIGZyb20g4oCYcGFja2FnZTpiYXNl4oCZOlxuXG4gICAgaW50ZXJzZWN0LCBzZXRkaWZmLCBzZXRlcXVhbCwgdW5pb25cbiJ9 -->
+<pre><code>
+Adjuntando el paquete: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShlc3F1aXNzZSlcbmBgYCJ9 -->
+<pre class="r"><code>library(esquisse)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUmVnaXN0ZXJlZCBTMyBtZXRob2Qgb3ZlcndyaXR0ZW4gYnkgJ2RhdGEudGFibGUnOlxuICBtZXRob2QgICAgICAgICAgIGZyb21cbiAgcHJpbnQuZGF0YS50YWJsZSAgICAgXG5SZWdpc3RlcmVkIFMzIG1ldGhvZCBvdmVyd3JpdHRlbiBieSAnaHRtbHdpZGdldHMnOlxuICBtZXRob2QgICAgICAgICAgIGZyb20gICAgICAgICBcbiAgcHJpbnQuaHRtbHdpZGdldCB0b29sczpyc3R1ZGlvXG4ifQ== -->
+<pre><code>Registered S3 method overwritten by &#39;data.table&#39;:
+  method           from
+  print.data.table     
+Registered S3 method overwritten by &#39;htmlwidgets&#39;:
+  method           from         
+  print.htmlwidget tools:rstudio</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>primero importamos el dataset, ademas importamos la libreria skimr
+<p>primero importamos el dataset, ademas importamos la librería skimr
 para la mejor visualización de los datos</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
@@ -1774,7 +1805,7 @@ para la mejor visualización de los datos</p>
 <pre class="r"><code>st &lt;- read_csv(&quot;estudiantes.csv&quot;, show_col_types = FALSE)
 head(st,10, show_col_types = FALSE)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6MTAsIm5jb2wiOjIwLCJzdW1tYXJ5Ijp7IkEgdGliYmxlIjpbIjEwIMOXIDIwIl19fSwicmRmIjoiSDRzSUFBQUFBQUFBQnJWV3pVNGJNUkIyU0dnZ2xMK1NTcWpxb1M4QVVzV2g5RkExcUVCQkl0R0dwQzA5cll6WEpGWTM2OGpyRFhEajBYaWtubnFFem1ZOW0xMFRTS0IwcFdqK3grT1p6M2FPZDArMktpY1ZRa2lSbEVvRlVwd0Zsc3grYSs5dmJCTlNtZ0doUUVwa1BxWVg0TFFHVEJWK1MvQ3IxRDZRNFZmYk1uVGIwRStXZnN2U2Z6VDB2YUVtVDVyM205RTdocDVjSmZSN0xhRS9qUDY3b2VqZk1uNC9ybkp4OEszRWVjMUdpa2Z5L0M3N29zNDlFZlVtR1I2U0pnYmw2eWdkaUU3MzBZdE1XVUEyK2JpRjhxWE1OT1FkcnZpVGgvL0dXcmx3dW0vTnRONFphc3ZyOTlqWHg5dlR2TWNHSFhWRXkzVU9CVFhIMkJGRlRaUG4wTkMyb2MxcnpKdHQwVFNvZVFhb1RKN1Z2ODlsT3RhMEZYdFJzK2puMzBhZXkxUFVJeDN6M2RQVy8zb0d4blU1WDhsVEY1ejJHR2Y5N2hScGxlSkVwNzVnenlxVkhTVUdWUFBIR1BOVnpUa3lGRm9NMEd1dXdUczBJNWNiUE5LSytsT2FyV3hQamNiVGp6QmNtVURSaitScEN1ZnFXSmlPdXlDZmo4dXZ0UkFqNGwyTGRhWEU3WmEvU04vbkhXekdTOWk5N2lqcVJhT1pQVnZVNUVRNUQrdE5hM0NxY0VaMTZYRTFXbXRhMjBOK3hmMEpibFk1ZGVxbm9ON252WkdVdFR6ZTYyRWVJZWxjSjVCcVhDWDAyRkR6d05TYWxveitEdXBySmc0Um1mcy9OaHZRM3ZDYWpqZGNOY3JGQXhtcDBHM3B5QlBjTThyS2p0WTg4R2pBc002cVF4VVBOUFhkdzJBZy9RSHZnV1JzYXp1TThUQjB0WFNQZVFqcFdQb3V2Tm03Z0RQSUlxVUVpM3lxM0IwR1p4RE9ZZXF4MFBJNTc3dkRLb3hxMlZGOElHUUVWVEdwVXMrVnV0VHhuU05rNEI3eEFVZXNMUjhHbXF1QWF6ZXB3NmhYMjVHV1NnUWR0d1ZLQ0VMRDRqN3RDZjhTTnNKa0QvZTMzT2FVZGJseW14SDFoYjVNcXh0aTFtMWY5dEZ6eWVIZ2RoaWMrUkVmOVdmVjZWNkdna0YvekE0eHcrc2pBRjBRbDdFclFub3EvT3ptMTlPdTdua1J1N3UxVnhDajR5bTRaMHIyb0VscHZTKyt3bnc0b3JteWQwRjdTYmVzbWM4cmViNkpjMStNYjQ4WUtyZTN0MzlzY0RDZmhnZ09WRlk4cXVubW1ZSjRrRzZza0xMczYyRmZ5Y3dhU1I3K2JIQkJHV1hCZ0JINWdzVm5nNGdsTDBkQlhMMjN3YnBSOEd2anZXVXU5b09PdGNwaVpnWGtxMG5sTTdmRWVqWjUwQkZCK21KQWwwS2FYbHJsODJSd0NJVSttTHpOUGtBS2diOFVkdVc1eXdBZkd2Q0JRNTMxNldrNndhTEhCK2dOb3hoT0lwZWpBdHB3VTB1ZHZsUVZTSWlhWWRQSnpWL1hlMndqZFEwQUFBPT0ifQ== -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6MTAsIm5jb2wiOjIwLCJzdW1tYXJ5Ijp7IkEgdGliYmxlIjpbIjEwIMOXIDIwIl19fSwicmRmIjoiSDRzSUFBQUFBQUFBQnJWV3pVNGJNUkIyU0dnZ0ZFSkxLcUdxaDc0QVNDMkh0b2VxUVFVS0Vva1dFbjU2V2htdlNheHUxcEhYRytER28vRklQZlVJbmMxNmxsMFRTQ2gwcFdqK3grT1p6M2IyTjQ3WEtzY1ZRa2lSbEVvRlVwd0dsa3dmdExkV1BoTlNtZ0toUUVwa05xYm40TFFFVEExK0MvQ3IxRCtSNFZkZk0vU3pvVjh0L1pxbC8yTG9CME5ObmpUdmdkRTdoaDVmSnZTd250QWpvejgwRlAxYnh1L29NaGNIMzJLYzEyeWt1Q3ZQN3JJdkd0d1RVVytjNFNGcGJGQytqdEsyNkhRZnZjaUVCV1NUajFvb1g4cFVVOTdoaWo5NStEVFd5b1hUZldlbTlkNVFXMTYreDc0ODJwN20zVGZvYUNCYXJuSW9xRHZHamlqYU0zbDJERzBidW5lRmViTXRtZ1ExendDVjhiTjYrbHdtWTAxYnNSZDFpMzc3YmVTWlBFVTkwaEhmUFczOXIyZGdWSmZ6bGZ6cmdwTWU0NnpmblNLdFVwem94QmZzV2FXeW84U0FhdjRZWTc2cUdVZUdRb3NCZXMwMGVZZG01SEtUUjFwUmYwS3psZTFmby9IMEl3d1h4MUQwSTNtYXdyazJFcWFqTHNqbjQvSnJ6Y1dJZU45aVhTbHh1K1h2MHZkNUI1dnhFbmF2TzRwNjBlM01uaTFxZktLY2gvV21OVGxWT0tPRzlMaTZYV3RTMjBOK3hhMHhibFk1RGVxbm9ON2l2VnNwYTNtODE4TThRdEs1U2lEVnZFem92cUhtZ2FudldUTDZPNml2bXpoRVpPNy8ySFJBZThOck90NXd6U2pudDJXa1FyZWxJMDl3enlncjYxcnp3S01Cd3pwckRsVTgwTlIzZDRLQjlBZThCNUt4TGEwenhzUFExZExkNXlHa1krbTc4SGJ6SE00Z2k1UVNMUEtwY3RjWm5FRTRoNm5IWE12bnZPOE9xekNxcXFQNFFNZ0lxbUpTcFo2TERhbmpPMGZJd04zbEE0NVlxKzRFbXF1QWF6ZXB3NmhmdFNNdGxRZzZiZ3VVRUlTRytTM2FFLzRGYklUSkh1NnYydWFVZGJseTl5THFDMzJSVmpmRXJOdSs2S1BuZ3NQQmJTYzQ5U04rMjU5WFR2Y2lGQXo2WTNhSUdkN3NBdWlDdUl3TkVkSVQ0V2MzdjV4MmRkT0wyTjJ0dllZWUhVL0JQVld5QjAxSzYzM3hBK2JERWMyVnpYUGFTN3Bselh4V3liTlZuUHQ4Zkh2RVVMbTV1ZmxqZzRQNU5FUndvTExpVVUxWFR4WEVnM1J0aFpSbFh3LzdTcWFXU1BMd1o0TUx5aWdMQm96SUZ5dytHMFFzdVJvRmNmWGVDdXRHd2ErVmo1YTUyQTg2MWlyem1SV1FyeVdWVDkwUTY5bmtRVWNFNllzQlhRcHBlbW1WejVMQklSVDZZUEpXK3dBcEJQNUMySlZuTGdOOGFNQUhEblhhcHlmcEJJc2VINkEzakdJNGlWeU9DbWpEVlMxMStsSlZJQ0ZxaGswbjEzOEIzYmUxWTNVTkFBQT0ifQ== -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["Hours_Studied"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Attendance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Parental_Involvement"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Access_to_Resources"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Extracurricular_Activities"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Sleep_Hours"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["Previous_Scores"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["Motivation_Level"],"name":[8],"type":["chr"],"align":["left"]},{"label":["Internet_Access"],"name":[9],"type":["chr"],"align":["left"]},{"label":["Tutoring_Sessions"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["Family_Income"],"name":[11],"type":["chr"],"align":["left"]},{"label":["Teacher_Quality"],"name":[12],"type":["chr"],"align":["left"]},{"label":["School_Type"],"name":[13],"type":["chr"],"align":["left"]},{"label":["Peer_Influence"],"name":[14],"type":["chr"],"align":["left"]},{"label":["Physical_Activity"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["Learning_Disabilities"],"name":[16],"type":["chr"],"align":["left"]},{"label":["Parental_Education_Level"],"name":[17],"type":["chr"],"align":["left"]},{"label":["Distance_from_Home"],"name":[18],"type":["chr"],"align":["left"]},{"label":["Gender"],"name":[19],"type":["chr"],"align":["left"]},{"label":["Exam_Score"],"name":[20],"type":["dbl"],"align":["right"]}],"data":[{"1":"23","2":"84","3":"Low","4":"High","5":"No","6":"7","7":"73","8":"Low","9":"Yes","10":"0","11":"Low","12":"Medium","13":"Public","14":"Positive","15":"3","16":"No","17":"High School","18":"Near","19":"Male","20":"67"},{"1":"19","2":"64","3":"Low","4":"Medium","5":"No","6":"8","7":"59","8":"Low","9":"Yes","10":"2","11":"Medium","12":"Medium","13":"Public","14":"Negative","15":"4","16":"No","17":"College","18":"Moderate","19":"Female","20":"61"},{"1":"24","2":"98","3":"Medium","4":"Medium","5":"Yes","6":"7","7":"91","8":"Medium","9":"Yes","10":"2","11":"Medium","12":"Medium","13":"Public","14":"Neutral","15":"4","16":"No","17":"Postgraduate","18":"Near","19":"Male","20":"74"},{"1":"29","2":"89","3":"Low","4":"Medium","5":"Yes","6":"8","7":"98","8":"Medium","9":"Yes","10":"1","11":"Medium","12":"Medium","13":"Public","14":"Negative","15":"4","16":"No","17":"High School","18":"Moderate","19":"Male","20":"71"},{"1":"19","2":"92","3":"Medium","4":"Medium","5":"Yes","6":"6","7":"65","8":"Medium","9":"Yes","10":"3","11":"Medium","12":"High","13":"Public","14":"Neutral","15":"4","16":"No","17":"College","18":"Near","19":"Female","20":"70"},{"1":"19","2":"88","3":"Medium","4":"Medium","5":"Yes","6":"8","7":"89","8":"Medium","9":"Yes","10":"3","11":"Medium","12":"Medium","13":"Public","14":"Positive","15":"3","16":"No","17":"Postgraduate","18":"Near","19":"Male","20":"71"},{"1":"29","2":"84","3":"Medium","4":"Low","5":"Yes","6":"7","7":"68","8":"Low","9":"Yes","10":"1","11":"Low","12":"Medium","13":"Private","14":"Neutral","15":"2","16":"No","17":"High School","18":"Moderate","19":"Male","20":"67"},{"1":"25","2":"78","3":"Low","4":"High","5":"Yes","6":"6","7":"50","8":"Medium","9":"Yes","10":"1","11":"High","12":"High","13":"Public","14":"Negative","15":"2","16":"No","17":"High School","18":"Far","19":"Male","20":"66"},{"1":"17","2":"94","3":"Medium","4":"High","5":"No","6":"6","7":"80","8":"High","9":"Yes","10":"0","11":"Medium","12":"Low","13":"Private","14":"Neutral","15":"1","16":"No","17":"College","18":"Near","19":"Male","20":"69"},{"1":"23","2":"98","3":"Medium","4":"Medium","5":"Yes","6":"8","7":"71","8":"Medium","9":"Yes","10":"0","11":"High","12":"High","13":"Public","14":"Positive","15":"5","16":"No","17":"High School","18":"Moderate","19":"Male","20":"72"}],"options":{"columns":{"min":{},"max":[10],"total":[20]},"rows":{"min":[10],"max":[10],"total":[10]},"pages":{}}}
@@ -1783,63 +1814,11 @@ head(st,10, show_col_types = FALSE)</code></pre>
 <!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>vemos que tipos de columnas tenemos, si son numericas o bien son de
-texto</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RyKHN0KVxuYGBgIn0= -->
-<pre class="r"><code>str(st)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoic3BjX3RibF8gWzYsNjA3IMOXIDIwXSAoUzM6IHNwZWNfdGJsX2RmL3RibF9kZi90YmwvZGF0YS5mcmFtZSlcbiAkIEhvdXJzX1N0dWRpZWQgICAgICAgICAgICAgOiBudW0gWzE6NjYwN10gMjMgMTkgMjQgMjkgMTkgMTkgMjkgMjUgMTcgMjMgLi4uXG4gJCBBdHRlbmRhbmNlICAgICAgICAgICAgICAgIDogbnVtIFsxOjY2MDddIDg0IDY0IDk4IDg5IDkyIDg4IDg0IDc4IDk0IDk4IC4uLlxuICQgUGFyZW50YWxfSW52b2x2ZW1lbnQgICAgICA6IGNociBbMTo2NjA3XSBcIkxvd1wiIFwiTG93XCIgXCJNZWRpdW1cIiBcIkxvd1wiIC4uLlxuICQgQWNjZXNzX3RvX1Jlc291cmNlcyAgICAgICA6IGNociBbMTo2NjA3XSBcIkhpZ2hcIiBcIk1lZGl1bVwiIFwiTWVkaXVtXCIgXCJNZWRpdW1cIiAuLi5cbiAkIEV4dHJhY3VycmljdWxhcl9BY3Rpdml0aWVzOiBjaHIgWzE6NjYwN10gXCJOb1wiIFwiTm9cIiBcIlllc1wiIFwiWWVzXCIgLi4uXG4gJCBTbGVlcF9Ib3VycyAgICAgICAgICAgICAgIDogbnVtIFsxOjY2MDddIDcgOCA3IDggNiA4IDcgNiA2IDggLi4uXG4gJCBQcmV2aW91c19TY29yZXMgICAgICAgICAgIDogbnVtIFsxOjY2MDddIDczIDU5IDkxIDk4IDY1IDg5IDY4IDUwIDgwIDcxIC4uLlxuICQgTW90aXZhdGlvbl9MZXZlbCAgICAgICAgICA6IGNociBbMTo2NjA3XSBcIkxvd1wiIFwiTG93XCIgXCJNZWRpdW1cIiBcIk1lZGl1bVwiIC4uLlxuICQgSW50ZXJuZXRfQWNjZXNzICAgICAgICAgICA6IGNociBbMTo2NjA3XSBcIlllc1wiIFwiWWVzXCIgXCJZZXNcIiBcIlllc1wiIC4uLlxuICQgVHV0b3JpbmdfU2Vzc2lvbnMgICAgICAgICA6IG51bSBbMTo2NjA3XSAwIDIgMiAxIDMgMyAxIDEgMCAwIC4uLlxuICQgRmFtaWx5X0luY29tZSAgICAgICAgICAgICA6IGNociBbMTo2NjA3XSBcIkxvd1wiIFwiTWVkaXVtXCIgXCJNZWRpdW1cIiBcIk1lZGl1bVwiIC4uLlxuICQgVGVhY2hlcl9RdWFsaXR5ICAgICAgICAgICA6IGNociBbMTo2NjA3XSBcIk1lZGl1bVwiIFwiTWVkaXVtXCIgXCJNZWRpdW1cIiBcIk1lZGl1bVwiIC4uLlxuICQgU2Nob29sX1R5cGUgICAgICAgICAgICAgICA6IGNociBbMTo2NjA3XSBcIlB1YmxpY1wiIFwiUHVibGljXCIgXCJQdWJsaWNcIiBcIlB1YmxpY1wiIC4uLlxuICQgUGVlcl9JbmZsdWVuY2UgICAgICAgICAgICA6IGNociBbMTo2NjA3XSBcIlBvc2l0aXZlXCIgXCJOZWdhdGl2ZVwiIFwiTmV1dHJhbFwiIFwiTmVnYXRpdmVcIiAuLi5cbiAkIFBoeXNpY2FsX0FjdGl2aXR5ICAgICAgICAgOiBudW0gWzE6NjYwN10gMyA0IDQgNCA0IDMgMiAyIDEgNSAuLi5cbiAkIExlYXJuaW5nX0Rpc2FiaWxpdGllcyAgICAgOiBjaHIgWzE6NjYwN10gXCJOb1wiIFwiTm9cIiBcIk5vXCIgXCJOb1wiIC4uLlxuICQgUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsICA6IGNociBbMTo2NjA3XSBcIkhpZ2ggU2Nob29sXCIgXCJDb2xsZWdlXCIgXCJQb3N0Z3JhZHVhdGVcIiBcIkhpZ2ggU2Nob29sXCIgLi4uXG4gJCBEaXN0YW5jZV9mcm9tX0hvbWUgICAgICAgIDogY2hyIFsxOjY2MDddIFwiTmVhclwiIFwiTW9kZXJhdGVcIiBcIk5lYXJcIiBcIk1vZGVyYXRlXCIgLi4uXG4gJCBHZW5kZXIgICAgICAgICAgICAgICAgICAgIDogY2hyIFsxOjY2MDddIFwiTWFsZVwiIFwiRmVtYWxlXCIgXCJNYWxlXCIgXCJNYWxlXCIgLi4uXG4gJCBFeGFtX1Njb3JlICAgICAgICAgICAgICAgIDogbnVtIFsxOjY2MDddIDY3IDYxIDc0IDcxIDcwIDcxIDY3IDY2IDY5IDcyIC4uLlxuIC0gYXR0cigqLCBcInNwZWNcIik9XG4gIC4uIGNvbHMoXG4gIC4uICAgSG91cnNfU3R1ZGllZCA9IGNvbF9kb3VibGUoKSxcbiAgLi4gICBBdHRlbmRhbmNlID0gY29sX2RvdWJsZSgpLFxuICAuLiAgIFBhcmVudGFsX0ludm9sdmVtZW50ID0gY29sX2NoYXJhY3RlcigpLFxuICAuLiAgIEFjY2Vzc190b19SZXNvdXJjZXMgPSBjb2xfY2hhcmFjdGVyKCksXG4gIC4uICAgRXh0cmFjdXJyaWN1bGFyX0FjdGl2aXRpZXMgPSBjb2xfY2hhcmFjdGVyKCksXG4gIC4uICAgU2xlZXBfSG91cnMgPSBjb2xfZG91YmxlKCksXG4gIC4uICAgUHJldmlvdXNfU2NvcmVzID0gY29sX2RvdWJsZSgpLFxuICAuLiAgIE1vdGl2YXRpb25fTGV2ZWwgPSBjb2xfY2hhcmFjdGVyKCksXG4gIC4uICAgSW50ZXJuZXRfQWNjZXNzID0gY29sX2NoYXJhY3RlcigpLFxuICAuLiAgIFR1dG9yaW5nX1Nlc3Npb25zID0gY29sX2RvdWJsZSgpLFxuICAuLiAgIEZhbWlseV9JbmNvbWUgPSBjb2xfY2hhcmFjdGVyKCksXG4gIC4uICAgVGVhY2hlcl9RdWFsaXR5ID0gY29sX2NoYXJhY3RlcigpLFxuICAuLiAgIFNjaG9vbF9UeXBlID0gY29sX2NoYXJhY3RlcigpLFxuICAuLiAgIFBlZXJfSW5mbHVlbmNlID0gY29sX2NoYXJhY3RlcigpLFxuICAuLiAgIFBoeXNpY2FsX0FjdGl2aXR5ID0gY29sX2RvdWJsZSgpLFxuICAuLiAgIExlYXJuaW5nX0Rpc2FiaWxpdGllcyA9IGNvbF9jaGFyYWN0ZXIoKSxcbiAgLi4gICBQYXJlbnRhbF9FZHVjYXRpb25fTGV2ZWwgPSBjb2xfY2hhcmFjdGVyKCksXG4gIC4uICAgRGlzdGFuY2VfZnJvbV9Ib21lID0gY29sX2NoYXJhY3RlcigpLFxuICAuLiAgIEdlbmRlciA9IGNvbF9jaGFyYWN0ZXIoKSxcbiAgLi4gICBFeGFtX1Njb3JlID0gY29sX2RvdWJsZSgpXG4gIC4uIClcbiAtIGF0dHIoKiwgXCJwcm9ibGVtc1wiKT08ZXh0ZXJuYWxwdHI+IFxuIn0= -->
-<pre><code>spc_tbl_ [6,607 × 20] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
- $ Hours_Studied             : num [1:6607] 23 19 24 29 19 19 29 25 17 23 ...
- $ Attendance                : num [1:6607] 84 64 98 89 92 88 84 78 94 98 ...
- $ Parental_Involvement      : chr [1:6607] &quot;Low&quot; &quot;Low&quot; &quot;Medium&quot; &quot;Low&quot; ...
- $ Access_to_Resources       : chr [1:6607] &quot;High&quot; &quot;Medium&quot; &quot;Medium&quot; &quot;Medium&quot; ...
- $ Extracurricular_Activities: chr [1:6607] &quot;No&quot; &quot;No&quot; &quot;Yes&quot; &quot;Yes&quot; ...
- $ Sleep_Hours               : num [1:6607] 7 8 7 8 6 8 7 6 6 8 ...
- $ Previous_Scores           : num [1:6607] 73 59 91 98 65 89 68 50 80 71 ...
- $ Motivation_Level          : chr [1:6607] &quot;Low&quot; &quot;Low&quot; &quot;Medium&quot; &quot;Medium&quot; ...
- $ Internet_Access           : chr [1:6607] &quot;Yes&quot; &quot;Yes&quot; &quot;Yes&quot; &quot;Yes&quot; ...
- $ Tutoring_Sessions         : num [1:6607] 0 2 2 1 3 3 1 1 0 0 ...
- $ Family_Income             : chr [1:6607] &quot;Low&quot; &quot;Medium&quot; &quot;Medium&quot; &quot;Medium&quot; ...
- $ Teacher_Quality           : chr [1:6607] &quot;Medium&quot; &quot;Medium&quot; &quot;Medium&quot; &quot;Medium&quot; ...
- $ School_Type               : chr [1:6607] &quot;Public&quot; &quot;Public&quot; &quot;Public&quot; &quot;Public&quot; ...
- $ Peer_Influence            : chr [1:6607] &quot;Positive&quot; &quot;Negative&quot; &quot;Neutral&quot; &quot;Negative&quot; ...
- $ Physical_Activity         : num [1:6607] 3 4 4 4 4 3 2 2 1 5 ...
- $ Learning_Disabilities     : chr [1:6607] &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
- $ Parental_Education_Level  : chr [1:6607] &quot;High School&quot; &quot;College&quot; &quot;Postgraduate&quot; &quot;High School&quot; ...
- $ Distance_from_Home        : chr [1:6607] &quot;Near&quot; &quot;Moderate&quot; &quot;Near&quot; &quot;Moderate&quot; ...
- $ Gender                    : chr [1:6607] &quot;Male&quot; &quot;Female&quot; &quot;Male&quot; &quot;Male&quot; ...
- $ Exam_Score                : num [1:6607] 67 61 74 71 70 71 67 66 69 72 ...
- - attr(*, &quot;spec&quot;)=
-  .. cols(
-  ..   Hours_Studied = col_double(),
-  ..   Attendance = col_double(),
-  ..   Parental_Involvement = col_character(),
-  ..   Access_to_Resources = col_character(),
-  ..   Extracurricular_Activities = col_character(),
-  ..   Sleep_Hours = col_double(),
-  ..   Previous_Scores = col_double(),
-  ..   Motivation_Level = col_character(),
-  ..   Internet_Access = col_character(),
-  ..   Tutoring_Sessions = col_double(),
-  ..   Family_Income = col_character(),
-  ..   Teacher_Quality = col_character(),
-  ..   School_Type = col_character(),
-  ..   Peer_Influence = col_character(),
-  ..   Physical_Activity = col_double(),
-  ..   Learning_Disabilities = col_character(),
-  ..   Parental_Education_Level = col_character(),
-  ..   Distance_from_Home = col_character(),
-  ..   Gender = col_character(),
-  ..   Exam_Score = col_double()
-  .. )
- - attr(*, &quot;problems&quot;)=&lt;externalptr&gt; </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>separamos las columnas númericas de las numéricas para mejor
+<p>Tras un primer vistazo podemos observar que tenemos 20 columnas y
+tenemos tanto valores numéricos como no numéricos. Ademas sospechamos
+que hay bastantes valores categóricos. Vamos a analizarlo mas a
+fondo.</p>
+<p>separamos las columnas numéricas de las no numéricas para mejor
 observación de los datos</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
@@ -1848,6 +1827,58 @@ observación de los datos</p>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBJbXByaW1pciBsb3MgdmFsb3JlcyDDum5pY29zIGRlIHRvZGFzIGxhcyBjb2x1bW5hcyBubyBudW3DqXJpY2FzXG5sYXBwbHkoc3RbIW51bWVyaWNfY29sdW1uc10sIHVuaXF1ZSlcbmBgYCJ9 -->
+<pre class="r"><code># Imprimir los valores únicos de todas las columnas no numéricas
+lapply(st[!numeric_columns], unique)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiJFBhcmVudGFsX0ludm9sdmVtZW50XG5bMV0gXCJMb3dcIiAgICBcIk1lZGl1bVwiIFwiSGlnaFwiICBcblxuJEFjY2Vzc190b19SZXNvdXJjZXNcblsxXSBcIkhpZ2hcIiAgIFwiTWVkaXVtXCIgXCJMb3dcIiAgIFxuXG4kRXh0cmFjdXJyaWN1bGFyX0FjdGl2aXRpZXNcblsxXSBcIk5vXCIgIFwiWWVzXCJcblxuJE1vdGl2YXRpb25fTGV2ZWxcblsxXSBcIkxvd1wiICAgIFwiTWVkaXVtXCIgXCJIaWdoXCIgIFxuXG4kSW50ZXJuZXRfQWNjZXNzXG5bMV0gXCJZZXNcIiBcIk5vXCIgXG5cbiRGYW1pbHlfSW5jb21lXG5bMV0gXCJMb3dcIiAgICBcIk1lZGl1bVwiIFwiSGlnaFwiICBcblxuJFRlYWNoZXJfUXVhbGl0eVxuWzFdIFwiTWVkaXVtXCIgXCJIaWdoXCIgICBcIkxvd1wiICAgIE5BICAgICAgXG5cbiRTY2hvb2xfVHlwZVxuWzFdIFwiUHVibGljXCIgIFwiUHJpdmF0ZVwiXG5cbiRQZWVyX0luZmx1ZW5jZVxuWzFdIFwiUG9zaXRpdmVcIiBcIk5lZ2F0aXZlXCIgXCJOZXV0cmFsXCIgXG5cbiRMZWFybmluZ19EaXNhYmlsaXRpZXNcblsxXSBcIk5vXCIgIFwiWWVzXCJcblxuJFBhcmVudGFsX0VkdWNhdGlvbl9MZXZlbFxuWzFdIFwiSGlnaCBTY2hvb2xcIiAgXCJDb2xsZWdlXCIgICAgICBcIlBvc3RncmFkdWF0ZVwiIE5BICAgICAgICAgICAgXG5cbiREaXN0YW5jZV9mcm9tX0hvbWVcblsxXSBcIk5lYXJcIiAgICAgXCJNb2RlcmF0ZVwiIFwiRmFyXCIgICAgICBOQSAgICAgICAgXG5cbiRHZW5kZXJcblsxXSBcIk1hbGVcIiAgIFwiRmVtYWxlXCJcbiJ9 -->
+<pre><code>$Parental_Involvement
+[1] &quot;Low&quot;    &quot;Medium&quot; &quot;High&quot;  
+
+$Access_to_Resources
+[1] &quot;High&quot;   &quot;Medium&quot; &quot;Low&quot;   
+
+$Extracurricular_Activities
+[1] &quot;No&quot;  &quot;Yes&quot;
+
+$Motivation_Level
+[1] &quot;Low&quot;    &quot;Medium&quot; &quot;High&quot;  
+
+$Internet_Access
+[1] &quot;Yes&quot; &quot;No&quot; 
+
+$Family_Income
+[1] &quot;Low&quot;    &quot;Medium&quot; &quot;High&quot;  
+
+$Teacher_Quality
+[1] &quot;Medium&quot; &quot;High&quot;   &quot;Low&quot;    NA      
+
+$School_Type
+[1] &quot;Public&quot;  &quot;Private&quot;
+
+$Peer_Influence
+[1] &quot;Positive&quot; &quot;Negative&quot; &quot;Neutral&quot; 
+
+$Learning_Disabilities
+[1] &quot;No&quot;  &quot;Yes&quot;
+
+$Parental_Education_Level
+[1] &quot;High School&quot;  &quot;College&quot;      &quot;Postgraduate&quot; NA            
+
+$Distance_from_Home
+[1] &quot;Near&quot;     &quot;Moderate&quot; &quot;Far&quot;      NA        
+
+$Gender
+[1] &quot;Male&quot;   &quot;Female&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Aquí podemos ver que todos las columnas no numéricas son categóricas.
+esto lo tendremos en cuenta para el análisis y la limpieza mas
+adelante</p>
+<p>Ahora buscamos los valores nulos dentro de las columnas</p>
 <p>Usamos skim mejor que <code>summary()</code> porque da mas
 información y presentada de forma mas limpia</p>
 <!-- rnb-text-end -->
@@ -1867,7 +1898,7 @@ Column type frequency:
 ________________________                       
 Group variables            None                </code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbIm9uZV9za2ltX2RmIiwidGJsX2RmIiwidGJsIiwiZGF0YS5mcmFtZSJdLCJucm93IjoxMywibmNvbCI6OCwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyIxMyDDlyA4Il19fSwicmRmIjoiSDRzSUFBQUFBQUFBQnExVlRXNFRNUlIyTXNua0Ixb3FDZ2pZSUE3UVNCVWJXRlVWYlNGU1FhVVVxUUloMTVseEdxc2VlL0JQMnV4NkJHN0FpaDFIWUF0YmpnQVhRRVZpMzJBbjlqUnhDVlNDU0MrMlAzL1Bmbjd2eTh2MjJ1Njk1bTRUQUJDQlNxVUVvcXFaZ3VxTG5ZMmwrd0JVeW1aUkFoWFFzT09SSVMyYVNkM1lnckU1dDNGdEN3bk1GS0t3emZxYzluRm1WbTV2Y1RWSnNKUlFjYmlOSmRmQ3JOelc3ZlVqSlZDaWhTQ0pwa2pBMVVTUlBsR2tZQ3c4NFFaQmluQUdOM0VmVTRkZmFUT0ZCY01Lams5MzhOd0d5Z2dkbUNnU25tSFAzY0VvNldFQm4ybEVpUm80K05MenBNYzVoVHVEM0RQbnQ3Q2h0Vm1YYXN3U2oxN2Z4RWd3d3ZiaEdwR29RK2hrZ0RlTGw2K25PamtmNkZYam81QTVESFlGeitEanM3RGlSNWlsV0l5eU9MWlpuNmZCK3FXeGgyNCtiMzFYZm93WEZ4NVAzclUvTHVkZlorKy83WDFTZHo2dm5IejQzbTY4LytieGlWZ2paK1ZndEJZYnF6bXM1ckRLaEcvc0xBcEc3MWQzMkdVM2o4SGZjL1NuejBWaW5vWDl3NzFUUDUwcVE1a1J6ZmhuVS9keWxRY2tnMzBrQ09wUXI0c0dneG1SMHVqTnM0eVdjNG9WaGdJcHo0b3l3b29wT3ZLMzRDd3ZCRjVuVURQeVJudVg1bUdQS0N4elpKUTlIVnhEOE1PV0Q5Qyt0bnhzdm9iRDRjK1FtQ0tGb0dGN1lnbUFXMTkrUzBvNG5TRFpjWXBVUzd2UTN1Z3k0dUViZTFLOXVzdDBoazFMc0dmb2pNblhlNEZ6bkNwNGdBZjJUUlk5UHAvdWVGOXduZnQ4aDd0ekhTUXh0TWszOTNoUytZTDVENDd5cDBBdGNXcE9XWFFQdGtkVy8yT3h5c01nVlkya2gwenpWS01XY2hyV1lLUXNaVnZiYks5cGdTWVVTUm13bTdhVXJhNFlGeXE4cE1aejIrK2tlM1VjT0pkRUFDeG9aa3VlTGlVOXpRNldsaDhFKzFGdWN1NXFlaWFiWXZUemVwQ1EyTmNjczMzQ2ZBS3JGSFdLTGh5bHVPOTd2Rkh2U09xdFhKRGlUNnBwTmQxUzNEUnlqMWdCTzJUMGRIRDZDK1NqME5NcUJ3QUEifQ== -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbIm9uZV9za2ltX2RmIiwidGJsX2RmIiwidGJsIiwiZGF0YS5mcmFtZSJdLCJucm93IjoxMywibmNvbCI6OCwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyIxMyDDlyA4Il19fSwicmRmIjoiSDRzSUFBQUFBQUFBQnExVnkyNFRNUlIxTXNua0FYMklBZ0kyaUE5b0pBUUxkbFZGVzRoVVVDbEZxa0RJZFR4T1k5WGpHZnhJbTEwL2dUOWd4WTVQWUF0YlBnRitBQldKZllPZDJOUEVKVkFKSXQzWVBqN1h2cjczNUdaN2JmZGVjN2NKQUloQXBWSUNVZFZNUWZYRnpzYnlBd0FxWmJNb2dRcG8yUEhJa0piTXBHNXMwZGljMjdpNmhRVGhDakhZNXYyTTlVbHFWbTV2YVJWaklpVlVHZHdtTXRQQ3JOeldyZlVqSlJEV1FsQ3NHUkp3RlN2YXA0b1dqTVVubVVHUW9obUhtNlJQbU1NWDJsd1J3WW1DNDlNZFBMZUJVc29HSmdxY3BjUnpkd2pDUFNMZ000MFlWUU1IWDNxT2Uxbkc0TTRnOTh6NUxXSm9iZDVsbW5EczBXdWJCQWxPK1Q1Y294SjFLSnNNOEVieDh2VkU0L09CWGpFK0NwbkRZRmRrS1h4OEZsYjhpUENFaUZFV3h6YnI4elJZdnpUMjBNM25yZS9Lai9IaXd1UEp1L2JIdS9uWDJmdHZlNS9VN2M4ckp4Kyt0eHZ2djNsOEl0YklXVGtZcmNYR2FnNnJPYXd5NFJzN2k0TFIrOVVkZHRuTlkvRDNIUDNwYzVHWVoySC9jTy9VVDZmS1VXcEVNLzdaMUwxYzVRRk5ZUjhKaWpyTTY2TEJZVXFsTkhyekxLUGxuQkZGb0VES3M2S1U4bUtLanZ3dEpNMExnZGM1MUp5KzBkNmxlZGlqaXNnY0dXVlBCOWNRMldITEIyaGZXejQyWDhQaDhHZElUSkJDMExBOXNRVEF6UysvSmVHTVRaRHNPRVdxSlYxb2IzUVo4ZkQxUGFsZTNlRTZKYVlsMkROMHl1WHJ2Y0E1VGhROElBUDdKb3NlbjA5M3ZDOHluZnQ4aDd0ekhTUUp0TWszOTNoUytZTDVENDd5cDBBdFNXSk9XWElQdGtkVy8yT3h5c01nVlEzY1E2WjVxbEVMT1Exck1GS1dzcTF0dHRlMFFERkRVZ2JzcGkxbHF5dkdoUW92cVdXNTdYZlN2VG9PbkVzaUFCWTB0eVZQbG5GUDg0UGwrOEYybEp1VXU1S2VxYVlZL2J3ZTVDUDJKU2Q4bjNLZnZ5cERuYUlKUnducCt4WnZ4RHRTZWlzWHRQaVBhbHBKdDFSbStyaEhySDRkTW5vNU9QMEZTS0k1bWlrSEFBQT0ifQ== -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["skim_variable"],"name":[1],"type":["chr"],"align":["left"]},{"label":["n_missing"],"name":[2],"type":["int"],"align":["right"]},{"label":["complete_rate"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["min"],"name":[4],"type":["int"],"align":["right"]},{"label":["max"],"name":[5],"type":["int"],"align":["right"]},{"label":["empty"],"name":[6],"type":["int"],"align":["right"]},{"label":["n_unique"],"name":[7],"type":["int"],"align":["right"]},{"label":["whitespace"],"name":[8],"type":["int"],"align":["right"]}],"data":[{"1":"Parental_Involvement","2":"0","3":"1.0000000","4":"3","5":"6","6":"0","7":"3","8":"0","_rn_":"1"},{"1":"Access_to_Resources","2":"0","3":"1.0000000","4":"3","5":"6","6":"0","7":"3","8":"0","_rn_":"2"},{"1":"Extracurricular_Activities","2":"0","3":"1.0000000","4":"2","5":"3","6":"0","7":"2","8":"0","_rn_":"3"},{"1":"Motivation_Level","2":"0","3":"1.0000000","4":"3","5":"6","6":"0","7":"3","8":"0","_rn_":"4"},{"1":"Internet_Access","2":"0","3":"1.0000000","4":"2","5":"3","6":"0","7":"2","8":"0","_rn_":"5"},{"1":"Family_Income","2":"0","3":"1.0000000","4":"3","5":"6","6":"0","7":"3","8":"0","_rn_":"6"},{"1":"Teacher_Quality","2":"78","3":"0.9881943","4":"3","5":"6","6":"0","7":"3","8":"0","_rn_":"7"},{"1":"School_Type","2":"0","3":"1.0000000","4":"6","5":"7","6":"0","7":"2","8":"0","_rn_":"8"},{"1":"Peer_Influence","2":"0","3":"1.0000000","4":"7","5":"8","6":"0","7":"3","8":"0","_rn_":"9"},{"1":"Learning_Disabilities","2":"0","3":"1.0000000","4":"2","5":"3","6":"0","7":"2","8":"0","_rn_":"10"},{"1":"Parental_Education_Level","2":"90","3":"0.9863781","4":"7","5":"12","6":"0","7":"3","8":"0","_rn_":"11"},{"1":"Distance_from_Home","2":"67","3":"0.9898592","4":"3","5":"8","6":"0","7":"3","8":"0","_rn_":"12"},{"1":"Gender","2":"0","3":"1.0000000","4":"4","5":"6","6":"0","7":"2","8":"0","_rn_":"13"}],"options":{"columns":{"min":{},"max":[10],"total":[8]},"rows":{"min":[10],"max":[10],"total":[13]},"pages":{}}}
@@ -1876,12 +1907,16 @@ Group variables            None                </code></pre>
 <!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>Se observa que tenemos valores nulos en 3 columnas:
+<code>Teacher_Quality</code>, <code>Parental_Educational_Level</code> y
+<code>Distance_From_Home</code> Mas tarde en la limpieza de datos
+veremos que hacer con ellos.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2tpbShzdFtudW1lcmljX2NvbHVtbnNdKVxuYGBgIn0= -->
 <pre class="r"><code>skim(st[numeric_columns])</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoi4pSA4pSAIERhdGEgU3VtbWFyeSDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgIFZhbHVlcyAgICAgICAgICAgICBcbk5hbWUgICAgICAgICAgICAgICAgICAgICAgIHN0W251bWVyaWNfY29sdW1uc11cbk51bWJlciBvZiByb3dzICAgICAgICAgICAgIDY2MDcgICAgICAgICAgICAgICBcbk51bWJlciBvZiBjb2x1bW5zICAgICAgICAgIDcgICAgICAgICAgICAgICAgICBcbl9fX19fX19fX19fX19fX19fX19fX19fICAgICAgICAgICAgICAgICAgICAgICBcbkNvbHVtbiB0eXBlIGZyZXF1ZW5jeTogICAgICAgICAgICAgICAgICAgICAgICBcbiAgbnVtZXJpYyAgICAgICAgICAgICAgICAgIDcgICAgICAgICAgICAgICAgICBcbl9fX19fX19fX19fX19fX19fX19fX19fXyAgICAgICAgICAgICAgICAgICAgICBcbkdyb3VwIHZhcmlhYmxlcyAgICAgICAgICAgIE5vbmUgICAgICAgICAgICAgICBcblxu4pSA4pSAIFZhcmlhYmxlIHR5cGU6IG51bWVyaWMg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSAXG4gIHNraW1fdmFyaWFibGUgICAgIG5fbWlzc2luZyBjb21wbGV0ZV9yYXRlICBtZWFuICAgIHNkIHAwIHAyNSBwNTAgcDc1IHAxMDAgaGlzdCBcbjEgSG91cnNfU3R1ZGllZCAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgMjAuMCAgIDUuOTkgIDEgIDE2ICAyMCAgMjQgICA0NCDiloHilobilofiloLiloFcbjIgQXR0ZW5kYW5jZSAgICAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgODAuMCAgMTEuNSAgNjAgIDcwICA4MCAgOTAgIDEwMCDilofilofilofilofilodcbjMgU2xlZXBfSG91cnMgICAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgIDcuMDMgIDEuNDcgIDQgICA2ICAgNyAgIDggICAxMCDiloXilobilofilobiloVcbjQgUHJldmlvdXNfU2NvcmVzICAgICAgICAgICAwICAgICAgICAgICAgIDEgNzUuMSAgMTQuNCAgNTAgIDYzICA3NSAgODggIDEwMCDilofilofilofilofilodcbjUgVHV0b3JpbmdfU2Vzc2lvbnMgICAgICAgICAwICAgICAgICAgICAgIDEgIDEuNDkgIDEuMjMgIDAgICAxICAgMSAgIDIgICAgOCDilofilobiloHiloHiloFcbjYgUGh5c2ljYWxfQWN0aXZpdHkgICAgICAgICAwICAgICAgICAgICAgIDEgIDIuOTcgIDEuMDMgIDAgICAyICAgMyAgIDQgICAgNiDiloLiloXilofiloXiloFcbjcgRXhhbV9TY29yZSAgICAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgNjcuMiAgIDMuODkgNTUgIDY1ICA2NyAgNjkgIDEwMSDiloLilofiloHiloHiloFcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoi4pSA4pSAIERhdGEgU3VtbWFyeSDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgIFZhbHVlcyAgICAgICAgICAgICBcbk5hbWUgICAgICAgICAgICAgICAgICAgICAgIHN0W251bWVyaWNfY29sdW1uc11cbk51bWJlciBvZiByb3dzICAgICAgICAgICAgIDY2MDcgICAgICAgICAgICAgICBcbk51bWJlciBvZiBjb2x1bW5zICAgICAgICAgIDcgICAgICAgICAgICAgICAgICBcbl9fX19fX19fX19fX19fX19fX19fX19fICAgICAgICAgICAgICAgICAgICAgICBcbkNvbHVtbiB0eXBlIGZyZXF1ZW5jeTogICAgICAgICAgICAgICAgICAgICAgICBcbiAgbnVtZXJpYyAgICAgICAgICAgICAgICAgIDcgICAgICAgICAgICAgICAgICBcbl9fX19fX19fX19fX19fX19fX19fX19fXyAgICAgICAgICAgICAgICAgICAgICBcbkdyb3VwIHZhcmlhYmxlcyAgICAgICAgICAgIE5vbmUgICAgICAgICAgICAgICBcblxu4pSA4pSAIFZhcmlhYmxlIHR5cGU6IG51bWVyaWMg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSAXG4gIHNraW1fdmFyaWFibGUgICAgIG5fbWlzc2luZyBjb21wbGV0ZV9yYXRlICBtZWFuICAgIHNkIHAwIHAyNSBwNTAgcDc1IHAxMDAgaGlzdCBcbjEgSG91cnNfU3R1ZGllZCAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgMjAuMCAgIDUuOTkgIDEgIDE2ICAyMCAgMjQgICA0NCDiloHilobilofiloLiloFcbjIgQXR0ZW5kYW5jZSAgICAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgODAuMCAgMTEuNSAgNjAgIDcwICA4MCAgOTAgIDEwMCDilofilofilofilofilodcbjMgU2xlZXBfSG91cnMgICAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgIDcuMDMgIDEuNDcgIDQgICA2ICAgNyAgIDggICAxMCDiloXilobilofilobiloVcbjQgUHJldmlvdXNfU2NvcmVzICAgICAgICAgICAwICAgICAgICAgICAgIDEgNzUuMSAgMTQuNCAgNTAgIDYzICA3NSAgODggIDEwMCDilofilofilofilofilodcbjUgVHV0b3JpbmdfU2Vzc2lvbnMgICAgICAgICAwICAgICAgICAgICAgIDEgIDEuNDkgIDEuMjMgIDAgICAxICAgMSAgIDIgICAgOCDilofilobiloHiloHiloFcbjYgUGh5c2ljYWxfQWN0aXZpdHkgICAgICAgICAwICAgICAgICAgICAgIDEgIDIuOTcgIDEuMDMgIDAgICAyICAgMyAgIDQgICAgNiDiloLiloXilofiloXiloFcbjcgRXhhbV9TY29yZSAgICAgICAgICAgICAgICAwICAgICAgICAgICAgIDEgNjcuMiAgIDMuODkgNTUgIDY1ICA2NyAgNjkgIDEwMSDiloLilofiloHiloHiloFcbiJ9 -->
 <pre><code>── Data Summary ────────────────────────
                            Values             
 Name                       st[numeric_columns]
@@ -1893,7 +1928,7 @@ Column type frequency:
 ________________________                      
 Group variables            None               
 
-── Variable type: numeric ───────────────────────────────────────────────────────────────────────────────────────────────
+── Variable type: numeric ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
   skim_variable     n_missing complete_rate  mean    sd p0 p25 p50 p75 p100 hist 
 1 Hours_Studied             0             1 20.0   5.99  1  16  20  24   44 ▁▆▇▂▁
 2 Attendance                0             1 80.0  11.5  60  70  80  90  100 ▇▇▇▇▇
@@ -1905,13 +1940,15 @@ Group variables            None
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>En los datos numéricos al contrario que pasaba en los no numéricos no
+tenemos ningún valor nulo.</p>
 </div>
 <div id="parte-2-limpieza-de-datos" class="section level1">
 <h1>Parte 2: Limpieza de datos</h1>
-<p>vemos que tenemos valores faltantes en 3
+<p>vemos que tenemos valores nulos en 3
 columnas:<code>Parental_Education_Level</code>,
 <code>Teacher_Quality</code>, <code>Distance_from_Home</code><br />
-como las 3 columnas son categoricas vamos a usar la moda en las 3 para
+como las 3 columnas son categóricas vamos a usar la moda en las 3 para
 poner el valor que mas se repite. como en r no existe una función que
 obtenga la moda directamente la creamos nosotros mismos.</p>
 <!-- rnb-text-end -->
@@ -1947,34 +1984,35 @@ escribir mutate para cada columna, permitiendo “fluir” a la función.</p>
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJpbnQoY29sU3Vtcyhpcy5uYShzdCkpKVxuYGBgIn0= -->
 <pre class="r"><code>print(colSums(is.na(st)))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgIEhvdXJzX1N0dWRpZWQgICAgICAgICAgICAgICAgIEF0dGVuZGFuY2UgICAgICAgUGFyZW50YWxfSW52b2x2ZW1lbnQgICAgICAgIEFjY2Vzc190b19SZXNvdXJjZXMgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbkV4dHJhY3VycmljdWxhcl9BY3Rpdml0aWVzICAgICAgICAgICAgICAgIFNsZWVwX0hvdXJzICAgICAgICAgICAgUHJldmlvdXNfU2NvcmVzICAgICAgICAgICBNb3RpdmF0aW9uX0xldmVsIFxuICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgXG4gICAgICAgICAgIEludGVybmV0X0FjY2VzcyAgICAgICAgICBUdXRvcmluZ19TZXNzaW9ucyAgICAgICAgICAgICAgRmFtaWx5X0luY29tZSAgICAgICAgICAgIFRlYWNoZXJfUXVhbGl0eSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwIFxuICAgICAgICAgICAgICAgU2Nob29sX1R5cGUgICAgICAgICAgICAgUGVlcl9JbmZsdWVuY2UgICAgICAgICAgUGh5c2ljYWxfQWN0aXZpdHkgICAgICBMZWFybmluZ19EaXNhYmlsaXRpZXMgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiAgUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsICAgICAgICAgRGlzdGFuY2VfZnJvbV9Ib21lICAgICAgICAgICAgICAgICAgICAgR2VuZGVyICAgICAgICAgICAgICAgICBFeGFtX1Njb3JlIFxuICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgXG4ifQ== -->
-<pre><code>             Hours_Studied                 Attendance       Parental_Involvement        Access_to_Resources 
-                         0                          0                          0                          0 
-Extracurricular_Activities                Sleep_Hours            Previous_Scores           Motivation_Level 
-                         0                          0                          0                          0 
-           Internet_Access          Tutoring_Sessions              Family_Income            Teacher_Quality 
-                         0                          0                          0                          0 
-               School_Type             Peer_Influence          Physical_Activity      Learning_Disabilities 
-                         0                          0                          0                          0 
-  Parental_Education_Level         Distance_from_Home                     Gender                 Exam_Score 
-                         0                          0                          0                          0 </code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgIEhvdXJzX1N0dWRpZWQgICAgICAgICAgICAgICAgIEF0dGVuZGFuY2UgICAgICAgUGFyZW50YWxfSW52b2x2ZW1lbnQgICAgICAgIEFjY2Vzc190b19SZXNvdXJjZXMgRXh0cmFjdXJyaWN1bGFyX0FjdGl2aXRpZXMgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiAgICAgICAgICAgICAgIFNsZWVwX0hvdXJzICAgICAgICAgICAgUHJldmlvdXNfU2NvcmVzICAgICAgICAgICBNb3RpdmF0aW9uX0xldmVsICAgICAgICAgICAgSW50ZXJuZXRfQWNjZXNzICAgICAgICAgIFR1dG9yaW5nX1Nlc3Npb25zIFxuICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgXG4gICAgICAgICAgICAgRmFtaWx5X0luY29tZSAgICAgICAgICAgIFRlYWNoZXJfUXVhbGl0eSAgICAgICAgICAgICAgICBTY2hvb2xfVHlwZSAgICAgICAgICAgICBQZWVyX0luZmx1ZW5jZSAgICAgICAgICBQaHlzaWNhbF9BY3Rpdml0eSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgICAgICAwIFxuICAgICBMZWFybmluZ19EaXNhYmlsaXRpZXMgICBQYXJlbnRhbF9FZHVjYXRpb25fTGV2ZWwgICAgICAgICBEaXN0YW5jZV9mcm9tX0hvbWUgICAgICAgICAgICAgICAgICAgICBHZW5kZXIgICAgICAgICAgICAgICAgIEV4YW1fU2NvcmUgXG4gICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgICAgICAgICAgICAgMCBcbiJ9 -->
+<pre><code>             Hours_Studied                 Attendance       Parental_Involvement        Access_to_Resources Extracurricular_Activities 
+                         0                          0                          0                          0                          0 
+               Sleep_Hours            Previous_Scores           Motivation_Level            Internet_Access          Tutoring_Sessions 
+                         0                          0                          0                          0                          0 
+             Family_Income            Teacher_Quality                School_Type             Peer_Influence          Physical_Activity 
+                         0                          0                          0                          0                          0 
+     Learning_Disabilities   Parental_Education_Level         Distance_from_Home                     Gender                 Exam_Score 
+                         0                          0                          0                          0                          0 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<div id="conversion-de-valores-categoricos-en-factores-de-r-gracias-a-esto-conseguimos-lo-siguiente" class="section level2">
-<h2>Conversion de valores categoricos en factores de R, gracias a esto
+<p>No hay valores nulos, lo que nos indica que ha funcionado</p>
+<div id="conversión-de-valores-categóricos-en-factores-de-r-gracias-a-esto-conseguimos-lo-siguiente" class="section level2">
+<h2>Conversión de valores categóricos en factores de R, gracias a esto
 conseguimos lo siguiente</h2>
 <ul>
-<li>Los factores permiten a R entender que son datos categoricos y no
+<li>Los factores permiten a R entender que son datos categóricos y no
 simples textos<br />
 </li>
-<li>facilita el analisis estadistico y creación de modelos.<br />
+<li>facilita el análisis estadístico y creación de modelos.<br />
 </li>
-<li>Permite establcer ordenes especificos entre categorias si es
+<li>Permite establecer ordenes específicos entre categorías si es
 necesario<br />
 </li>
 <li>Optimiza el uso de memoria de R</li>
 </ul>
+<p>Convertimos en factores los categóricos y añadimos orden en algunos
+de ellos ya que tiene relevancia el orden (low&lt;medium&lt;high)</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3QgPC0gc3QgJT4lXG4gIG11dGF0ZShcbiAgICBQYXJlbnRhbF9JbnZvbHZlbWVudCA9IGZhY3RvcihQYXJlbnRhbF9JbnZvbHZlbWVudCxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYyhcIkxvd1wiLCBcIk1lZGl1bVwiLCBcIkhpZ2hcIiksXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9yZGVyZWQgPSBUUlVFKSxcbiAgICBBY2Nlc3NfdG9fUmVzb3VyY2VzID0gZmFjdG9yKEFjY2Vzc190b19SZXNvdXJjZXMsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYyhcIkxvd1wiLCBcIk1lZGl1bVwiLCBcIkhpZ2hcIiksXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb3JkZXJlZCA9IFRSVUUpLFxuICAgIEV4dHJhY3VycmljdWxhcl9BY3Rpdml0aWVzID0gZmFjdG9yKEV4dHJhY3VycmljdWxhcl9BY3Rpdml0aWVzLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZXZlbHMgPSBjKFwiTm9cIiwgXCJZZXNcIikpLCAgXG4gICAgTW90aXZhdGlvbl9MZXZlbCA9IGZhY3RvcihNb3RpdmF0aW9uX0xldmVsLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIGxldmVscyA9IGMoXCJMb3dcIiwgXCJNZWRpdW1cIiwgXCJIaWdoXCIpLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9yZGVyZWQgPSBUUlVFKSxcbiAgICBJbnRlcm5ldF9BY2Nlc3MgPSBmYWN0b3IoSW50ZXJuZXRfQWNjZXNzLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYyhcIk5vXCIsIFwiWWVzXCIpKSwgIFxuICAgIEZhbWlseV9JbmNvbWUgPSBmYWN0b3IoRmFtaWx5X0luY29tZSxcbiAgICAgICAgICAgICAgICAgICAgICAgICBsZXZlbHMgPSBjKFwiTG93XCIsIFwiTWVkaXVtXCIsIFwiSGlnaFwiKSxcbiAgICAgICAgICAgICAgICAgICAgICAgICBvcmRlcmVkID0gVFJVRSksXG4gICAgVGVhY2hlcl9RdWFsaXR5ID0gZmFjdG9yKFRlYWNoZXJfUXVhbGl0eSxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgIGxldmVscyA9IGMoXCJMb3dcIiwgXCJNZWRpdW1cIiwgXCJIaWdoXCIpLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgb3JkZXJlZCA9IFRSVUUpLFxuICAgIFNjaG9vbF9UeXBlID0gZmFjdG9yKFNjaG9vbF9UeXBlKSwgIFxuICAgIFBlZXJfSW5mbHVlbmNlID0gZmFjdG9yKFBlZXJfSW5mbHVlbmNlLFxuICAgICAgICAgICAgICAgICAgICAgICAgICBsZXZlbHMgPSBjKFwiTmVnYXRpdmVcIiwgXCJOZXV0cmFsXCIsIFwiUG9zaXRpdmVcIiksXG4gICAgICAgICAgICAgICAgICAgICAgICAgIG9yZGVyZWQgPSBUUlVFKSxcbiAgICBMZWFybmluZ19EaXNhYmlsaXRpZXMgPSBmYWN0b3IoTGVhcm5pbmdfRGlzYWJpbGl0aWVzLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYyhcIk5vXCIsIFwiWWVzXCIpKSwgIFxuICAgIFBhcmVudGFsX0VkdWNhdGlvbl9MZXZlbCA9IGZhY3RvcihQYXJlbnRhbF9FZHVjYXRpb25fTGV2ZWwsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZXZlbHMgPSBjKFwiSGlnaCBTY2hvb2xcIiwgXCJDb2xsZWdlXCIsIFwiUG9zdGdyYWR1YXRlXCIpLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb3JkZXJlZCA9IFRSVUUpLFxuICAgIERpc3RhbmNlX2Zyb21fSG9tZSA9IGZhY3RvcihEaXN0YW5jZV9mcm9tX0hvbWUsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZXZlbHMgPSBjKFwiTmVhclwiLCBcIk1vZGVyYXRlXCIsIFwiRmFyXCIpLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb3JkZXJlZCA9IFRSVUUpLFxuICAgIEdlbmRlciA9IGZhY3RvcihHZW5kZXIpICBcbiAgKVxuYGBgIn0= -->
@@ -2053,7 +2091,7 @@ necesario<br />
 <h1>Objetivo de estos datos</h1>
 <p>Trabajaremos con estos datos en dos fases principales.</p>
 <ul>
-<li><p>Fase 1: Analisis exploratorio de los datos</p>
+<li><p>Fase 1: Análisis exploratorio de los datos</p>
 <ul>
 <li><p><code>Objetivo principal</code> Analizar los factores que
 influyen en el rendimiento académico de los estudiantes, medido a través
@@ -2063,7 +2101,7 @@ económica y personal</p></li>
 <ul>
 <li><p>Identificar qué variables tienen mayor impacto en las
 calificaciones de los exámenes</p></li>
-<li><p>Examinar cómo los factores socioeconómicos (Family_Income,
+<li><p>Examinar cómo los factores socio económicos (Family_Income,
 Parental_Education_Level) afectan al rendimiento</p></li>
 <li><p>Evaluar la influencia de factores escolares (Teacher_Quality,
 School_Type, Access_to_Resources)</p></li>
@@ -2076,7 +2114,7 @@ Motivation_Level, Learning_Disabilities)</p></li>
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkFCIHByb2dyYW1hY2nDs246IERhdGFzZXQgZGUgZXN0dWRpYW50ZXMiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQojIFBhcnRlIDE6IGNhcmdhIHkgZXhwbG9yYWNpw7NuIGRlIGRhdG9zLg0KDQpgYGB7cn0NCmxpYnJhcnkocmVhZHIpDQpsaWJyYXJ5KHNraW1yKQ0KbGlicmFyeShkcGx5cikNCmxpYnJhcnkoZXNxdWlzc2UpDQoNCmBgYA0KDQpwcmltZXJvIGltcG9ydGFtb3MgZWwgZGF0YXNldCwgYWRlbWFzIGltcG9ydGFtb3MgbGEgbGlicmVyaWEgc2tpbXIgcGFyYSBsYSBtZWpvciB2aXN1YWxpemFjacOzbiBkZSBsb3MgZGF0b3MNCg0KYGBge3IgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1UUlVFLCBwYWdlZC5wcmludD1UUlVFLCBzaG93X2NvbF90eXBlcz19DQpzdCA8LSByZWFkX2NzdigiZXN0dWRpYW50ZXMuY3N2Iiwgc2hvd19jb2xfdHlwZXMgPSBGQUxTRSkNCmhlYWQoc3QsMTAsIHNob3dfY29sX3R5cGVzID0gRkFMU0UpDQpgYGANCg0KdmVtb3MgcXVlIHRpcG9zIGRlIGNvbHVtbmFzIHRlbmVtb3MsIHNpIHNvbiBudW1lcmljYXMgbyBiaWVuIHNvbiBkZSB0ZXh0bw0KDQpgYGB7cn0NCnN0cihzdCkNCmBgYA0KDQpzZXBhcmFtb3MgbGFzIGNvbHVtbmFzIG7Dum1lcmljYXMgZGUgbGFzIG51bcOpcmljYXMgcGFyYSBtZWpvciBvYnNlcnZhY2nDs24gZGUgbG9zIGRhdG9zDQoNCmBgYHtyfQ0KbnVtZXJpY19jb2x1bW5zIDwtIHNhcHBseShzdCwgaXMubnVtZXJpYykNCmBgYA0KDQpVc2Ftb3Mgc2tpbSBtZWpvciBxdWUgYHN1bW1hcnkoKWAgcG9ycXVlIGRhIG1hcyBpbmZvcm1hY2nDs24geSBwcmVzZW50YWRhIGRlIGZvcm1hIG1hcyBsaW1waWENCg0KYGBge3J9DQpza2ltKHN0WyFudW1lcmljX2NvbHVtbnNdKQ0KYGBgDQoNCmBgYHtyIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0UsIHBhZ2VkLnByaW50PUZBTFNFfQ0Kc2tpbShzdFtudW1lcmljX2NvbHVtbnNdKQ0KYGBgDQoNCiMgUGFydGUgMjogTGltcGllemEgZGUgZGF0b3MNCg0KdmVtb3MgcXVlIHRlbmVtb3MgdmFsb3JlcyBmYWx0YW50ZXMgZW4gMyBjb2x1bW5hczpgUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsYCwgYFRlYWNoZXJfUXVhbGl0eWAsIGBEaXN0YW5jZV9mcm9tX0hvbWVgXA0KY29tbyBsYXMgMyBjb2x1bW5hcyBzb24gY2F0ZWdvcmljYXMgdmFtb3MgYSB1c2FyIGxhIG1vZGEgZW4gbGFzIDMgcGFyYSBwb25lciBlbCB2YWxvciBxdWUgbWFzIHNlIHJlcGl0ZS4gY29tbyBlbiByIG5vIGV4aXN0ZSB1bmEgZnVuY2nDs24gcXVlIG9idGVuZ2EgbGEgbW9kYSBkaXJlY3RhbWVudGUgbGEgY3JlYW1vcyBub3NvdHJvcyBtaXNtb3MuDQoNCmBgYHtyfQ0KZ2V0bW9kZSA8LSBmdW5jdGlvbih2KSB7DQogICB1bmlxdiA8LSB1bmlxdWUodikgICAgICAgICAgICAgICAgICAgICANCiAgIHVuaXF2W3doaWNoLm1heCh0YWJ1bGF0ZShtYXRjaCh2LCB1bmlxdikpKV0NCn0NCmBgYA0KDQpgYGB7cn0NCnN0IDwtIHN0ICU+JQ0KICBtdXRhdGUoDQogICAgVGVhY2hlcl9RdWFsaXR5ID0gaWZlbHNlKGlzLm5hKFRlYWNoZXJfUXVhbGl0eSksIGdldG1vZGUoVGVhY2hlcl9RdWFsaXR5KSwgVGVhY2hlcl9RdWFsaXR5KSwgI3NpIGVzIE5BIChUUlVFKSBzYWx0YSBgZ2V0bW9kZShjb2x1bW5hKWAsc2kgZXMgRmFsc2Ugbm8gY2FtYmlhIG5hZGENCiAgICBQYXJlbnRhbF9FZHVjYXRpb25fTGV2ZWwgPSBpZmVsc2UoaXMubmEoUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsKSwgZ2V0bW9kZShQYXJlbnRhbF9FZHVjYXRpb25fTGV2ZWwpLCBQYXJlbnRhbF9FZHVjYXRpb25fTGV2ZWwpLA0KICAgIERpc3RhbmNlX2Zyb21fSG9tZSA9IGlmZWxzZShpcy5uYShEaXN0YW5jZV9mcm9tX0hvbWUpLCBnZXRtb2RlKERpc3RhbmNlX2Zyb21fSG9tZSksIERpc3RhbmNlX2Zyb21fSG9tZSkNCiAgKQ0KDQpgYGANCg0KZWwgYCVcPiVgIGVzdG8gZXMgZWwgYHBpcGVgLCBxdWUgZXN0YSB0b21hbmRvIGVsIGRmIGBzdGB5IGxvIHBhc28gY29tbyBlbnRyYWRhIGEgbGEgc2lndWllbnRlIGZ1bmNpw7NuIGBtdXRhdGUoKWBlbiBlc3RlIGNhc28uIEdyYWNpYXMgZXN0byBub3MgZXZpdGFtb3MgZXNjcmliaXIgbXV0YXRlIHBhcmEgY2FkYSBjb2x1bW5hLCBwZXJtaXRpZW5kbyAiZmx1aXIiIGEgbGEgZnVuY2nDs24uDQoNCkNvbXByb2JhbW9zIHF1ZSBubyBoYXkgdmFsb3JlcyBudWxvcy4NCg0KYGBge3J9DQpwcmludChjb2xTdW1zKGlzLm5hKHN0KSkpDQpgYGANCg0KIyMgQ29udmVyc2lvbiBkZSB2YWxvcmVzIGNhdGVnb3JpY29zIGVuIGZhY3RvcmVzIGRlIFIsIGdyYWNpYXMgYSBlc3RvIGNvbnNlZ3VpbW9zIGxvIHNpZ3VpZW50ZQ0KDQotICAgTG9zIGZhY3RvcmVzIHBlcm1pdGVuIGEgUiBlbnRlbmRlciBxdWUgc29uIGRhdG9zIGNhdGVnb3JpY29zIHkgbm8gc2ltcGxlcyB0ZXh0b3NcDQotICAgZmFjaWxpdGEgZWwgYW5hbGlzaXMgZXN0YWRpc3RpY28geSBjcmVhY2nDs24gZGUgbW9kZWxvcy5cDQotICAgUGVybWl0ZSBlc3RhYmxjZXIgb3JkZW5lcyBlc3BlY2lmaWNvcyBlbnRyZSBjYXRlZ29yaWFzIHNpIGVzIG5lY2VzYXJpb1wNCi0gICBPcHRpbWl6YSBlbCB1c28gZGUgbWVtb3JpYSBkZSBSDQoNCmBgYHtyfQ0Kc3QgPC0gc3QgJT4lDQogIG11dGF0ZSgNCiAgICBQYXJlbnRhbF9JbnZvbHZlbWVudCA9IGZhY3RvcihQYXJlbnRhbF9JbnZvbHZlbWVudCwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYygiTG93IiwgIk1lZGl1bSIsICJIaWdoIiksDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9yZGVyZWQgPSBUUlVFKSwNCiAgICBBY2Nlc3NfdG9fUmVzb3VyY2VzID0gZmFjdG9yKEFjY2Vzc190b19SZXNvdXJjZXMsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYygiTG93IiwgIk1lZGl1bSIsICJIaWdoIiksDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb3JkZXJlZCA9IFRSVUUpLA0KICAgIEV4dHJhY3VycmljdWxhcl9BY3Rpdml0aWVzID0gZmFjdG9yKEV4dHJhY3VycmljdWxhcl9BY3Rpdml0aWVzLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZXZlbHMgPSBjKCJObyIsICJZZXMiKSksICANCiAgICBNb3RpdmF0aW9uX0xldmVsID0gZmFjdG9yKE1vdGl2YXRpb25fTGV2ZWwsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYygiTG93IiwgIk1lZGl1bSIsICJIaWdoIiksDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgb3JkZXJlZCA9IFRSVUUpLA0KICAgIEludGVybmV0X0FjY2VzcyA9IGZhY3RvcihJbnRlcm5ldF9BY2Nlc3MsDQogICAgICAgICAgICAgICAgICAgICAgICAgICBsZXZlbHMgPSBjKCJObyIsICJZZXMiKSksICANCiAgICBGYW1pbHlfSW5jb21lID0gZmFjdG9yKEZhbWlseV9JbmNvbWUsDQogICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYygiTG93IiwgIk1lZGl1bSIsICJIaWdoIiksDQogICAgICAgICAgICAgICAgICAgICAgICAgb3JkZXJlZCA9IFRSVUUpLA0KICAgIFRlYWNoZXJfUXVhbGl0eSA9IGZhY3RvcihUZWFjaGVyX1F1YWxpdHksDQogICAgICAgICAgICAgICAgICAgICAgICAgICBsZXZlbHMgPSBjKCJMb3ciLCAiTWVkaXVtIiwgIkhpZ2giKSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgIG9yZGVyZWQgPSBUUlVFKSwNCiAgICBTY2hvb2xfVHlwZSA9IGZhY3RvcihTY2hvb2xfVHlwZSksICANCiAgICBQZWVyX0luZmx1ZW5jZSA9IGZhY3RvcihQZWVyX0luZmx1ZW5jZSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYygiTmVnYXRpdmUiLCAiTmV1dHJhbCIsICJQb3NpdGl2ZSIpLA0KICAgICAgICAgICAgICAgICAgICAgICAgICBvcmRlcmVkID0gVFJVRSksDQogICAgTGVhcm5pbmdfRGlzYWJpbGl0aWVzID0gZmFjdG9yKExlYXJuaW5nX0Rpc2FiaWxpdGllcywNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGxldmVscyA9IGMoIk5vIiwgIlllcyIpKSwgIA0KICAgIFBhcmVudGFsX0VkdWNhdGlvbl9MZXZlbCA9IGZhY3RvcihQYXJlbnRhbF9FZHVjYXRpb25fTGV2ZWwsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZXZlbHMgPSBjKCJIaWdoIFNjaG9vbCIsICJDb2xsZWdlIiwgIlBvc3RncmFkdWF0ZSIpLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb3JkZXJlZCA9IFRSVUUpLA0KICAgIERpc3RhbmNlX2Zyb21fSG9tZSA9IGZhY3RvcihEaXN0YW5jZV9mcm9tX0hvbWUsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZXZlbHMgPSBjKCJOZWFyIiwgIk1vZGVyYXRlIiwgIkZhciIpLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb3JkZXJlZCA9IFRSVUUpLA0KICAgIEdlbmRlciA9IGZhY3RvcihHZW5kZXIpICANCiAgKQ0KYGBgDQoNClZlcmlmaWNhbW9zIHF1ZSBzZSBoYW4gY29udmVydGlkbyBlbiBmYWN0b3IuDQoNCmBgYHtyfQ0Kc3RyKHN0KQ0KYGBgDQoNCiMgT2JqZXRpdm8gZGUgZXN0b3MgZGF0b3MNCg0KVHJhYmFqYXJlbW9zIGNvbiBlc3RvcyBkYXRvcyBlbiBkb3MgZmFzZXMgcHJpbmNpcGFsZXMuDQoNCi0gICBGYXNlIDE6IEFuYWxpc2lzIGV4cGxvcmF0b3JpbyBkZSBsb3MgZGF0b3MNCg0KICAgIC0gICBgT2JqZXRpdm8gcHJpbmNpcGFsYCBBbmFsaXphciBsb3MgZmFjdG9yZXMgcXVlIGluZmx1eWVuIGVuIGVsIHJlbmRpbWllbnRvIGFjYWTDqW1pY28gZGUgbG9zIGVzdHVkaWFudGVzLCBtZWRpZG8gYSB0cmF2w6lzIGRlIHN1cyBwdW50dWFjaW9uZXMgZW4gZXjDoW1lbmVzLCBjb25zaWRlcmFuZG8gdmFyaWFibGVzIGRlc2RlIGxhIHBhcnRlIGVjb27Ds21pY2EgeSBwZXJzb25hbA0KDQogICAgLSAgIGBPYmpldGl2b3MgZXNwZWNpZmljb3NgOg0KDQogICAgICAgIC0gICBJZGVudGlmaWNhciBxdcOpIHZhcmlhYmxlcyB0aWVuZW4gbWF5b3IgaW1wYWN0byBlbiBsYXMgY2FsaWZpY2FjaW9uZXMgZGUgbG9zIGV4w6FtZW5lcw0KDQogICAgICAgIC0gICBFeGFtaW5hciBjw7NtbyBsb3MgZmFjdG9yZXMgc29jaW9lY29uw7NtaWNvcyAoRmFtaWx5X0luY29tZSwgUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsKSBhZmVjdGFuIGFsIHJlbmRpbWllbnRvDQoNCiAgICAgICAgLSAgIEV2YWx1YXIgbGEgaW5mbHVlbmNpYSBkZSBmYWN0b3JlcyBlc2NvbGFyZXMgKFRlYWNoZXJfUXVhbGl0eSwgU2Nob29sX1R5cGUsIEFjY2Vzc190b19SZXNvdXJjZXMpDQoNCiAgICAgICAgLSAgIEFuYWxpemFyIGVsIGltcGFjdG8gZGUgZmFjdG9yZXMgcGVyc29uYWxlcyAoU2xlZXBfSG91cnMsIE1vdGl2YXRpb25fTGV2ZWwsIExlYXJuaW5nX0Rpc2FiaWxpdGllcykNCg0KLSAgIEZhc2UgMjogTW9kZWxvIHByZWRpY3Rpdm8uDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkFCIHByb2dyYW1hY2nDs246IERhdGFzZXQgZGUgZXN0dWRpYW50ZXMiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQojIyBFeHBsaWNhY2nDs24gZGVsIGRhdGFzZXQNCg0KRWwgZGF0YXNldCBoYSBzaWRvIHNhY2FkbyBkZSBsYSBwYWdpbmEga2FnZ2xlOiA8aHR0cHM6Ly93d3cua2FnZ2xlLmNvbS8+LiBEZSBsYSBzZWNjacOzbiBkZSBkYXRhc2V0cywgZXNwZWPDrWZpY2FtZW50ZSBoZW1vcyBlc2NvZ2lkbyBlc3RlIGRhdGFzZXQ6IDxodHRwczovL3d3dy5rYWdnbGUuY29tL2RhdGFzZXRzL2xhaW5ndXluMTIzL3N0dWRlbnQtcGVyZm9ybWFuY2UtZmFjdG9ycz4uIEVzdGUgY29uanVudG8gZGUgZGF0b3Mgb2ZyZWNlIHVuYSB2aXNpw7NuIGNvbXBsZXRhIGRlIGRpdmVyc29zIGZhY3RvcmVzIHF1ZSBhZmVjdGFuIGFsIHJlbmRpbWllbnRvIGRlIGxvcyBlc3R1ZGlhbnRlcyBlbiBsb3MgZXjDoW1lbmVzLiBJbmNsdXllIGluZm9ybWFjacOzbiBzb2JyZSBow6FiaXRvcyBkZSBlc3R1ZGlvLCBhc2lzdGVuY2lhLCBwYXJ0aWNpcGFjacOzbiBkZSBsb3MgcGFkcmVzIHkgb3Ryb3MgYXNwZWN0b3MgcXVlIGluZmx1eWVuIGVuIGVsIMOpeGl0byBhY2Fkw6ltaWNvLg0KDQojIFBhcnRlIDE6IGNhcmdhIHkgZXhwbG9yYWNpw7NuIGRlIGRhdG9zLg0KDQpgYGB7cn0NCmxpYnJhcnkocmVhZHIpDQpsaWJyYXJ5KHNraW1yKQ0KbGlicmFyeShkcGx5cikNCmxpYnJhcnkoZXNxdWlzc2UpDQoNCmBgYA0KDQpwcmltZXJvIGltcG9ydGFtb3MgZWwgZGF0YXNldCwgYWRlbWFzIGltcG9ydGFtb3MgbGEgbGlicmVyw61hIHNraW1yIHBhcmEgbGEgbWVqb3IgdmlzdWFsaXphY2nDs24gZGUgbG9zIGRhdG9zDQoNCmBgYHtyIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9VFJVRSwgcGFnZWQucHJpbnQ9VFJVRSwgc2hvd19jb2xfdHlwZXM9fQ0Kc3QgPC0gcmVhZF9jc3YoImVzdHVkaWFudGVzLmNzdiIsIHNob3dfY29sX3R5cGVzID0gRkFMU0UpDQpoZWFkKHN0LDEwLCBzaG93X2NvbF90eXBlcyA9IEZBTFNFKQ0KYGBgDQoNClRyYXMgdW4gcHJpbWVyIHZpc3Rhem8gcG9kZW1vcyBvYnNlcnZhciBxdWUgdGVuZW1vcyAyMCBjb2x1bW5hcyB5IHRlbmVtb3MgdGFudG8gdmFsb3JlcyBudW3DqXJpY29zIGNvbW8gbm8gbnVtw6lyaWNvcy4gQWRlbWFzIHNvc3BlY2hhbW9zIHF1ZSBoYXkgYmFzdGFudGVzIHZhbG9yZXMgY2F0ZWfDs3JpY29zLiBWYW1vcyBhIGFuYWxpemFybG8gbWFzIGEgZm9uZG8uDQoNCnNlcGFyYW1vcyBsYXMgY29sdW1uYXMgbnVtw6lyaWNhcyBkZSBsYXMgbm8gbnVtw6lyaWNhcyBwYXJhIG1lam9yIG9ic2VydmFjacOzbiBkZSBsb3MgZGF0b3MNCg0KYGBge3J9DQpudW1lcmljX2NvbHVtbnMgPC0gc2FwcGx5KHN0LCBpcy5udW1lcmljKQ0KYGBgDQoNCmBgYHtyfQ0KIyBJbXByaW1pciBsb3MgdmFsb3JlcyDDum5pY29zIGRlIHRvZGFzIGxhcyBjb2x1bW5hcyBubyBudW3DqXJpY2FzDQpsYXBwbHkoc3RbIW51bWVyaWNfY29sdW1uc10sIHVuaXF1ZSkNCg0KYGBgDQoNCkFxdcOtIHBvZGVtb3MgdmVyIHF1ZSB0b2RvcyBsYXMgY29sdW1uYXMgbm8gbnVtw6lyaWNhcyBzb24gY2F0ZWfDs3JpY2FzLiBlc3RvIGxvIHRlbmRyZW1vcyBlbiBjdWVudGEgcGFyYSBlbCBhbsOhbGlzaXMgeSBsYSBsaW1waWV6YSBtYXMgYWRlbGFudGUNCg0KQWhvcmEgYnVzY2Ftb3MgbG9zIHZhbG9yZXMgbnVsb3MgZGVudHJvIGRlIGxhcyBjb2x1bW5hcw0KDQpVc2Ftb3Mgc2tpbSBtZWpvciBxdWUgYHN1bW1hcnkoKWAgcG9ycXVlIGRhIG1hcyBpbmZvcm1hY2nDs24geSBwcmVzZW50YWRhIGRlIGZvcm1hIG1hcyBsaW1waWENCg0KYGBge3J9DQpza2ltKHN0WyFudW1lcmljX2NvbHVtbnNdKQ0KYGBgDQoNClNlIG9ic2VydmEgcXVlIHRlbmVtb3MgdmFsb3JlcyBudWxvcyBlbiAzIGNvbHVtbmFzOiBgVGVhY2hlcl9RdWFsaXR5YCwgYFBhcmVudGFsX0VkdWNhdGlvbmFsX0xldmVsYCB5IGBEaXN0YW5jZV9Gcm9tX0hvbWVgIE1hcyB0YXJkZSBlbiBsYSBsaW1waWV6YSBkZSBkYXRvcyB2ZXJlbW9zIHF1ZSBoYWNlciBjb24gZWxsb3MuDQoNCmBgYHtyIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0UsIHBhZ2VkLnByaW50PUZBTFNFfQ0Kc2tpbShzdFtudW1lcmljX2NvbHVtbnNdKQ0KYGBgDQoNCkVuIGxvcyBkYXRvcyBudW3DqXJpY29zIGFsIGNvbnRyYXJpbyBxdWUgcGFzYWJhIGVuIGxvcyBubyBudW3DqXJpY29zIG5vIHRlbmVtb3MgbmluZ8O6biB2YWxvciBudWxvLg0KDQojIFBhcnRlIDI6IExpbXBpZXphIGRlIGRhdG9zDQoNCnZlbW9zIHF1ZSB0ZW5lbW9zIHZhbG9yZXMgbnVsb3MgZW4gMyBjb2x1bW5hczpgUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsYCwgYFRlYWNoZXJfUXVhbGl0eWAsIGBEaXN0YW5jZV9mcm9tX0hvbWVgXA0KY29tbyBsYXMgMyBjb2x1bW5hcyBzb24gY2F0ZWfDs3JpY2FzIHZhbW9zIGEgdXNhciBsYSBtb2RhIGVuIGxhcyAzIHBhcmEgcG9uZXIgZWwgdmFsb3IgcXVlIG1hcyBzZSByZXBpdGUuIGNvbW8gZW4gciBubyBleGlzdGUgdW5hIGZ1bmNpw7NuIHF1ZSBvYnRlbmdhIGxhIG1vZGEgZGlyZWN0YW1lbnRlIGxhIGNyZWFtb3Mgbm9zb3Ryb3MgbWlzbW9zLg0KDQpgYGB7cn0NCmdldG1vZGUgPC0gZnVuY3Rpb24odikgew0KICAgdW5pcXYgPC0gdW5pcXVlKHYpICAgICAgICAgICAgICAgICAgICAgDQogICB1bmlxdlt3aGljaC5tYXgodGFidWxhdGUobWF0Y2godiwgdW5pcXYpKSldDQp9DQpgYGANCg0KYGBge3J9DQpzdCA8LSBzdCAlPiUNCiAgbXV0YXRlKA0KICAgIFRlYWNoZXJfUXVhbGl0eSA9IGlmZWxzZShpcy5uYShUZWFjaGVyX1F1YWxpdHkpLCBnZXRtb2RlKFRlYWNoZXJfUXVhbGl0eSksIFRlYWNoZXJfUXVhbGl0eSksICNzaSBlcyBOQSAoVFJVRSkgc2FsdGEgYGdldG1vZGUoY29sdW1uYSlgLHNpIGVzIEZhbHNlIG5vIGNhbWJpYSBuYWRhDQogICAgUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsID0gaWZlbHNlKGlzLm5hKFBhcmVudGFsX0VkdWNhdGlvbl9MZXZlbCksIGdldG1vZGUoUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsKSwgUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsKSwNCiAgICBEaXN0YW5jZV9mcm9tX0hvbWUgPSBpZmVsc2UoaXMubmEoRGlzdGFuY2VfZnJvbV9Ib21lKSwgZ2V0bW9kZShEaXN0YW5jZV9mcm9tX0hvbWUpLCBEaXN0YW5jZV9mcm9tX0hvbWUpDQogICkNCg0KYGBgDQoNCmVsIGAlXD4lYCBlc3RvIGVzIGVsIGBwaXBlYCwgcXVlIGVzdGEgdG9tYW5kbyBlbCBkZiBgc3RgeSBsbyBwYXNvIGNvbW8gZW50cmFkYSBhIGxhIHNpZ3VpZW50ZSBmdW5jacOzbiBgbXV0YXRlKClgZW4gZXN0ZSBjYXNvLiBHcmFjaWFzIGVzdG8gbm9zIGV2aXRhbW9zIGVzY3JpYmlyIG11dGF0ZSBwYXJhIGNhZGEgY29sdW1uYSwgcGVybWl0aWVuZG8gImZsdWlyIiBhIGxhIGZ1bmNpw7NuLg0KDQpDb21wcm9iYW1vcyBxdWUgbm8gaGF5IHZhbG9yZXMgbnVsb3MuDQoNCmBgYHtyfQ0KcHJpbnQoY29sU3Vtcyhpcy5uYShzdCkpKQ0KYGBgDQoNCk5vIGhheSB2YWxvcmVzIG51bG9zLCBsbyBxdWUgbm9zIGluZGljYSBxdWUgaGEgZnVuY2lvbmFkbw0KDQojIyBDb252ZXJzacOzbiBkZSB2YWxvcmVzIGNhdGVnw7NyaWNvcyBlbiBmYWN0b3JlcyBkZSBSLCBncmFjaWFzIGEgZXN0byBjb25zZWd1aW1vcyBsbyBzaWd1aWVudGUNCg0KLSAgIExvcyBmYWN0b3JlcyBwZXJtaXRlbiBhIFIgZW50ZW5kZXIgcXVlIHNvbiBkYXRvcyBjYXRlZ8Ozcmljb3MgeSBubyBzaW1wbGVzIHRleHRvc1wNCi0gICBmYWNpbGl0YSBlbCBhbsOhbGlzaXMgZXN0YWTDrXN0aWNvIHkgY3JlYWNpw7NuIGRlIG1vZGVsb3MuXA0KLSAgIFBlcm1pdGUgZXN0YWJsZWNlciBvcmRlbmVzIGVzcGVjw61maWNvcyBlbnRyZSBjYXRlZ29yw61hcyBzaSBlcyBuZWNlc2FyaW9cDQotICAgT3B0aW1pemEgZWwgdXNvIGRlIG1lbW9yaWEgZGUgUg0KDQpDb252ZXJ0aW1vcyBlbiBmYWN0b3JlcyBsb3MgY2F0ZWfDs3JpY29zIHkgYcOxYWRpbW9zIG9yZGVuIGVuIGFsZ3Vub3MgZGUgZWxsb3MgeWEgcXVlIHRpZW5lIHJlbGV2YW5jaWEgZWwgb3JkZW4gKGxvd1w8bWVkaXVtXDxoaWdoKQ0KDQpgYGB7cn0NCnN0IDwtIHN0ICU+JQ0KICBtdXRhdGUoDQogICAgUGFyZW50YWxfSW52b2x2ZW1lbnQgPSBmYWN0b3IoUGFyZW50YWxfSW52b2x2ZW1lbnQsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGxldmVscyA9IGMoIkxvdyIsICJNZWRpdW0iLCAiSGlnaCIpLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvcmRlcmVkID0gVFJVRSksDQogICAgQWNjZXNzX3RvX1Jlc291cmNlcyA9IGZhY3RvcihBY2Nlc3NfdG9fUmVzb3VyY2VzLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGxldmVscyA9IGMoIkxvdyIsICJNZWRpdW0iLCAiSGlnaCIpLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9yZGVyZWQgPSBUUlVFKSwNCiAgICBFeHRyYWN1cnJpY3VsYXJfQWN0aXZpdGllcyA9IGZhY3RvcihFeHRyYWN1cnJpY3VsYXJfQWN0aXZpdGllcywNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYygiTm8iLCAiWWVzIikpLCAgDQogICAgTW90aXZhdGlvbl9MZXZlbCA9IGZhY3RvcihNb3RpdmF0aW9uX0xldmVsLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgIGxldmVscyA9IGMoIkxvdyIsICJNZWRpdW0iLCAiSGlnaCIpLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9yZGVyZWQgPSBUUlVFKSwNCiAgICBJbnRlcm5ldF9BY2Nlc3MgPSBmYWN0b3IoSW50ZXJuZXRfQWNjZXNzLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYygiTm8iLCAiWWVzIikpLCAgDQogICAgRmFtaWx5X0luY29tZSA9IGZhY3RvcihGYW1pbHlfSW5jb21lLA0KICAgICAgICAgICAgICAgICAgICAgICAgIGxldmVscyA9IGMoIkxvdyIsICJNZWRpdW0iLCAiSGlnaCIpLA0KICAgICAgICAgICAgICAgICAgICAgICAgIG9yZGVyZWQgPSBUUlVFKSwNCiAgICBUZWFjaGVyX1F1YWxpdHkgPSBmYWN0b3IoVGVhY2hlcl9RdWFsaXR5LA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYygiTG93IiwgIk1lZGl1bSIsICJIaWdoIiksDQogICAgICAgICAgICAgICAgICAgICAgICAgICBvcmRlcmVkID0gVFJVRSksDQogICAgU2Nob29sX1R5cGUgPSBmYWN0b3IoU2Nob29sX1R5cGUpLCAgDQogICAgUGVlcl9JbmZsdWVuY2UgPSBmYWN0b3IoUGVlcl9JbmZsdWVuY2UsDQogICAgICAgICAgICAgICAgICAgICAgICAgIGxldmVscyA9IGMoIk5lZ2F0aXZlIiwgIk5ldXRyYWwiLCAiUG9zaXRpdmUiKSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgb3JkZXJlZCA9IFRSVUUpLA0KICAgIExlYXJuaW5nX0Rpc2FiaWxpdGllcyA9IGZhY3RvcihMZWFybmluZ19EaXNhYmlsaXRpZXMsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZXZlbHMgPSBjKCJObyIsICJZZXMiKSksICANCiAgICBQYXJlbnRhbF9FZHVjYXRpb25fTGV2ZWwgPSBmYWN0b3IoUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYygiSGlnaCBTY2hvb2wiLCAiQ29sbGVnZSIsICJQb3N0Z3JhZHVhdGUiKSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9yZGVyZWQgPSBUUlVFKSwNCiAgICBEaXN0YW5jZV9mcm9tX0hvbWUgPSBmYWN0b3IoRGlzdGFuY2VfZnJvbV9Ib21lLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYygiTmVhciIsICJNb2RlcmF0ZSIsICJGYXIiKSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9yZGVyZWQgPSBUUlVFKSwNCiAgICBHZW5kZXIgPSBmYWN0b3IoR2VuZGVyKSAgDQogICkNCmBgYA0KDQpWZXJpZmljYW1vcyBxdWUgc2UgaGFuIGNvbnZlcnRpZG8gZW4gZmFjdG9yLg0KDQpgYGB7cn0NCnN0cihzdCkNCmBgYA0KDQojIE9iamV0aXZvIGRlIGVzdG9zIGRhdG9zDQoNClRyYWJhamFyZW1vcyBjb24gZXN0b3MgZGF0b3MgZW4gZG9zIGZhc2VzIHByaW5jaXBhbGVzLg0KDQotICAgRmFzZSAxOiBBbsOhbGlzaXMgZXhwbG9yYXRvcmlvIGRlIGxvcyBkYXRvcw0KDQogICAgLSAgIGBPYmpldGl2byBwcmluY2lwYWxgIEFuYWxpemFyIGxvcyBmYWN0b3JlcyBxdWUgaW5mbHV5ZW4gZW4gZWwgcmVuZGltaWVudG8gYWNhZMOpbWljbyBkZSBsb3MgZXN0dWRpYW50ZXMsIG1lZGlkbyBhIHRyYXbDqXMgZGUgc3VzIHB1bnR1YWNpb25lcyBlbiBleMOhbWVuZXMsIGNvbnNpZGVyYW5kbyB2YXJpYWJsZXMgZGVzZGUgbGEgcGFydGUgZWNvbsOzbWljYSB5IHBlcnNvbmFsDQoNCiAgICAtICAgYE9iamV0aXZvcyBlc3BlY2lmaWNvc2A6DQoNCiAgICAgICAgLSAgIElkZW50aWZpY2FyIHF1w6kgdmFyaWFibGVzIHRpZW5lbiBtYXlvciBpbXBhY3RvIGVuIGxhcyBjYWxpZmljYWNpb25lcyBkZSBsb3MgZXjDoW1lbmVzDQoNCiAgICAgICAgLSAgIEV4YW1pbmFyIGPDs21vIGxvcyBmYWN0b3JlcyBzb2NpbyBlY29uw7NtaWNvcyAoRmFtaWx5X0luY29tZSwgUGFyZW50YWxfRWR1Y2F0aW9uX0xldmVsKSBhZmVjdGFuIGFsIHJlbmRpbWllbnRvDQoNCiAgICAgICAgLSAgIEV2YWx1YXIgbGEgaW5mbHVlbmNpYSBkZSBmYWN0b3JlcyBlc2NvbGFyZXMgKFRlYWNoZXJfUXVhbGl0eSwgU2Nob29sX1R5cGUsIEFjY2Vzc190b19SZXNvdXJjZXMpDQoNCiAgICAgICAgLSAgIEFuYWxpemFyIGVsIGltcGFjdG8gZGUgZmFjdG9yZXMgcGVyc29uYWxlcyAoU2xlZXBfSG91cnMsIE1vdGl2YXRpb25fTGV2ZWwsIExlYXJuaW5nX0Rpc2FiaWxpdGllcykNCg0KLSAgIEZhc2UgMjogTW9kZWxvIHByZWRpY3Rpdm8uDQo=</div>
 
 
 

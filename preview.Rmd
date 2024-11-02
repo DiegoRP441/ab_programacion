@@ -3,6 +3,10 @@ title: "AB programación: Dataset de estudiantes"
 output: html_notebook
 ---
 
+## Explicación del dataset
+
+El dataset ha sido sacado de la pagina kaggle: <https://www.kaggle.com/>. De la sección de datasets, específicamente hemos escogido este dataset: <https://www.kaggle.com/datasets/lainguyn123/student-performance-factors>. Este conjunto de datos ofrece una visión completa de diversos factores que afectan al rendimiento de los estudiantes en los exámenes. Incluye información sobre hábitos de estudio, asistencia, participación de los padres y otros aspectos que influyen en el éxito académico.
+
 # Parte 1: carga y exploración de datos.
 
 ```{r}
@@ -13,24 +17,30 @@ library(esquisse)
 
 ```
 
-primero importamos el dataset, ademas importamos la libreria skimr para la mejor visualización de los datos
+primero importamos el dataset, ademas importamos la librería skimr para la mejor visualización de los datos
 
 ```{r message=FALSE, warning=TRUE, paged.print=TRUE, show_col_types=}
 st <- read_csv("estudiantes.csv", show_col_types = FALSE)
 head(st,10, show_col_types = FALSE)
 ```
 
-vemos que tipos de columnas tenemos, si son numericas o bien son de texto
+Tras un primer vistazo podemos observar que tenemos 20 columnas y tenemos tanto valores numéricos como no numéricos. Ademas sospechamos que hay bastantes valores categóricos. Vamos a analizarlo mas a fondo.
 
-```{r}
-str(st)
-```
-
-separamos las columnas númericas de las numéricas para mejor observación de los datos
+separamos las columnas numéricas de las no numéricas para mejor observación de los datos
 
 ```{r}
 numeric_columns <- sapply(st, is.numeric)
 ```
+
+```{r}
+# Imprimir los valores únicos de todas las columnas no numéricas
+lapply(st[!numeric_columns], unique)
+
+```
+
+Aquí podemos ver que todos las columnas no numéricas son categóricas. esto lo tendremos en cuenta para el análisis y la limpieza mas adelante
+
+Ahora buscamos los valores nulos dentro de las columnas
 
 Usamos skim mejor que `summary()` porque da mas información y presentada de forma mas limpia
 
@@ -38,14 +48,18 @@ Usamos skim mejor que `summary()` porque da mas información y presentada de for
 skim(st[!numeric_columns])
 ```
 
+Se observa que tenemos valores nulos en 3 columnas: `Teacher_Quality`, `Parental_Educational_Level` y `Distance_From_Home` Mas tarde en la limpieza de datos veremos que hacer con ellos.
+
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 skim(st[numeric_columns])
 ```
 
+En los datos numéricos al contrario que pasaba en los no numéricos no tenemos ningún valor nulo.
+
 # Parte 2: Limpieza de datos
 
-vemos que tenemos valores faltantes en 3 columnas:`Parental_Education_Level`, `Teacher_Quality`, `Distance_from_Home`\
-como las 3 columnas son categoricas vamos a usar la moda en las 3 para poner el valor que mas se repite. como en r no existe una función que obtenga la moda directamente la creamos nosotros mismos.
+vemos que tenemos valores nulos en 3 columnas:`Parental_Education_Level`, `Teacher_Quality`, `Distance_from_Home`\
+como las 3 columnas son categóricas vamos a usar la moda en las 3 para poner el valor que mas se repite. como en r no existe una función que obtenga la moda directamente la creamos nosotros mismos.
 
 ```{r}
 getmode <- function(v) {
@@ -72,12 +86,16 @@ Comprobamos que no hay valores nulos.
 print(colSums(is.na(st)))
 ```
 
-## Conversion de valores categoricos en factores de R, gracias a esto conseguimos lo siguiente
+No hay valores nulos, lo que nos indica que ha funcionado
 
--   Los factores permiten a R entender que son datos categoricos y no simples textos\
--   facilita el analisis estadistico y creación de modelos.\
--   Permite establcer ordenes especificos entre categorias si es necesario\
+## Conversión de valores categóricos en factores de R, gracias a esto conseguimos lo siguiente
+
+-   Los factores permiten a R entender que son datos categóricos y no simples textos\
+-   facilita el análisis estadístico y creación de modelos.\
+-   Permite establecer ordenes específicos entre categorías si es necesario\
 -   Optimiza el uso de memoria de R
+
+Convertimos en factores los categóricos y añadimos orden en algunos de ellos ya que tiene relevancia el orden (low\<medium\<high)
 
 ```{r}
 st <- st %>%
@@ -127,7 +145,7 @@ str(st)
 
 Trabajaremos con estos datos en dos fases principales.
 
--   Fase 1: Analisis exploratorio de los datos
+-   Fase 1: Análisis exploratorio de los datos
 
     -   `Objetivo principal` Analizar los factores que influyen en el rendimiento académico de los estudiantes, medido a través de sus puntuaciones en exámenes, considerando variables desde la parte económica y personal
 
@@ -135,7 +153,7 @@ Trabajaremos con estos datos en dos fases principales.
 
         -   Identificar qué variables tienen mayor impacto en las calificaciones de los exámenes
 
-        -   Examinar cómo los factores socioeconómicos (Family_Income, Parental_Education_Level) afectan al rendimiento
+        -   Examinar cómo los factores socio económicos (Family_Income, Parental_Education_Level) afectan al rendimiento
 
         -   Evaluar la influencia de factores escolares (Teacher_Quality, School_Type, Access_to_Resources)
 
