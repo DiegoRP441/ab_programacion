@@ -16,6 +16,7 @@ library(dplyr)
 library(esquisse)
 library(reshape2)
 library(ggplot2)
+library(tidyr)
 
 ```
 
@@ -329,3 +330,48 @@ ggplot(st_clean, aes(x = Motivation_Level, y = Attendance, fill = Motivation_Lev
 ```
 
 No hay grandes diferencias entre los niveles de motivación y la asistencia a clase. se puede ver que la mediana de la motivación alta es menor, esta tiene los picos mas altos en dos puntos, asistencia en torno al 70 y al 95. sin embargo la motivación media y baja son mas estables en la asistencia.
+
+Ahora vamos a analizar las horas estudiadas
+
+```{r}
+ggplot(st_clean, aes(x = Hours_Studied, y = Exam_Score, color = Motivation_Level)) +
+  geom_point(alpha = 0.7) +
+  theme_minimal() +
+  labs(title = "Diagrama de Dispersión de Sleep_Hours vs Exam_Score",
+       x = "Horas de estudio",
+       y = "Puntaje del Examen",
+       color = "Nivel de Motivación") +
+  scale_color_brewer(palette = "Set1")
+```
+
+podemos ver que a medida que aumentan las horas de estudio, aumentan la nota. Podríamos decir que los valores anómalos en la nota se centran en los valores medios y no en los extremos de horas estudiadas.
+
+```{r}
+ggplot(st_clean, aes(x = Hours_Studied, fill = Motivation_Level)) +
+  geom_density(alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Gráfico de Densidad de Asistencia por Nivel de Motivación",
+       x = "horas estudiadas",
+       y = "Densidad",
+       fill = "Nivel de Motivación") +
+  scale_fill_manual(values = c("High" = "lightblue", "Medium" = "lightgreen", "Low" = "lightpink"))
+```
+
+No hay diferencias muy elevadas en las horas estudiadas según el nivel de motivación, pero podemos observar que los de baja motivación concentran mas sus horas de estudio por debajo de las 20 y los de alta motivación concentran sus horas de estudios en mas de 20. sin embargo los de motivación media dispersan mas las horas estudiadas llegando mayor cantidad de horas desplazandose un poco mas a la derecha que las otras dos.
+
+```{r}
+
+# Crear gráfico de densidad de Exam_Score por Teacher_Quality
+ggplot(st_clean, aes(x = Exam_Score, fill = Teacher_Quality)) +
+  geom_density(alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Gráfico de Densidad de Exam_Score por Nivel de Calidad del Profesorado",
+       x = "Puntaje del Examen",
+       y = "Densidad",
+       fill = "Calidad del Profesorado") +
+  scale_fill_brewer(palette = "Set2")
+
+
+```
+
+Se puede observar que la calidad del profesor parece estar asociada con una tendencia a mejores puntajes en el examen, especialmente para la categoría de calidad alta. Sin embargo, la diferencia entre las curvas de densidad no es muy significativa, por lo que se requeriría un análisis más profundo para confirmar esta relación de manera concluyente.

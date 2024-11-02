@@ -6,7 +6,9 @@
 - [x] Gráficos de barras de frecuencias para variables categóricas (e.g., `Gender`, `Family_Income`, `Parental_Education_Level`).
 - [x] Diagrama de caja (boxplot) de `Exam_Score` por `Gender`.
 - [x] Diagrama de dispersión de `Sleep_Hours` vs `Exam_Score` con color por `Motivation_Level`.
-- [ ] Gráfico de densidad de `Exam_Score` para diferentes niveles de `Teacher_Quality`.
+- [x] analisis entre motivacion y asistencia a clase 
+- [x] analisis entre motivacion y horas de estudio
+- [x] Gráfico de densidad de `Exam_Score` para diferentes niveles de `Teacher_Quality`.
 
 ### Análisis Socioeconómico
 - [ ] Boxplot de `Exam_Score` por `Family_Income`.
