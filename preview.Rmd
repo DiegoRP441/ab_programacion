@@ -144,6 +144,8 @@ Verificamos que se han convertido en factor.
 str(st)
 ```
 
+Devolvemos el csv limpio y trabajaremos con él.
+
 ```{r}
 # Guardar el data frame limpio en un archivo CSV
 write.csv(st, "st_clean.csv", row.names = FALSE)
@@ -263,7 +265,7 @@ ggplot(st_clean, aes(x = Gender, y = Exam_Score, fill = Gender)) +
 
 -   Valores atípicos: Hay valores atípicos en ambos géneros, lo cual indica que hay alumnos con notas o mas altas o mas bajas que la mayoría.
 
-## Buscamos si el nivel de motivación influye en las variables con correlaciones mas elevadas. 
+## Buscamos si el nivel de motivación influye en las variables con correlaciones mas elevadas.
 
 estas son:
 
@@ -337,9 +339,9 @@ Ahora vamos a analizar las horas estudiadas
 ggplot(st_clean, aes(x = Hours_Studied, y = Exam_Score, color = Motivation_Level)) +
   geom_point(alpha = 0.7) +
   theme_minimal() +
-  labs(title = "Diagrama de Dispersión de Sleep_Hours vs Exam_Score",
+  labs(title = "Diagrama de Dispersión de horas de estudio vs Exam_Score",
        x = "Horas de estudio",
-       y = "Puntaje del Examen",
+       y = "notas del Examen",
        color = "Nivel de Motivación") +
   scale_color_brewer(palette = "Set1")
 ```
@@ -357,7 +359,7 @@ ggplot(st_clean, aes(x = Hours_Studied, fill = Motivation_Level)) +
   scale_fill_manual(values = c("High" = "lightblue", "Medium" = "lightgreen", "Low" = "lightpink"))
 ```
 
-No hay diferencias muy elevadas en las horas estudiadas según el nivel de motivación, pero podemos observar que los de baja motivación concentran mas sus horas de estudio por debajo de las 20 y los de alta motivación concentran sus horas de estudios en mas de 20. sin embargo los de motivación media dispersan mas las horas estudiadas llegando mayor cantidad de horas desplazandose un poco mas a la derecha que las otras dos.
+No hay diferencias muy elevadas en las horas estudiadas según el nivel de motivación, pero podemos observar que los de baja motivación concentran mas sus horas de estudio por debajo de las 20 y los de alta motivación concentran sus horas de estudios en mas de 20. sin embargo los de motivación media dispersan mas las horas estudiadas llegando mayor cantidad de horas desplazándose un poco mas a la derecha que las otras dos.
 
 ```{r}
 
@@ -375,3 +377,228 @@ ggplot(st_clean, aes(x = Exam_Score, fill = Teacher_Quality)) +
 ```
 
 Se puede observar que la calidad del profesor parece estar asociada con una tendencia a mejores puntajes en el examen, especialmente para la categoría de calidad alta. Sin embargo, la diferencia entre las curvas de densidad no es muy significativa, por lo que se requeriría un análisis más profundo para confirmar esta relación de manera concluyente.
+
+```{r}
+ggplot(st_clean, aes(x = Access_to_Resources, y = Exam_Score, fill = Access_to_Resources)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Diagrama de Caja de Exam_Score por Access_to_Resources",
+       x = "Acceso a Recursos",
+       y = "Puntaje del Examen") +
+  scale_fill_brewer(palette = "Set1")
+```
+
+Vamos a analizar cuanto influyen las horas de tutoría en el resultado final.
+
+```{r}
+# Cargar ggplot2
+library(ggplot2)
+
+# Crear boxplot de Exam_Score por Tutoring_Sessions
+ggplot(st_clean, aes(x = as.factor(Tutoring_Sessions), y = Exam_Score, fill = as.factor(Tutoring_Sessions))) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Diagrama de Caja de Exam_Score por Número de Sesiones de Tutoría",
+       x = "Número de Sesiones de Tutoría",
+       y = "Puntaje del Examen",
+       fill = "Sesiones de Tutoría") +
+  scale_fill_brewer(palette = "Set3")
+
+```
+
+```{r}
+# Crear gráfico de dispersión de Tutoring_Sessions vs Exam_Score
+ggplot(st_clean, aes(x = Tutoring_Sessions, y = Exam_Score)) +
+  geom_point(alpha = 0.6, color = "blue") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +  # Línea de tendencia
+  theme_minimal() +
+  labs(title = "Gráfico de Dispersión de Tutoring_Sessions vs Exam_Score",
+       x = "Número de Sesiones de Tutoría",
+       y = "Puntaje del Examen")
+
+```
+
+Vemos que hay correlación baja, es decir, influye minimamente las horas de tutoría con la nota del examen
+
+```{r}
+ggplot(st_clean, aes(x = Hours_Studied, y = Exam_Score)) +
+  geom_point(alpha = 0.6, color = "blue") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +  # Línea de tendencia
+  theme_minimal() +
+  labs(title = "Gráfico de Dispersión de Hours_Studied vs Exam_Score",
+       x = "Número de Hours_Studied",
+       y = "Puntaje del Examen")
+```
+
+```{r}
+ggplot(st_clean, aes(x = Attendance, y = Exam_Score)) +
+  geom_point(alpha = 0.6, color = "blue") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +  # Línea de tendencia
+  theme_minimal() +
+  labs(title = "Gráfico de Dispersión de Attendance vs Exam_Score",
+       x = "Número de Attendance",
+       y = "Puntaje del Examen")
+```
+
+Podemos observar en estos dos gráficos de dispersión que la correlación es positiva y mayor que en la anterior, como decía el heatmap.
+
+## Análisis socio-económico
+
+Aquí buscaremos si los ingresos familiares y la influencia tanto externa como paterna tienen influencia relevante en las notas y el nivel de motivación de los alumnos.
+
+```{r}
+# Cargar ggplot2
+library(ggplot2)
+
+# Crear boxplot de Exam_Score por Family_Income
+ggplot(st_clean, aes(x = Family_Income, y = Exam_Score, fill = Family_Income)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Diagrama de Caja de Exam_Score por Ingreso Familiar",
+       x = "Ingreso Familiar",
+       y = "Puntaje del Examen") +
+  scale_fill_brewer(palette = "Pastel1")
+
+```
+
+```{r}
+# Crear gráfico de densidad de Exam_Score por Teacher_Quality
+ggplot(st_clean, aes(x = Exam_Score, fill = Family_Income)) +
+  geom_density(alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Gráfico de Densidad de Exam_Score por Nivel ingresos familiares",
+       x = "Puntaje del Examen",
+       y = "Densidad",
+       fill = "ingresos familiares") +
+  scale_fill_brewer(palette = "Set2")
+```
+
+Los ingresos familiares no son un factor determinante para sacar mejores notas pero podemos observar que mayor ingresos familiares da lugar a mejores notas, ahora podriamos ver si la cantidad de horas estudiadas es mayor en gente con ingresos familiares elevados en comparación con ingresos bajo
+
+```{r}
+# Cargar paquetes necesarios
+library(dplyr)
+library(skimr)
+
+# Resumir Hours_Studied por Family_Income usando skim()
+st_clean %>%
+  group_by(Family_Income) %>%
+  skim(Hours_Studied)
+```
+
+Observamos que no.
+
+Buscamos si el nivel de motivación aumenta según `"Parental_Involvement"`y `"Peer_Influence"`.
+
+```{r}
+# Cargar ggplot2
+library(ggplot2)
+
+# Crear gráfico de barras apiladas de Motivation_Level por Peer_Influence
+ggplot(st_clean, aes(x = Peer_Influence, fill = Motivation_Level)) +
+  geom_bar(position = "fill") +
+  theme_minimal() +
+  labs(title = "Distribución de Motivation_Level según Peer_Influence",
+       x = "Influencia de Pares",
+       y = "Proporción",
+       fill = "Nivel de Motivación") +
+  scale_fill_brewer(palette = "Set2")
+
+
+```
+
+```{r}
+# Cargar ggplot2
+library(ggplot2)
+
+# Crear gráfico de barras apiladas de Motivation_Level por Parental_Involvement
+ggplot(st_clean, aes(x = Parental_Involvement, fill = Motivation_Level)) +
+  geom_bar(position = "fill") +
+  theme_minimal() +
+  labs(title = "Distribución de Motivation_Level según Parental_Involvement",
+       x = "Participación de los Padres",
+       y = "Proporción",
+       fill = "Nivel de Motivación") +
+  scale_fill_brewer(palette = "Set2")
+
+```
+
+Estos gráficos sugieren que la tanto la influencia de los pares (`Peer_Influence`) como el interes de los padres (`Parental_Involvement`) no parecen estar fuertemente asociadas con cambios en el nivel de motivación (`Motivation_Level`). Las proporciones de motivación se mantienen bastante consistentes independientemente de si la influencia de los pares es negativa, neutral o positiva.
+
+```{r}
+# Cargar ggplot2
+library(ggplot2)
+
+# Crear gráfico de barras apiladas de Exam_Score por Peer_Influence
+ggplot(st_clean, aes(x = Peer_Influence, y = Exam_Score, fill = Peer_Influence)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Diagrama de Caja de Exam_Score por Influencia externa",
+       x = "Influencia de Pares",
+       y = "Puntaje del Examen") +
+  scale_fill_brewer(palette = "Pastel2")
+
+# Crear gráfico de barras apiladas de Exam_Score por Parental_Involvement
+ggplot(st_clean, aes(x = Parental_Involvement, y = Exam_Score, fill = Parental_Involvement)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Diagrama de Caja de Exam_Score por Participación de los Padres",
+       x = "Participación de los Padres",
+       y = "Puntaje del Examen") +
+  scale_fill_brewer(palette = "Set2")
+```
+
+```{r}
+ggplot(st_clean, aes(x = Exam_Score, fill = Peer_Influence)) +
+  geom_density(alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Gráfico de Densidad de Exam_Score por influencia externa",
+       x = "Puntaje del Examen",
+       y = "Densidad",
+       fill = "influencia externa") +
+  scale_fill_brewer(palette = "Set2")
+
+ggplot(st_clean, aes(x = Exam_Score, fill = Parental_Involvement)) +
+  geom_density(alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Gráfico de Densidad de Exam_Score por influencia paterna",
+       x = "Puntaje del Examen",
+       y = "Densidad",
+       fill = "influencia paterna") +
+  scale_fill_brewer(palette = "Set2")
+```
+
+vemos que una influencia paterna alta y una influencia externa positiva tiene mejores resultados académicas que el que no.
+
+```{r}
+# Cargar ggplot2
+library(ggplot2)
+
+# Crear gráfico de violín de Exam_Score por School_Type
+ggplot(st_clean, aes(x = School_Type, y = Exam_Score, fill = School_Type)) +
+  geom_violin(trim = FALSE) +
+  theme_minimal() +
+  labs(title = "Gráfico de Violín de Exam_Score por Tipo de Escuela",
+       x = "Tipo de Escuela",
+       y = "Puntaje del Examen") +
+  scale_fill_brewer(palette = "Pastel1")
+
+```
+
+Podríamos decir que, en base a este gráfico, **no hay una diferencia significativa en las notas de examen entre los estudiantes de escuelas públicas y privadas**. La forma y la amplitud de las distribuciones son similares, lo que sugiere que, en este contexto, el tipo de escuela no parece influir considerablemente en los resultados de los exámenes.
+
+```{r}
+# Cargar ggplot2
+library(ggplot2)
+
+# Crear gráfico de violín de Exam_Score por Family_Income y Gender
+ggplot(st_clean, aes(x = Family_Income, y = Exam_Score, fill = Gender)) +
+  geom_violin(trim = FALSE, position = position_dodge(0.8)) +
+  theme_minimal() +
+  labs(title = "Gráfico de Violín de Exam_Score por Ingreso Familiar y Género",
+       x = "Ingreso Familiar",
+       y = "Puntaje del Examen",
+       fill = "Género") +
+  scale_fill_brewer(palette = "Pastel1")
+
+```
