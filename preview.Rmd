@@ -5,6 +5,8 @@ output: html_notebook
 
 ## Explicación del dataset
 
+Diego Romero Puyal.
+
 El dataset ha sido sacado de la pagina kaggle: <https://www.kaggle.com/>. De la sección de datasets, específicamente hemos escogido este dataset: <https://www.kaggle.com/datasets/lainguyn123/student-performance-factors>. Este conjunto de datos ofrece una visión completa de diversos factores que afectan al rendimiento de los estudiantes en los exámenes. Incluye información sobre hábitos de estudio, asistencia, participación de los padres y otros aspectos que influyen en el éxito académico.
 
 # Parte 1: carga y exploración de datos.
@@ -36,7 +38,6 @@ numeric_columns <- sapply(st, is.numeric)
 ```
 
 ```{r}
-# Imprimir los valores únicos de todas las columnas no numéricas
 lapply(st[!numeric_columns], unique)
 
 ```
@@ -147,7 +148,6 @@ str(st)
 Devolvemos el csv limpio y trabajaremos con él.
 
 ```{r}
-# Guardar el data frame limpio en un archivo CSV
 write.csv(st, "st_clean.csv", row.names = FALSE)
 
 ```
@@ -162,10 +162,8 @@ head(st,10, show_col_types = FALSE)
 Primero comprobamos si existe algún tipo de sesgo en los datos que tenemos en genero y recursos.
 
 ```{r}
-# Variables categóricas que quieres analizar
 categorical_vars <- c("Gender", "Family_Income", "School_Type", "Learning_Disabilities")
 
-# Crear gráficos de barras para cada variable categórica
 for (var in categorical_vars) {
   p <- ggplot(st_clean, aes_string(x = var)) +
     geom_bar(fill = "skyblue") +
@@ -180,29 +178,17 @@ for (var in categorical_vars) {
 Sesgo:
 
 -   **Género**: La distribución es equilibrada, lo que sugiere un bajo riesgo de sesgo.
-
-<!-- -->
-
 -   **Ingreso Familiar**: Predominan las clases media y baja, lo que puede influir en los análisis.
-
 -   **Tipo de Escuela**: Mayor representación de escuelas públicas, lo cual podría sesgar los resultados si queremos extrapolarlos hacia grupos donde haya una mayoría de escuela privada.
-
 -   **Discapacidades de Aprendizaje**: Baja representación de estudiantes con discapacidades, lo que podría limitar la representatividad de los análisis en este aspecto.
 
 Podríamos concluir que es un análisis que se podría extrapolar hacia el conjunto mayoritario de la población, es decir, gente de clase media sin `learning_disabilities` y que van a la escuela pública sin tener en cuenta el género.
 
 ```{r}
-# Cargar paquetes necesarios
-library(ggplot2)
-library(reshape2)
-
-# Calcular la matriz de correlación (usando solo variables numéricas)
 cor_matrix <- cor(st_clean[, sapply(st_clean, is.numeric)], use = "complete.obs")
 
-# Convertir la matriz de correlación en un formato largo para ggplot2
 melted_cor_matrix <- melt(cor_matrix)
 
-# Crear el heatmap con los números visibles en los cuadrados
 ggplot(data = melted_cor_matrix, aes(x = Var1, y = Var2, fill = value)) +
   geom_tile(color = "white") +
   geom_text(aes(label = round(value, 2)), color = "black", size = 3) +
@@ -219,12 +205,11 @@ ggplot(data = melted_cor_matrix, aes(x = Var1, y = Var2, fill = value)) +
 
 En este mapa de calor Podemos observar en las variables numéricas cuales son las que tienen mas peso con la nota del examen. que en este caso podemos ver que son `Attendance` y `Hours_Studied`.
 
-### Graficos de todo tipo
+### Gráficos de todo tipo
 
 ### Generales
 
 ```{r}
-# Crear histograma
 ggplot(st_clean, aes(x = Exam_Score)) +
   geom_histogram(binwidth = 2, fill = "skyblue", color = "black") +
   theme_minimal() +
@@ -234,11 +219,9 @@ ggplot(st_clean, aes(x = Exam_Score)) +
 ```
 
 ```{r}
-# Calcular la mediana y la media
 mediana_exam_score <- median(st_clean$Exam_Score, na.rm = TRUE)
 media_exam_score <- mean(st_clean$Exam_Score, na.rm = TRUE)
 
-# Imprimir los resultados
 cat("Mediana de Exam_Score:", mediana_exam_score, "\n")
 cat("Media de Exam_Score:", media_exam_score, "\n")
 
@@ -247,7 +230,6 @@ cat("Media de Exam_Score:", media_exam_score, "\n")
 Podemos ver la distribución de notas de los estudiantes que se concentra entre el 60 y el 70. Ademas podemos decir que es un histograma casi simétrico, la media y la mediana están muy cerca una de otra.
 
 ```{r}
-# Crear boxplot
 ggplot(st_clean, aes(x = Gender, y = Exam_Score, fill = Gender)) +
   geom_boxplot() +
   theme_minimal() +
@@ -259,7 +241,7 @@ ggplot(st_clean, aes(x = Gender, y = Exam_Score, fill = Gender)) +
 
 -   la mediana parece similar en ambos géneros.
 
--   Las cajas que son el rango intercuartilico (Del primer al tercer cuartil), que muestra la dispersión central de los datos. Ambos géneros están igual distribuidos.
+-   Las cajas que son el rango intercuartílico (Del primer al tercer cuartil), que muestra la dispersión central de los datos. Ambos géneros están igual distribuidos.
 
 -   Rango, los bigotes muestran la variabilidad fuera de los cuartiles. Ambos géneros tienen un rango similar.
 
@@ -289,10 +271,6 @@ no hay nada relevante que podamos sacar de aquí. podemos analizar los valores a
 Pero sin embargo si comparamos con un gráfico mas adecuado podemos observar que si que tiene que ver.
 
 ```{r}
-# Cargar ggplot2
-library(ggplot2)
-
-# Crear gráfico de densidad para diferentes niveles de motivación
 ggplot(st_clean, aes(x = Exam_Score, fill = Motivation_Level)) +
   geom_density(alpha = 0.5) +
   theme_minimal() +
@@ -308,7 +286,6 @@ ggplot(st_clean, aes(x = Exam_Score, fill = Motivation_Level)) +
 si observamos el gráfico podemos decir que la motivación bajo tiene notas inferiores en comparación con las notas altas.
 
 ```{r}
-# Crear gráfico de densidad para diferentes niveles de motivación
 ggplot(st_clean, aes(x = Attendance, fill = Motivation_Level)) +
   geom_density(alpha = 0.5) +
   theme_minimal() +
@@ -320,7 +297,6 @@ ggplot(st_clean, aes(x = Attendance, fill = Motivation_Level)) +
 ```
 
 ```{r}
-# Crear boxplot de Attendance por Motivation_Level
 ggplot(st_clean, aes(x = Motivation_Level, y = Attendance, fill = Motivation_Level)) +
   geom_boxplot() +
   theme_minimal() +
@@ -362,8 +338,6 @@ ggplot(st_clean, aes(x = Hours_Studied, fill = Motivation_Level)) +
 No hay diferencias muy elevadas en las horas estudiadas según el nivel de motivación, pero podemos observar que los de baja motivación concentran mas sus horas de estudio por debajo de las 20 y los de alta motivación concentran sus horas de estudios en mas de 20. sin embargo los de motivación media dispersan mas las horas estudiadas llegando mayor cantidad de horas desplazándose un poco mas a la derecha que las otras dos.
 
 ```{r}
-
-# Crear gráfico de densidad de Exam_Score por Teacher_Quality
 ggplot(st_clean, aes(x = Exam_Score, fill = Teacher_Quality)) +
   geom_density(alpha = 0.5) +
   theme_minimal() +
@@ -372,8 +346,6 @@ ggplot(st_clean, aes(x = Exam_Score, fill = Teacher_Quality)) +
        y = "Densidad",
        fill = "Calidad del Profesorado") +
   scale_fill_brewer(palette = "Set2")
-
-
 ```
 
 Se puede observar que la calidad del profesor parece estar asociada con una tendencia a mejores puntajes en el examen, especialmente para la categoría de calidad alta. Sin embargo, la diferencia entre las curvas de densidad no es muy significativa, por lo que se requeriría un análisis más profundo para confirmar esta relación de manera concluyente.
@@ -391,10 +363,8 @@ ggplot(st_clean, aes(x = Access_to_Resources, y = Exam_Score, fill = Access_to_R
 Vamos a analizar cuanto influyen las horas de tutoría en el resultado final.
 
 ```{r}
-# Cargar ggplot2
 library(ggplot2)
 
-# Crear boxplot de Exam_Score por Tutoring_Sessions
 ggplot(st_clean, aes(x = as.factor(Tutoring_Sessions), y = Exam_Score, fill = as.factor(Tutoring_Sessions))) +
   geom_boxplot() +
   theme_minimal() +
@@ -407,10 +377,9 @@ ggplot(st_clean, aes(x = as.factor(Tutoring_Sessions), y = Exam_Score, fill = as
 ```
 
 ```{r}
-# Crear gráfico de dispersión de Tutoring_Sessions vs Exam_Score
 ggplot(st_clean, aes(x = Tutoring_Sessions, y = Exam_Score)) +
   geom_point(alpha = 0.6, color = "blue") +
-  geom_smooth(method = "lm", color = "red", se = FALSE) +  # Línea de tendencia
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
   theme_minimal() +
   labs(title = "Gráfico de Dispersión de Tutoring_Sessions vs Exam_Score",
        x = "Número de Sesiones de Tutoría",
@@ -423,7 +392,7 @@ Vemos que hay correlación baja, es decir, influye minimamente las horas de tuto
 ```{r}
 ggplot(st_clean, aes(x = Hours_Studied, y = Exam_Score)) +
   geom_point(alpha = 0.6, color = "blue") +
-  geom_smooth(method = "lm", color = "red", se = FALSE) +  # Línea de tendencia
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
   theme_minimal() +
   labs(title = "Gráfico de Dispersión de Hours_Studied vs Exam_Score",
        x = "Número de Hours_Studied",
@@ -433,7 +402,7 @@ ggplot(st_clean, aes(x = Hours_Studied, y = Exam_Score)) +
 ```{r}
 ggplot(st_clean, aes(x = Attendance, y = Exam_Score)) +
   geom_point(alpha = 0.6, color = "blue") +
-  geom_smooth(method = "lm", color = "red", se = FALSE) +  # Línea de tendencia
+  geom_smooth(method = "lm", color = "red", se = FALSE) + 
   theme_minimal() +
   labs(title = "Gráfico de Dispersión de Attendance vs Exam_Score",
        x = "Número de Attendance",
@@ -447,10 +416,6 @@ Podemos observar en estos dos gráficos de dispersión que la correlación es po
 Aquí buscaremos si los ingresos familiares y la influencia tanto externa como paterna tienen influencia relevante en las notas y el nivel de motivación de los alumnos.
 
 ```{r}
-# Cargar ggplot2
-library(ggplot2)
-
-# Crear boxplot de Exam_Score por Family_Income
 ggplot(st_clean, aes(x = Family_Income, y = Exam_Score, fill = Family_Income)) +
   geom_boxplot() +
   theme_minimal() +
@@ -462,7 +427,6 @@ ggplot(st_clean, aes(x = Family_Income, y = Exam_Score, fill = Family_Income)) +
 ```
 
 ```{r}
-# Crear gráfico de densidad de Exam_Score por Teacher_Quality
 ggplot(st_clean, aes(x = Exam_Score, fill = Family_Income)) +
   geom_density(alpha = 0.5) +
   theme_minimal() +
@@ -476,11 +440,6 @@ ggplot(st_clean, aes(x = Exam_Score, fill = Family_Income)) +
 Los ingresos familiares no son un factor determinante para sacar mejores notas pero podemos observar que mayor ingresos familiares da lugar a mejores notas, ahora podriamos ver si la cantidad de horas estudiadas es mayor en gente con ingresos familiares elevados en comparación con ingresos bajo
 
 ```{r}
-# Cargar paquetes necesarios
-library(dplyr)
-library(skimr)
-
-# Resumir Hours_Studied por Family_Income usando skim()
 st_clean %>%
   group_by(Family_Income) %>%
   skim(Hours_Studied)
@@ -491,10 +450,6 @@ Observamos que no.
 Buscamos si el nivel de motivación aumenta según `"Parental_Involvement"`y `"Peer_Influence"`.
 
 ```{r}
-# Cargar ggplot2
-library(ggplot2)
-
-# Crear gráfico de barras apiladas de Motivation_Level por Peer_Influence
 ggplot(st_clean, aes(x = Peer_Influence, fill = Motivation_Level)) +
   geom_bar(position = "fill") +
   theme_minimal() +
@@ -503,15 +458,9 @@ ggplot(st_clean, aes(x = Peer_Influence, fill = Motivation_Level)) +
        y = "Proporción",
        fill = "Nivel de Motivación") +
   scale_fill_brewer(palette = "Set2")
-
-
 ```
 
 ```{r}
-# Cargar ggplot2
-library(ggplot2)
-
-# Crear gráfico de barras apiladas de Motivation_Level por Parental_Involvement
 ggplot(st_clean, aes(x = Parental_Involvement, fill = Motivation_Level)) +
   geom_bar(position = "fill") +
   theme_minimal() +
@@ -520,16 +469,11 @@ ggplot(st_clean, aes(x = Parental_Involvement, fill = Motivation_Level)) +
        y = "Proporción",
        fill = "Nivel de Motivación") +
   scale_fill_brewer(palette = "Set2")
-
 ```
 
 Estos gráficos sugieren que la tanto la influencia de los pares (`Peer_Influence`) como el interes de los padres (`Parental_Involvement`) no parecen estar fuertemente asociadas con cambios en el nivel de motivación (`Motivation_Level`). Las proporciones de motivación se mantienen bastante consistentes independientemente de si la influencia de los pares es negativa, neutral o positiva.
 
 ```{r}
-# Cargar ggplot2
-library(ggplot2)
-
-# Crear gráfico de barras apiladas de Exam_Score por Peer_Influence
 ggplot(st_clean, aes(x = Peer_Influence, y = Exam_Score, fill = Peer_Influence)) +
   geom_boxplot() +
   theme_minimal() +
@@ -538,7 +482,6 @@ ggplot(st_clean, aes(x = Peer_Influence, y = Exam_Score, fill = Peer_Influence))
        y = "Puntaje del Examen") +
   scale_fill_brewer(palette = "Pastel2")
 
-# Crear gráfico de barras apiladas de Exam_Score por Parental_Involvement
 ggplot(st_clean, aes(x = Parental_Involvement, y = Exam_Score, fill = Parental_Involvement)) +
   geom_boxplot() +
   theme_minimal() +
@@ -571,10 +514,6 @@ ggplot(st_clean, aes(x = Exam_Score, fill = Parental_Involvement)) +
 vemos que una influencia paterna alta y una influencia externa positiva tiene mejores resultados académicas que el que no.
 
 ```{r}
-# Cargar ggplot2
-library(ggplot2)
-
-# Crear gráfico de violín de Exam_Score por School_Type
 ggplot(st_clean, aes(x = School_Type, y = Exam_Score, fill = School_Type)) +
   geom_violin(trim = FALSE) +
   theme_minimal() +
@@ -588,10 +527,6 @@ ggplot(st_clean, aes(x = School_Type, y = Exam_Score, fill = School_Type)) +
 Podríamos decir que, en base a este gráfico, **no hay una diferencia significativa en las notas de examen entre los estudiantes de escuelas públicas y privadas**. La forma y la amplitud de las distribuciones son similares, lo que sugiere que, en este contexto, el tipo de escuela no parece influir considerablemente en los resultados de los exámenes.
 
 ```{r}
-# Cargar ggplot2
-library(ggplot2)
-
-# Crear gráfico de violín de Exam_Score por Family_Income y Gender
 ggplot(st_clean, aes(x = Family_Income, y = Exam_Score, fill = Gender)) +
   geom_violin(trim = FALSE, position = position_dodge(0.8)) +
   theme_minimal() +
@@ -600,5 +535,8 @@ ggplot(st_clean, aes(x = Family_Income, y = Exam_Score, fill = Gender)) +
        y = "Puntaje del Examen",
        fill = "Género") +
   scale_fill_brewer(palette = "Pastel1")
-
 ```
+
+### Objetivo de los datos
+
+Según nuestra correlación podríamos enfocarnos en predecir la nota del examen con un modelo de regresión lineal o múltiple de las variables numéricas que tienen el dato de correlación positiva mas alta que son: `Hours_Studied` y `Attendance`. Podríamos mirar luego si usar un modelo basado en árbol como random forest o gradient boosting.
