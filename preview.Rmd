@@ -184,6 +184,8 @@ Sesgo:
 
 Podríamos concluir que es un análisis que se podría extrapolar hacia el conjunto mayoritario de la población, es decir, gente de clase media sin `learning_disabilities` y que van a la escuela pública sin tener en cuenta el género.
 
+## Mapa de correlaciones. 
+
 ```{r}
 cor_matrix <- cor(st_clean[, sapply(st_clean, is.numeric)], use = "complete.obs")
 
@@ -205,9 +207,7 @@ ggplot(data = melted_cor_matrix, aes(x = Var1, y = Var2, fill = value)) +
 
 En este mapa de calor Podemos observar en las variables numéricas cuales son las que tienen mas peso con la nota del examen. que en este caso podemos ver que son `Attendance` y `Hours_Studied`.
 
-### Gráficos de todo tipo
-
-### Generales
+### Gráficos según género
 
 ```{r}
 ggplot(st_clean, aes(x = Exam_Score)) +
@@ -247,7 +247,7 @@ ggplot(st_clean, aes(x = Gender, y = Exam_Score, fill = Gender)) +
 
 -   Valores atípicos: Hay valores atípicos en ambos géneros, lo cual indica que hay alumnos con notas o mas altas o mas bajas que la mayoría.
 
-## Buscamos si el nivel de motivación influye en las variables con correlaciones mas elevadas.
+## Influencia de motivación en las variables de correlación mas elevadas.
 
 estas son:
 
@@ -270,6 +270,8 @@ no hay nada relevante que podamos sacar de aquí. podemos analizar los valores a
 
 Pero sin embargo si comparamos con un gráfico mas adecuado podemos observar que si que tiene que ver.
 
+### Análisis de nota de examen por nivel de motivación.
+
 ```{r}
 ggplot(st_clean, aes(x = Exam_Score, fill = Motivation_Level)) +
   geom_density(alpha = 0.5) +
@@ -283,14 +285,16 @@ ggplot(st_clean, aes(x = Exam_Score, fill = Motivation_Level)) +
 
 ```
 
-si observamos el gráfico podemos decir que la motivación bajo tiene notas inferiores en comparación con las notas altas.
+Vemos que las motivaciones bajas tienen notas mas bajas, las notas medias se concentran en notas mayores que las motivaciones altas, sin embargo las motivaciones altas tienen las mejores notas
+
+### Análisis de asistencia por nivel de motivación
 
 ```{r}
 ggplot(st_clean, aes(x = Attendance, fill = Motivation_Level)) +
   geom_density(alpha = 0.5) +
   theme_minimal() +
   labs(title = "Gráfico de Densidad de Asistencia por Nivel de Motivación",
-       x = "Attendance",
+       x = "asistencia",
        y = "Densidad",
        fill = "Nivel de Motivación") +
   scale_fill_manual(values = c("High" = "lightblue", "Medium" = "lightgreen", "Low" = "lightpink"))
@@ -300,7 +304,7 @@ ggplot(st_clean, aes(x = Attendance, fill = Motivation_Level)) +
 ggplot(st_clean, aes(x = Motivation_Level, y = Attendance, fill = Motivation_Level)) +
   geom_boxplot() +
   theme_minimal() +
-  labs(title = "Diagrama de Caja de Attendance por Nivel de Motivación",
+  labs(title = "Diagrama de Caja de asistencia por Nivel de Motivación",
        x = "Nivel de Motivación",
        y = "Horas de Asistencia") +
   scale_fill_manual(values = c("High" = "lightblue", "Medium" = "lightgreen", "Low" = "lightpink"))
@@ -315,7 +319,7 @@ Ahora vamos a analizar las horas estudiadas
 ggplot(st_clean, aes(x = Hours_Studied, y = Exam_Score, color = Motivation_Level)) +
   geom_point(alpha = 0.7) +
   theme_minimal() +
-  labs(title = "Diagrama de Dispersión de horas de estudio vs Exam_Score",
+  labs(title = "Diagrama de Dispersión de horas de estudio vs nota de examen",
        x = "Horas de estudio",
        y = "notas del Examen",
        color = "Nivel de Motivación") +
@@ -328,7 +332,7 @@ podemos ver que a medida que aumentan las horas de estudio, aumentan la nota. Po
 ggplot(st_clean, aes(x = Hours_Studied, fill = Motivation_Level)) +
   geom_density(alpha = 0.5) +
   theme_minimal() +
-  labs(title = "Gráfico de Densidad de Asistencia por Nivel de Motivación",
+  labs(title = "Gráfico de horas de estudio por Nivel de Motivación",
        x = "horas estudiadas",
        y = "Densidad",
        fill = "Nivel de Motivación") +
@@ -336,6 +340,8 @@ ggplot(st_clean, aes(x = Hours_Studied, fill = Motivation_Level)) +
 ```
 
 No hay diferencias muy elevadas en las horas estudiadas según el nivel de motivación, pero podemos observar que los de baja motivación concentran mas sus horas de estudio por debajo de las 20 y los de alta motivación concentran sus horas de estudios en mas de 20. sin embargo los de motivación media dispersan mas las horas estudiadas llegando mayor cantidad de horas desplazándose un poco mas a la derecha que las otras dos.
+
+### Análisis de calidad de profesor
 
 ```{r}
 ggplot(st_clean, aes(x = Exam_Score, fill = Teacher_Quality)) +
@@ -348,33 +354,37 @@ ggplot(st_clean, aes(x = Exam_Score, fill = Teacher_Quality)) +
   scale_fill_brewer(palette = "Set2")
 ```
 
-Se puede observar que la calidad del profesor parece estar asociada con una tendencia a mejores puntajes en el examen, especialmente para la categoría de calidad alta. Sin embargo, la diferencia entre las curvas de densidad no es muy significativa, por lo que se requeriría un análisis más profundo para confirmar esta relación de manera concluyente.
+Se puede observar que la calidad del profesor parece estar asociada con una tendencia a mejores puntuaciones en el examen, especialmente para la categoría de calidad alta. Sin embargo, la diferencia entre las curvas de densidad no es muy significativa, por lo que se requeriría un análisis más profundo para confirmar esta relación de manera concluyente.
+
+### Análisis según el acceso a los recursos
 
 ```{r}
 ggplot(st_clean, aes(x = Access_to_Resources, y = Exam_Score, fill = Access_to_Resources)) +
   geom_boxplot() +
   theme_minimal() +
-  labs(title = "Diagrama de Caja de Exam_Score por Access_to_Resources",
+  labs(title = "Diagrama de Caja de nota de examen por Acceso a los recursos",
        x = "Acceso a Recursos",
-       y = "Puntaje del Examen") +
+       y = "notas del Examen") +
   scale_fill_brewer(palette = "Set1")
 ```
 
-Vamos a analizar cuanto influyen las horas de tutoría en el resultado final.
+### Análisis de tutoria
+
+Vamos a analizar cuanto influyen las horas de tutoria en el resultado final.
 
 ```{r}
-library(ggplot2)
-
 ggplot(st_clean, aes(x = as.factor(Tutoring_Sessions), y = Exam_Score, fill = as.factor(Tutoring_Sessions))) +
   geom_boxplot() +
   theme_minimal() +
-  labs(title = "Diagrama de Caja de Exam_Score por Número de Sesiones de Tutoría",
+  labs(title = "Diagrama de Caja de nota de examen por Número de Sesiones de Tutoría",
        x = "Número de Sesiones de Tutoría",
        y = "Puntaje del Examen",
        fill = "Sesiones de Tutoría") +
   scale_fill_brewer(palette = "Set3")
 
 ```
+
+## Análisis de dispersión 
 
 ```{r}
 ggplot(st_clean, aes(x = Tutoring_Sessions, y = Exam_Score)) +
