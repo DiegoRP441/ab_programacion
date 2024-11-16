@@ -19,6 +19,9 @@ library(esquisse)
 library(reshape2)
 library(ggplot2)
 library(tidyr)
+library(gridExtra)
+library(moments)
+
 
 ```
 
@@ -154,15 +157,17 @@ write.csv(st, "st_clean.csv", row.names = FALSE)
 
 ```{r message=FALSE, warning=TRUE, paged.print=TRUE, show_col_types=}
 st_clean <- read_csv("st_clean.csv", show_col_types = FALSE)
-head(st,10, show_col_types = FALSE)
+head(st_clean,10, show_col_types = FALSE)
 ```
 
-# Análisis de los datos
+# Parte 3: Análisis de los datos
 
 Primero comprobamos si existe algún tipo de sesgo en los datos que tenemos en genero y recursos.
 
 ```{r}
 categorical_vars <- c("Gender", "Family_Income", "School_Type", "Learning_Disabilities")
+
+plots <- list()
 
 for (var in categorical_vars) {
   p <- ggplot(st_clean, aes_string(x = var)) +
@@ -170,8 +175,11 @@ for (var in categorical_vars) {
     theme_minimal() +
     labs(title = paste("Distribución de", var), x = var, y = "Frecuencia") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  print(p)
+  
+  plots[[var]] <- p
 }
+
+grid.arrange(grobs = plots, nrow = 2, ncol = 2)
 
 ```
 
@@ -207,7 +215,7 @@ ggplot(data = melted_cor_matrix, aes(x = Var1, y = Var2, fill = value)) +
 
 En este mapa de calor Podemos observar en las variables numéricas cuales son las que tienen mas peso con la nota del examen. que en este caso podemos ver que son `Attendance` y `Hours_Studied`.
 
-### Gráficos según género
+## Distribución de las notas
 
 ```{r}
 ggplot(st_clean, aes(x = Exam_Score)) +
@@ -229,328 +237,560 @@ cat("Media de Exam_Score:", media_exam_score, "\n")
 
 Podemos ver la distribución de notas de los estudiantes que se concentra entre el 60 y el 70. Ademas podemos decir que es un histograma casi simétrico, la media y la mediana están muy cerca una de otra.
 
+El histograma da una interpretación visual, pero para concretar más vamos a buscar un valor cuantitativo para ver si estamos en lo cierto. Para ello hacemos el análisis de skewness.
+
 ```{r}
-ggplot(st_clean, aes(x = Gender, y = Exam_Score, fill = Gender)) +
+
+skewness_exam_score <- skewness(st_clean$Exam_Score, na.rm = TRUE)
+
+cat("Coeficiente de asimetría (skewness):", skewness_exam_score, "\n")
+
+if (abs(skewness_exam_score) < 0.5) {
+  cat("La distribución es aproximadamente simétrica.\n")
+} else if (skewness_exam_score > 0.5) {
+  cat("La distribución está sesgada a la derecha.\n")
+} else if (skewness_exam_score < -0.5) {
+  cat("La distribución está sesgada a la izquierda.\n")
+}
+
+```
+
+El coeficiente de asimetría obtenido es **1.644435**, lo que indica que la distribución está sesgada a la derecha. Esto significa que la cola de la distribución es más larga hacia los valores más altos.
+
+## Análisis por género
+
+Vamos a realizar un análisis centrándonos en el género donde veremos si tiene una relevancia en distintas variables como pueden ser: "
+
+```         
+Exam_Score,Previous_Scores, Motivation_Level, Tutoring_Sessions, Hours_Studied, Attendance
+```
+
+### Notas según género
+
+```{r}
+# Crear boxplot para Exam_Score por Gender
+boxplot_exam <- ggplot(st_clean, aes(x = Gender, y = Exam_Score, fill = Gender)) +
   geom_boxplot() +
   theme_minimal() +
-  labs(title = "Diagrama de Caja de Exam_Score por Gender",
+  labs(title = "Distribución de Exam_Score por Género",
        x = "Género",
-       y = "Puntaje del Examen") +
-  scale_fill_brewer(palette = "Pastel1")
-```
+       y = "Notas del Examen") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
 
--   la mediana parece similar en ambos géneros.
-
--   Las cajas que son el rango intercuartílico (Del primer al tercer cuartil), que muestra la dispersión central de los datos. Ambos géneros están igual distribuidos.
-
--   Rango, los bigotes muestran la variabilidad fuera de los cuartiles. Ambos géneros tienen un rango similar.
-
--   Valores atípicos: Hay valores atípicos en ambos géneros, lo cual indica que hay alumnos con notas o mas altas o mas bajas que la mayoría.
-
-## Influencia de motivación en las variables de correlación mas elevadas.
-
-estas son:
-
--   `Hours_Studied`
-
--   `Attendance`
-
-```{r}
-ggplot(st_clean, aes(x = Sleep_Hours, y = Exam_Score, color = Motivation_Level)) +
-  geom_point(alpha = 0.7) +
+# Crear barplot para Exam_Score por Gender
+barplot_exam <- st_clean %>%
+  group_by(Gender) %>%
+  summarise(Media_Exam_Score = mean(Exam_Score, na.rm = TRUE)) %>%
+  ggplot(aes(x = Gender, y = Media_Exam_Score, fill = Gender)) +
+  geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Diagrama de Dispersión de Sleep_Hours vs Exam_Score",
-       x = "Horas de Sueño",
-       y = "Puntaje del Examen",
-       color = "Nivel de Motivación") +
-  scale_color_brewer(palette = "Set1")
-```
+  labs(title = "Media de Exam_Score por Género",
+       x = "Género",
+       y = "Media de Notas del Examen") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
 
-no hay nada relevante que podamos sacar de aquí. podemos analizar los valores atípicos. la motivación alta no asegura una nota elevada y tampoco dormir poco te asegura una nota alta.
-
-Pero sin embargo si comparamos con un gráfico mas adecuado podemos observar que si que tiene que ver.
-
-### Análisis de nota de examen por nivel de motivación.
-
-HAY QUE CAMBIARLO TODO PORQUE EN RESUMEN ES QUE NO INFLUYE NADA EL NIVEL DE MOTIVACIÓN EN LA NOTA, NADA O MINIMAMENTE
-
-```{r}
-ggplot(st_clean, aes(x = Exam_Score, fill = Motivation_Level)) +
-  geom_density(alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Gráfico de Densidad de Exam_Score por Nivel de Motivación",
-       x = "Puntaje del Examen",
-       y = "Densidad",
-       fill = "Nivel de Motivación") +
-  scale_fill_manual(values = c("High" = "lightblue", "Medium" = "lightgreen", "Low" = "lightpink"))
-
-
-```
-
-Vemos que las motivaciones bajas tienen notas mas bajas, las notas medias se concentran en notas mayores que las motivaciones altas, sin embargo las motivaciones altas tienen las mejores notas
-
-### Análisis de asistencia por nivel de motivación
-
-```{r}
-ggplot(st_clean, aes(x = Attendance, fill = Motivation_Level)) +
-  geom_density(alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Gráfico de Densidad de Asistencia por Nivel de Motivación",
-       x = "asistencia",
-       y = "Densidad",
-       fill = "Nivel de Motivación") +
-  scale_fill_manual(values = c("High" = "lightblue", "Medium" = "lightgreen", "Low" = "lightpink"))
-```
-
-```{r}
-ggplot(st_clean, aes(x = Motivation_Level, y = Attendance, fill = Motivation_Level)) +
+# Crear boxplot para Previous_Scores por Gender
+boxplot_previous <- ggplot(st_clean, aes(x = Gender, y = Previous_Scores, fill = Gender)) +
   geom_boxplot() +
   theme_minimal() +
-  labs(title = "Diagrama de Caja de asistencia por Nivel de Motivación",
-       x = "Nivel de Motivación",
-       y = "Horas de Asistencia") +
-  scale_fill_manual(values = c("High" = "lightblue", "Medium" = "lightgreen", "Low" = "lightpink"))
+  labs(title = "Distribución de Previous_Scores por Género",
+       x = "Género",
+       y = "Notas Previas") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
 
-```
-
-No hay grandes diferencias entre los niveles de motivación y la asistencia a clase. se puede ver que la mediana de la motivación alta es menor, esta tiene los picos mas altos en dos puntos, asistencia en torno al 70 y al 95. sin embargo la motivación media y baja son mas estables en la asistencia.
-
-Ahora vamos a analizar las horas estudiadas
-
-```{r}
-ggplot(st_clean, aes(x = Hours_Studied, y = Exam_Score, color = Motivation_Level)) +
-  geom_point(alpha = 0.7) +
+# Crear barplot para Previous_Scores por Gender
+barplot_previous <- st_clean %>%
+  group_by(Gender) %>%
+  summarise(Media_Previous_Scores = mean(Previous_Scores, na.rm = TRUE)) %>%
+  ggplot(aes(x = Gender, y = Media_Previous_Scores, fill = Gender)) +
+  geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Diagrama de Dispersión de horas de estudio vs nota de examen",
-       x = "Horas de estudio",
-       y = "notas del Examen",
-       color = "Nivel de Motivación") +
-  scale_color_brewer(palette = "Set1")
-```
+  labs(title = "Media de Previous_Scores por Género",
+       x = "Género",
+       y = "Media de Notas Previas") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
 
-podemos ver que a medida que aumentan las horas de estudio, aumentan la nota. Podríamos decir que los valores anómalos en la nota se centran en los valores medios y no en los extremos de horas estudiadas.
-
-```{r}
-ggplot(st_clean, aes(x = Hours_Studied, fill = Motivation_Level)) +
-  geom_density(alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Gráfico de horas de estudio por Nivel de Motivación",
-       x = "horas estudiadas",
-       y = "Densidad",
-       fill = "Nivel de Motivación") +
-  scale_fill_manual(values = c("High" = "lightblue", "Medium" = "lightgreen", "Low" = "lightpink"))
-```
-
-No hay diferencias muy elevadas en las horas estudiadas según el nivel de motivación, pero podemos observar que los de baja motivación concentran mas sus horas de estudio por debajo de las 20 y los de alta motivación concentran sus horas de estudios en mas de 20. sin embargo los de motivación media dispersan mas las horas estudiadas llegando mayor cantidad de horas desplazándose un poco mas a la derecha que las otras dos.
-
-### Análisis de calidad de profesor
-
-```{r}
-ggplot(st_clean, aes(x = Exam_Score, fill = Teacher_Quality)) +
-  geom_density(alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Gráfico de Densidad de Exam_Score por Nivel de Calidad del Profesorado",
-       x = "Puntaje del Examen",
-       y = "Densidad",
-       fill = "Calidad del Profesorado") +
-  scale_fill_brewer(palette = "Set2")
-```
-
-Se puede observar que la calidad del profesor parece estar asociada con una tendencia a mejores puntuaciones en el examen, especialmente para la categoría de calidad alta. Sin embargo, la diferencia entre las curvas de densidad no es muy significativa, por lo que se requeriría un análisis más profundo para confirmar esta relación de manera concluyente.
-
-### Análisis según el acceso a los recursos
-
-```{r}
-ggplot(st_clean, aes(x = Access_to_Resources, y = Exam_Score, fill = Access_to_Resources)) +
-  geom_boxplot() +
-  theme_minimal() +
-  labs(title = "Diagrama de Caja de nota de examen por Acceso a los recursos",
-       x = "Acceso a Recursos",
-       y = "notas del Examen") +
-  scale_fill_brewer(palette = "Set1")
-```
-
-### Análisis de tutoria
-
-Vamos a analizar cuanto influyen las horas de tutoria en el resultado final.
-
-```{r}
-ggplot(st_clean, aes(x = as.factor(Tutoring_Sessions), y = Exam_Score, fill = as.factor(Tutoring_Sessions))) +
-  geom_boxplot() +
-  theme_minimal() +
-  labs(title = "Diagrama de Caja de nota de examen por Número de Sesiones de Tutoría",
-       x = "Número de Sesiones de Tutoría",
-       y = "Puntaje del Examen",
-       fill = "Sesiones de Tutoría") +
-  scale_fill_brewer(palette = "Set3")
-
-```
-
-## Análisis de dispersión
-
-```{r}
-ggplot(st_clean, aes(x = Tutoring_Sessions, y = Exam_Score)) +
-  geom_point(alpha = 0.6, color = "blue") +
-  geom_smooth(method = "lm", color = "red", se = FALSE) +
-  theme_minimal() +
-  labs(title = "Gráfico de Dispersión de Tutoring_Sessions vs Exam_Score",
-       x = "Número de Sesiones de Tutoría",
-       y = "Puntaje del Examen")
-
-```
-
-Vemos que hay correlación baja, es decir, influye minimamente las horas de tutoría con la nota del examen
-
-```{r}
-ggplot(st_clean, aes(x = Hours_Studied, y = Exam_Score)) +
-  geom_point(alpha = 0.6, color = "blue") +
-  geom_smooth(method = "lm", color = "red", se = FALSE) +
-  theme_minimal() +
-  labs(title = "Gráfico de Dispersión de Hours_Studied vs Exam_Score",
-       x = "Número de Hours_Studied",
-       y = "Puntaje del Examen")
-```
-
-```{r}
-ggplot(st_clean, aes(x = Attendance, y = Exam_Score)) +
-  geom_point(alpha = 0.6, color = "blue") +
-  geom_smooth(method = "lm", color = "red", se = FALSE) + 
-  theme_minimal() +
-  labs(title = "Gráfico de Dispersión de Attendance vs Exam_Score",
-       x = "Número de Attendance",
-       y = "Puntaje del Examen")
-```
-
-Podemos observar en estos dos gráficos de dispersión que la correlación es positiva y mayor que en la anterior, como decía el heatmap.
-
-## Análisis socio-económico
-
-Aquí buscaremos si los ingresos familiares y la influencia tanto externa como paterna tienen influencia relevante en las notas y el nivel de motivación de los alumnos.
-
-```{r}
-ggplot(st_clean, aes(x = Family_Income, y = Exam_Score, fill = Family_Income)) +
-  geom_boxplot() +
-  theme_minimal() +
-  labs(title = "Diagrama de Caja de Exam_Score por Ingreso Familiar",
-       x = "Ingreso Familiar",
-       y = "Puntaje del Examen") +
-  scale_fill_brewer(palette = "Pastel1")
+grid.arrange(
+  boxplot_exam, barplot_exam,
+  boxplot_previous, barplot_previous,
+  nrow = 2, ncol = 2
+)
 
 ```
 
 ```{r}
-ggplot(st_clean, aes(x = Exam_Score, fill = Family_Income)) +
-  geom_density(alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Gráfico de Densidad de Exam_Score por Nivel ingresos familiares",
-       x = "Puntaje del Examen",
-       y = "Densidad",
-       fill = "ingresos familiares") +
-  scale_fill_brewer(palette = "Set2")
+
+medias_por_genero <- st_clean %>%
+  group_by(Gender) %>%
+  summarise(
+    Media_Exam_Score = mean(Exam_Score, na.rm = TRUE),
+    Media_Previous_Scores = mean(Previous_Scores, na.rm = TRUE)
+  )
+
+print(medias_por_genero)
 ```
 
-Los ingresos familiares no son un factor determinante para sacar mejores notas pero podemos observar que mayor ingresos familiares da lugar a mejores notas, ahora podriamos ver si la cantidad de horas estudiadas es mayor en gente con ingresos familiares elevados en comparación con ingresos bajo
+Tanto chicas y chicas tienen la misma media.
 
-DE ESTE PUEDO SACAR ALGO DE LA CATEGÓRICA
-
-```{r}
-st_clean %>%
-  group_by(Family_Income) %>%
-  skim(Hours_Studied)
-```
-
-Observamos que no.
-
-Buscamos si el nivel de motivación aumenta según `"Parental_Involvement"`y `"Peer_Influence"`.
+### Motivación, asistencia, horas de estudio y horas de tutoria según género
 
 ```{r}
-ggplot(st_clean, aes(x = Peer_Influence, fill = Motivation_Level)) +
-  geom_bar(position = "fill") +
+motivacion_por_genero <- st_clean %>%
+  group_by(Gender, Motivation_Level) %>%
+  summarise(Count = n()) %>%
+  mutate(Percentage = Count / sum(Count) * 100) %>%
+  ungroup()
+
+grafico_motivacion <- ggplot(motivacion_por_genero, aes(x = Gender, y = Percentage, fill = Motivation_Level)) +
+  geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Distribución de Motivation_Level según Peer_Influence",
-       x = "Influencia de Pares",
-       y = "Proporción",
-       fill = "Nivel de Motivación") +
-  scale_fill_brewer(palette = "Set2")
-```
+  labs(title = "Distribución porcentual de Motivación por Género",
+       x = "Género",
+       y = "Porcentaje",
+       fill = "Motivación") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-```{r}
-ggplot(st_clean, aes(x = Parental_Involvement, fill = Motivation_Level)) +
-  geom_bar(position = "fill") +
+promedio_tutoria_por_genero <- st_clean %>%
+  group_by(Gender) %>%
+  summarise(Promedio_Tutoring_Sessions = mean(Tutoring_Sessions, na.rm = TRUE))
+
+grafico_tutoria <- ggplot(promedio_tutoria_por_genero, aes(x = Gender, y = Promedio_Tutoring_Sessions, fill = Gender)) +
+  geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Distribución de Motivation_Level según Parental_Involvement",
-       x = "Participación de los Padres",
-       y = "Proporción",
-       fill = "Nivel de Motivación") +
-  scale_fill_brewer(palette = "Set2")
-```
-
-Estos gráficos sugieren que la tanto la influencia de los pares (`Peer_Influence`) como el interes de los padres (`Parental_Involvement`) no parecen estar fuertemente asociadas con cambios en el nivel de motivación (`Motivation_Level`). Las proporciones de motivación se mantienen bastante consistentes independientemente de si la influencia de los pares es negativa, neutral o positiva.
-
-```{r}
-ggplot(st_clean, aes(x = Peer_Influence, y = Exam_Score, fill = Peer_Influence)) +
-  geom_boxplot() +
-  theme_minimal() +
-  labs(title = "Diagrama de Caja de Exam_Score por Influencia externa",
-       x = "Influencia de Pares",
-       y = "Puntaje del Examen") +
-  scale_fill_brewer(palette = "Pastel2")
-
-ggplot(st_clean, aes(x = Parental_Involvement, y = Exam_Score, fill = Parental_Involvement)) +
-  geom_boxplot() +
-  theme_minimal() +
-  labs(title = "Diagrama de Caja de Exam_Score por Participación de los Padres",
-       x = "Participación de los Padres",
-       y = "Puntaje del Examen") +
-  scale_fill_brewer(palette = "Set2")
-```
-
-```{r}
-ggplot(st_clean, aes(x = Exam_Score, fill = Peer_Influence)) +
-  geom_density(alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Gráfico de Densidad de Exam_Score por influencia externa",
-       x = "Puntaje del Examen",
-       y = "Densidad",
-       fill = "influencia externa") +
-  scale_fill_brewer(palette = "Set2")
-
-ggplot(st_clean, aes(x = Exam_Score, fill = Parental_Involvement)) +
-  geom_density(alpha = 0.5) +
-  theme_minimal() +
-  labs(title = "Gráfico de Densidad de Exam_Score por influencia paterna",
-       x = "Puntaje del Examen",
-       y = "Densidad",
-       fill = "influencia paterna") +
-  scale_fill_brewer(palette = "Set2")
-```
-
-vemos que una influencia paterna alta y una influencia externa positiva tiene mejores resultados académicas que el que no.
-
-```{r}
-ggplot(st_clean, aes(x = School_Type, y = Exam_Score, fill = School_Type)) +
-  geom_violin(trim = FALSE) +
-  theme_minimal() +
-  labs(title = "Gráfico de Violín de Exam_Score por Tipo de Escuela",
-       x = "Tipo de Escuela",
-       y = "Puntaje del Examen") +
-  scale_fill_brewer(palette = "Pastel1")
-
-```
-
-Podríamos decir que, en base a este gráfico, **no hay una diferencia significativa en las notas de examen entre los estudiantes de escuelas públicas y privadas**. La forma y la amplitud de las distribuciones son similares, lo que sugiere que, en este contexto, el tipo de escuela no parece influir considerablemente en los resultados de los exámenes.
-
-```{r}
-ggplot(st_clean, aes(x = Family_Income, y = Exam_Score, fill = Gender)) +
-  geom_violin(trim = FALSE, position = position_dodge(0.8)) +
-  theme_minimal() +
-  labs(title = "Gráfico de Violín de Exam_Score por Ingreso Familiar y Género",
-       x = "Ingreso Familiar",
-       y = "Puntaje del Examen",
+  labs(title = "Promedio de Horas de Tutoría por Género",
+       x = "Género",
+       y = "Promedio de Horas",
        fill = "Género") +
-  scale_fill_brewer(palette = "Pastel1")
+  geom_text(aes(label = round(Promedio_Tutoring_Sessions, 1)), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, size = 3.5) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+promedio_estudio_por_genero <- st_clean %>%
+  group_by(Gender) %>%
+  summarise(Promedio_Study_Hours = mean(Hours_Studied, na.rm = TRUE))
+
+grafico_estudio <- ggplot(promedio_estudio_por_genero, aes(x = Gender, y = Promedio_Study_Hours, fill = Gender)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Promedio de Horas de Estudio por Género",
+       x = "Género",
+       y = "Promedio de Horas",
+       fill = "Género") +
+  geom_text(aes(label = round(Promedio_Study_Hours, 1)), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, size = 3.5) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+promedio_asistencia_por_genero <- st_clean %>%
+  group_by(Gender) %>%
+  summarise(Promedio_Attendance = mean(Attendance, na.rm = TRUE))
+
+grafico_asistencia <- ggplot(promedio_asistencia_por_genero, aes(x = Gender, y = Promedio_Attendance, fill = Gender)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Promedio de Asistencia por Género",
+       x = "Género",
+       y = "Promedio de Asistencia",
+       fill = "Género") +
+  geom_text(aes(label = round(Promedio_Attendance, 1)), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, size = 3.5) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+grid.arrange(grafico_motivacion, grafico_tutoria, grafico_estudio, grafico_asistencia, nrow = 2, ncol = 2)
+
 ```
 
-### Objetivo de los datos
+Se distribuyen de igual manera entre chicos y chicas. El genero no tiene relevancia.
 
-Según nuestra correlación podríamos enfocarnos en predecir la nota del examen con un modelo de regresión lineal o múltiple de las variables numéricas que tienen el dato de correlación positiva mas alta que son: `Hours_Studied` y `Attendance`. Podríamos mirar luego si usar un modelo basado en árbol como random forest o gradient boosting.
+## Análisis según problemas de aprendizaje
+
+```{r}
+boxplot_exam <- ggplot(st_clean, aes(x = Learning_Disabilities, y = Exam_Score, fill = Learning_Disabilities)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Distribución de Exam_Score por Learning Disabilities",
+       x = "Learning Disabilities",
+       y = "Notas del Examen") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+barplot_exam <- st_clean %>%
+  group_by(Learning_Disabilities) %>%
+  summarise(Media_Exam_Score = mean(Exam_Score, na.rm = TRUE)) %>%
+  ggplot(aes(x = Learning_Disabilities, y = Media_Exam_Score, fill = Learning_Disabilities)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Media de Exam_Score por Learning Disabilities",
+       x = "Learning Disabilities",
+       y = "Media de Notas del Examen") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+boxplot_previous <- ggplot(st_clean, aes(x = Learning_Disabilities, y = Previous_Scores, fill = Learning_Disabilities)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Distribución de Previous_Scores por Learning Disabilities",
+       x = "Learning Disabilities",
+       y = "Notas Previas") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+barplot_previous <- st_clean %>%
+  group_by(Learning_Disabilities) %>%
+  summarise(Media_Previous_Scores = mean(Previous_Scores, na.rm = TRUE)) %>%
+  ggplot(aes(x = Learning_Disabilities, y = Media_Previous_Scores, fill = Learning_Disabilities)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Media de Previous_Scores por Learning Disabilities",
+       x = "Learning Disabilities",
+       y = "Media de Notas Previas") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+grid.arrange(
+  boxplot_exam, barplot_exam,
+  boxplot_previous, barplot_previous,
+  nrow = 2, ncol = 2
+)
+
+```
+
+Podemos ver que la existencia de discapacidades para el aprendizaje no tiene influencia en los resultados de los exámenes.
+
+```{r}
+motivacion_por_disabilities <- st_clean %>%
+  group_by(Learning_Disabilities, Motivation_Level) %>%
+  summarise(Count = n()) %>%
+  mutate(Percentage = Count / sum(Count) * 100) %>%
+  ungroup()
+
+grafico_motivacion <- ggplot(motivacion_por_disabilities, aes(x = Learning_Disabilities, y = Percentage, fill = Motivation_Level)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Distribución porcentual de Motivación por Learning Disabilities",
+       x = "Learning Disabilities",
+       y = "Porcentaje",
+       fill = "Motivación") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+promedio_tutoria_por_disabilities <- st_clean %>%
+  group_by(Learning_Disabilities) %>%
+  summarise(Promedio_Tutoring_Sessions = mean(Tutoring_Sessions, na.rm = TRUE))
+
+grafico_tutoria <- ggplot(promedio_tutoria_por_disabilities, aes(x = Learning_Disabilities, y = Promedio_Tutoring_Sessions, fill = Learning_Disabilities)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Promedio de Horas de Tutoría por Learning Disabilities",
+       x = "Learning Disabilities",
+       y = "Promedio de Horas",
+       fill = "Learning Disabilities") +
+  geom_text(aes(label = round(Promedio_Tutoring_Sessions, 1)), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, size = 3.5) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+promedio_estudio_por_disabilities <- st_clean %>%
+  group_by(Learning_Disabilities) %>%
+  summarise(Promedio_Study_Hours = mean(Hours_Studied, na.rm = TRUE))
+
+grafico_estudio <- ggplot(promedio_estudio_por_disabilities, aes(x = Learning_Disabilities, y = Promedio_Study_Hours, fill = Learning_Disabilities)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Promedio de Horas de Estudio por Learning Disabilities",
+       x = "Learning Disabilities",
+       y = "Promedio de Horas",
+       fill = "Learning Disabilities") +
+  geom_text(aes(label = round(Promedio_Study_Hours, 1)), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, size = 3.5) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+promedio_asistencia_por_disabilities <- st_clean %>%
+  group_by(Learning_Disabilities) %>%
+  summarise(Promedio_Attendance = mean(Attendance, na.rm = TRUE))
+
+grafico_asistencia <- ggplot(promedio_asistencia_por_disabilities, aes(x = Learning_Disabilities, y = Promedio_Attendance, fill = Learning_Disabilities)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Promedio de Asistencia por Learning Disabilities",
+       x = "Learning Disabilities",
+       y = "Promedio de Asistencia",
+       fill = "Learning Disabilities") +
+  geom_text(aes(label = round(Promedio_Attendance, 1)), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, size = 3.5) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+grid.arrange(grafico_motivacion, grafico_tutoria, grafico_estudio, grafico_asistencia, nrow = 2, ncol = 2)
+
+```
+
+```{r}
+grafico_peer_influence <- st_clean %>%
+  group_by(Learning_Disabilities, Peer_Influence) %>%
+  summarise(Count = n()) %>%
+  mutate(Percentage = Count / sum(Count) * 100) %>%
+  ggplot(aes(x = Learning_Disabilities, y = Percentage, fill = Peer_Influence)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Porcentaje de Peer Influence por Learning Disabilities",
+       x = "Learning Disabilities",
+       y = "Porcentaje",
+       fill = "Peer Influence") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+grafico_parental_involvement <- st_clean %>%
+  group_by(Learning_Disabilities, Parental_Involvement) %>%
+  summarise(Count = n()) %>%
+  mutate(Percentage = Count / sum(Count) * 100) %>%
+  ggplot(aes(x = Learning_Disabilities, y = Percentage, fill = Parental_Involvement)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Porcentaje de Parental Involvement por Learning Disabilities",
+       x = "Learning Disabilities",
+       y = "Porcentaje",
+       fill = "Parental Involvement") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+grid.arrange(grafico_peer_influence, grafico_parental_involvement, nrow = 1, ncol = 2)
+
+
+```
+
+No hay grandes diferencias entre tener o no tener problemas de aprendizaje
+
+## Análisis según tipo de escuela.
+
+```{r}
+boxplot_exam <- ggplot(st_clean, aes(x = School_Type, y = Exam_Score, fill = School_Type)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Distribución de Exam_Score por School Type",
+       x = "School Type",
+       y = "Notas del Examen") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+barplot_exam <- st_clean %>%
+  group_by(School_Type) %>%
+  summarise(Media_Exam_Score = mean(Exam_Score, na.rm = TRUE)) %>%
+  ggplot(aes(x = School_Type, y = Media_Exam_Score, fill = School_Type)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Media de Exam_Score por School Type",
+       x = "School Type",
+       y = "Media de Notas del Examen") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+boxplot_previous <- ggplot(st_clean, aes(x = School_Type, y = Previous_Scores, fill = School_Type)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Distribución de Previous_Scores por School Type",
+       x = "School Type",
+       y = "Notas Previas") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+barplot_previous <- st_clean %>%
+  group_by(School_Type) %>%
+  summarise(Media_Previous_Scores = mean(Previous_Scores, na.rm = TRUE)) %>%
+  ggplot(aes(x = School_Type, y = Media_Previous_Scores, fill = School_Type)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Media de Previous_Scores por School Type",
+       x = "School Type",
+       y = "Media de Notas Previas") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+grid.arrange(
+  boxplot_exam, barplot_exam,
+  boxplot_previous, barplot_previous,
+  nrow = 2, ncol = 2
+)
+
+```
+
+```{r}
+grafico_family_income <- st_clean %>%
+  group_by(School_Type, Family_Income) %>%
+  summarise(Count = n()) %>%
+  mutate(Percentage = Count / sum(Count) * 100) %>%
+  ggplot(aes(x = School_Type, y = Percentage, fill = Family_Income)) +
+  geom_bar(stat = "identity", position = "fill") +
+  theme_minimal() +
+  labs(title = "Distribución de Family Income por School Type",
+       x = "School Type",
+       y = "Porcentaje",
+       fill = "Family Income") +
+  scale_y_continuous(labels = scales::percent) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+grafico_teacher_quality <- st_clean %>%
+  group_by(School_Type, Teacher_Quality) %>%
+  summarise(Count = n()) %>%
+  mutate(Percentage = Count / sum(Count) * 100) %>%
+  ggplot(aes(x = School_Type, y = Percentage, fill = Teacher_Quality)) +
+  geom_bar(stat = "identity", position = "fill") +
+  theme_minimal() +
+  labs(title = "Distribución de Teacher Quality por School Type",
+       x = "School Type",
+       y = "Porcentaje",
+       fill = "Teacher Quality") +
+  scale_y_continuous(labels = scales::percent) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+grid.arrange(grafico_family_income, grafico_teacher_quality, nrow = 1, ncol = 2)
+
+```
+
+## Análisis de horas dormidas
+
+```{r}
+st_clean <- st_clean %>%
+  mutate(Sleep_Interval = cut(Sleep_Hours, 
+                              breaks = c(0, 4, 6, 8, 10, Inf), 
+                              labels = c("Muy poco (<4h)", "Poco (4-6h)", "Adecuado (6-8h)", "Bueno (8-10h)", "Excesivo (>10h)"),
+                              right = FALSE))
+
+sleep_intervals <- st_clean %>%
+  group_by(Sleep_Interval) %>%
+  summarise(Count = n()) %>%
+  mutate(Percentage = Count / sum(Count) * 100)
+
+grafico_dispersion <- ggplot(st_clean, aes(x = Exam_Score, y = 1, color = Sleep_Interval)) +
+  geom_jitter(height = 0.1, width = 0.3, size = 3, alpha = 0.7) +
+  scale_color_manual(values = c("Muy poco (<4h)" = "red", 
+                                "Poco (4-6h)" = "orange", 
+                                "Adecuado (6-8h)" = "green", 
+                                "Bueno (8-10h)" = "blue", 
+                                "Excesivo (>10h)" = "purple")) +
+  theme_minimal() +
+  labs(title = "Distribución de Exam Score por Intervalo de Sueño",
+       x = "Puntuación del Examen",
+       y = "",
+       color = "Intervalo de Sueño") +
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank())
+
+grafico_circular <- ggplot(sleep_intervals, aes(x = "", y = Percentage, fill = Sleep_Interval)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar(theta = "y") +
+  scale_fill_manual(values = c("Muy poco (<4h)" = "red", 
+                               "Poco (4-6h)" = "orange", 
+                               "Adecuado (6-8h)" = "green", 
+                               "Bueno (8-10h)" = "blue", 
+                               "Excesivo (>10h)" = "purple")) +
+  theme_void() +
+  labs(title = "Distribución de Intervalos de Sueño (en Porcentaje)",
+       fill = "Intervalos de Sueño") +
+  geom_text(aes(label = sprintf("%.1f%%", Percentage)), 
+            position = position_stack(vjust = 0.5), size = 4)
+
+
+grid.arrange(grafico_dispersion, grafico_circular, nrow = 1, ncol = 2)
+
+
+```
+
+Las horas de sueño no tienen gran importancia.
+
+## Conclusión de los análisis de los gráficos
+
+Todos los análisis los mirases por donde los mirasen daban siempre lo mismo, indicando que o bien no tiene ningún tipo de relevancia o el dataset estaba preparado para que solo las 3/4 columnas que mencionamos despues son imporantes.
+
+## Análisis de las 4 correlaciones mayores
+
+```{r}
+var1 <- "Hours_Studied"
+var2 <- "Previous_Scores"
+var3 <- "Attendance"
+var4 <- "Tutoring_Sessions"
+
+grafico_var1 <- ggplot(st_clean, aes_string(x = var1, y = "Exam_Score")) +
+  geom_point(alpha = 0.7, color = "blue") +
+  theme_minimal() +
+  labs(title = paste("Relación entre", var1, "y Exam_Score"),
+       x = var1,
+       y = "Exam Score")
+
+grafico_var2 <- ggplot(st_clean, aes_string(x = var2, y = "Exam_Score")) +
+  geom_point(alpha = 0.7, color = "red") +
+  theme_minimal() +
+  labs(title = paste("Relación entre", var2, "y Exam_Score"),
+       x = var2,
+       y = "Exam Score")
+
+grafico_var3 <- ggplot(st_clean, aes_string(x = var3, y = "Exam_Score")) +
+  geom_point(alpha = 0.7, color = "green") +
+  theme_minimal() +
+  labs(title = paste("Relación entre", var3, "y Exam_Score"),
+       x = var3,
+       y = "Exam Score")
+
+grafico_var4 <- ggplot(st_clean, aes(x = as.factor(Tutoring_Sessions), y = Exam_Score, fill = as.factor(Tutoring_Sessions))) +
+  geom_boxplot() +
+  theme_minimal() +
+  scale_fill_brewer(palette = "Set3") +
+  labs(title = paste("Distribución de Exam_Score por", var4),
+       x = "Número de Sesiones de Tutoría",
+       y = "Exam Score",
+       fill = "Sesiones de Tutoría") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+grid.arrange(grafico_var1, grafico_var2, grafico_var3, grafico_var4, nrow = 2, ncol = 2)
+
+
+```
+
+### añadimos la recta de regresión
+
+```{r}
+var1 <- "Hours_Studied"
+var2 <- "Previous_Scores"
+var3 <- "Attendance"
+
+grafico_var1 <- ggplot(st_clean, aes_string(x = var1, y = "Exam_Score")) +
+  geom_point(alpha = 0.7, color = "blue") +
+  geom_smooth(method = "lm", se = FALSE, color = "darkblue") +
+  theme_minimal() +
+  labs(title = paste("Relación entre", var1, "y Exam_Score"),
+       x = var1,
+       y = "Exam Score")
+
+grafico_var2 <- ggplot(st_clean, aes_string(x = var2, y = "Exam_Score")) +
+  geom_point(alpha = 0.7, color = "red") +
+  geom_smooth(method = "lm", se = FALSE, color = "darkred") +
+  theme_minimal() +
+  labs(title = paste("Relación entre", var2, "y Exam_Score"),
+       x = var2,
+       y = "Exam Score")
+
+grafico_var3 <- ggplot(st_clean, aes_string(x = var3, y = "Exam_Score")) +
+  geom_point(alpha = 0.7, color = "green") +
+  geom_smooth(method = "lm", se = FALSE, color = "darkgreen") +
+  theme_minimal() +
+  labs(title = paste("Relación entre", var3, "y Exam_Score"),
+       x = var3,
+       y = "Exam Score")
+
+grid.arrange(grafico_var1, grafico_var2, grafico_var3, nrow = 2, ncol = 2)
+
+```
+
+Como podemos comprobar viendo la recta de regresión y el mapa de puntos como nos indicaba el mapa de correlación estos son los 3 valores que mas influyen en la nota del examen.
+
+## Objetivo de los datos
+
+Según vemos en el mapa de correlaciones y analizando el resto de variables y las rectas de regresión correspondientes concluimos que vamos a utilizar una **Regresión lineal múltiple** para predecir el `exam_score`. las variables que incluiremos en esta regresión lineal múltiple serán las siguientes: `attendance`, `hours_studied` y `Previous_score` por orden de peso.

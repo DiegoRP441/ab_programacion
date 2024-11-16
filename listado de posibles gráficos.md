@@ -36,4 +36,6 @@
 - [ ] Gráfico de barras apiladas de `Learning_Disabilities` vs `Exam_Score` dividido por `Parental_Education_Level`. 
 
 ![[Pasted image 20241103142058.png]]
-deberia centrarme en horas estudiadas, asistencia, horas de tutoria y examenes anteriores
+debería centrarme en horas estudiadas, asistencia, horas de tutoría y exámenes anteriores
+
+empezar con las regresiones y el "machine learnings" tanto simple como múltiple y ver cual da la mejor precisión. 
