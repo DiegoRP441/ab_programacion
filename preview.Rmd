@@ -184,7 +184,7 @@ Sesgo:
 
 Podríamos concluir que es un análisis que se podría extrapolar hacia el conjunto mayoritario de la población, es decir, gente de clase media sin `learning_disabilities` y que van a la escuela pública sin tener en cuenta el género.
 
-## Mapa de correlaciones. 
+## Mapa de correlaciones.
 
 ```{r}
 cor_matrix <- cor(st_clean[, sapply(st_clean, is.numeric)], use = "complete.obs")
@@ -271,6 +271,8 @@ no hay nada relevante que podamos sacar de aquí. podemos analizar los valores a
 Pero sin embargo si comparamos con un gráfico mas adecuado podemos observar que si que tiene que ver.
 
 ### Análisis de nota de examen por nivel de motivación.
+
+HAY QUE CAMBIARLO TODO PORQUE EN RESUMEN ES QUE NO INFLUYE NADA EL NIVEL DE MOTIVACIÓN EN LA NOTA, NADA O MINIMAMENTE
 
 ```{r}
 ggplot(st_clean, aes(x = Exam_Score, fill = Motivation_Level)) +
@@ -384,7 +386,7 @@ ggplot(st_clean, aes(x = as.factor(Tutoring_Sessions), y = Exam_Score, fill = as
 
 ```
 
-## Análisis de dispersión 
+## Análisis de dispersión
 
 ```{r}
 ggplot(st_clean, aes(x = Tutoring_Sessions, y = Exam_Score)) +
@@ -448,6 +450,8 @@ ggplot(st_clean, aes(x = Exam_Score, fill = Family_Income)) +
 ```
 
 Los ingresos familiares no son un factor determinante para sacar mejores notas pero podemos observar que mayor ingresos familiares da lugar a mejores notas, ahora podriamos ver si la cantidad de horas estudiadas es mayor en gente con ingresos familiares elevados en comparación con ingresos bajo
+
+DE ESTE PUEDO SACAR ALGO DE LA CATEGÓRICA
 
 ```{r}
 st_clean %>%
