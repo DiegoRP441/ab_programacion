@@ -39,3 +39,5 @@
 debería centrarme en horas estudiadas, asistencia, horas de tutoría y exámenes anteriores
 
 empezar con las regresiones y el "machine learnings" tanto simple como múltiple y ver cual da la mejor precisión. 
+
+![[Pasted image 20241201201226.png]]
