@@ -22,6 +22,7 @@ library(tidyr)
 library(gridExtra)
 library(moments)
 library(caret)
+library(reticulate)
 
 
 ```
@@ -67,86 +68,18 @@ En los datos numéricos al contrario que pasaba en los no numéricos no tenemos 
 # Parte 2: Limpieza de datos
 
 vemos que tenemos valores nulos en 3 columnas:`Parental_Education_Level`, `Teacher_Quality`, `Distance_from_Home`\
-como las 3 columnas son categóricas vamos a usar la moda en las 3 para poner el valor que mas se repite. como en r no existe una función que obtenga la moda directamente la creamos nosotros mismos.
+Como las 3 columnas que contienen nulos son categóricas vamos a limpiarlas usando la librería `pandas` de python para una mayor facilidad a la hora de trabajar con la moda, debido a que R no tiene una función especifica para calcular la moda.
 
-```{r}
-getmode <- function(v) {
-   uniqv <- unique(v)                     
-   uniqv[which.max(tabulate(match(v, uniqv)))]
-}
+```{python}
+import pandas as pd
+
+st['Teacher_Quality'] = st['Teacher_Quality'].fillna(st['Teacher_Quality'].mode()[0])
+st['Parental_Education_Level'] = st['Parental_Education_Level'].fillna(st['Parental_Education_Level'].mode()[0])
+st['Distance_from_Home'] = st['Distance_from_Home'].fillna(st['Distance_from_Home'].mode()[0])
 ```
 
-```{r}
-st <- st %>%
-  mutate(
-    Teacher_Quality = ifelse(is.na(Teacher_Quality), getmode(Teacher_Quality), Teacher_Quality), #si es NA (TRUE) salta `getmode(columna)`,si es False no cambia nada
-    Parental_Education_Level = ifelse(is.na(Parental_Education_Level), getmode(Parental_Education_Level), Parental_Education_Level),
-    Distance_from_Home = ifelse(is.na(Distance_from_Home), getmode(Distance_from_Home), Distance_from_Home)
-  )
-
-```
-
-el `%\>%` esto es el `pipe`, que esta tomando el df `st`y lo paso como entrada a la siguiente función `mutate()`en este caso. Gracias esto nos evitamos escribir mutate para cada columna, permitiendo "fluir" a la función.
-
-Comprobamos que no hay valores nulos.
-
-```{r}
-print(colSums(is.na(st)))
-```
-
-No hay valores nulos, lo que nos indica que ha funcionado
-
-## Conversión de valores categóricos en factores de R, gracias a esto conseguimos lo siguiente
-
--   Los factores permiten a R entender que son datos categóricos y no simples textos\
--   facilita el análisis estadístico y creación de modelos.\
--   Permite establecer ordenes específicos entre categorías si es necesario\
--   Optimiza el uso de memoria de R
-
-Convertimos en factores los categóricos y añadimos orden en algunos de ellos ya que tiene relevancia el orden (low\<medium\<high)
-
-```{r}
-st <- st %>%
-  mutate(
-    Parental_Involvement = factor(Parental_Involvement,
-                                levels = c("Low", "Medium", "High"),
-                                ordered = TRUE),
-    Access_to_Resources = factor(Access_to_Resources,
-                               levels = c("Low", "Medium", "High"),
-                               ordered = TRUE),
-    Extracurricular_Activities = factor(Extracurricular_Activities,
-                                      levels = c("No", "Yes")),  
-    Motivation_Level = factor(Motivation_Level,
-                            levels = c("Low", "Medium", "High"),
-                            ordered = TRUE),
-    Internet_Access = factor(Internet_Access,
-                           levels = c("No", "Yes")),  
-    Family_Income = factor(Family_Income,
-                         levels = c("Low", "Medium", "High"),
-                         ordered = TRUE),
-    Teacher_Quality = factor(Teacher_Quality,
-                           levels = c("Low", "Medium", "High"),
-                           ordered = TRUE),
-    School_Type = factor(School_Type),  
-    Peer_Influence = factor(Peer_Influence,
-                          levels = c("Negative", "Neutral", "Positive"),
-                          ordered = TRUE),
-    Learning_Disabilities = factor(Learning_Disabilities,
-                                 levels = c("No", "Yes")),  
-    Parental_Education_Level = factor(Parental_Education_Level,
-                                    levels = c("High School", "College", "Postgraduate"),
-                                    ordered = TRUE),
-    Distance_from_Home = factor(Distance_from_Home,
-                              levels = c("Near", "Moderate", "Far"),
-                              ordered = TRUE),
-    Gender = factor(Gender)  
-  )
-```
-
-Verificamos que se han convertido en factor.
-
-```{r}
-str(st)
+```{python}
+print(st.isnull().sum())
 ```
 
 Devolvemos el csv limpio y trabajaremos con él.
@@ -903,14 +836,14 @@ cat("Modelo 2 - RMSE:", rmse2, "R²:", r2_2, "\n")
 El **Modelo 2**, que incluye la variable **`Tutoring_Sessions`**, es mejor que el **Modelo 1** porque tiene un **RMSE menor** (2.47 frente a 2.54), lo que indica predicciones más precisas, y un **R² mayor** (59.67% frente a 57.21%), lo que significa que explica mejor la variabilidad de **`Exam_Score`**. Aunque la mejora es moderada, demuestra que **`Tutoring_Sessions`** aporta información útil al modelo.
 
 ```{r}
-margen <- 3
+margen <- 2
 
 aciertos1 <- mean(abs(data_selected$Exam_Score - pred1) <= margen) * 100
 
 aciertos2 <- mean(abs(data_selected$Exam_Score - pred2) <= margen) * 100
 
-cat("Porcentaje de aciertos (±3 puntos) - Modelo 1:", round(aciertos1, 2), "%\n")
-cat("Porcentaje de aciertos (±3 puntos) - Modelo 2:", round(aciertos2, 2), "%\n")
+cat("Porcentaje de aciertos (±2.4 puntos) - Modelo 1:", round(aciertos1, 2), "%\n")
+cat("Porcentaje de aciertos (±2.4 puntos) - Modelo 2:", round(aciertos2, 2), "%\n")
 
 ```
 
