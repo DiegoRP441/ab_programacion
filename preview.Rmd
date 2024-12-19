@@ -809,12 +809,11 @@ data_selected <- st_clean %>%
 Entrenamos modelo
 
 ```{r}
-# Crear el modelo de Regresión Lineal Múltiple
-modelo <- lm(Exam_Score ~ Attendance + Hours_Studied + Previous_Scores, data = data_selected)
 
-# Mostrar el resumen del modelo
+modelo1 <- lm(Exam_Score ~ Attendance + Hours_Studied + Previous_Scores, data = data_selected)
+
 cat("Resumen del modelo de Regresión Lineal Múltiple:\n")
-summary(modelo)
+summary(modelo1)
 
 ```
 
@@ -844,7 +843,7 @@ Las **métricas del modelo** indican su rendimiento y ajuste. El **R² (0.572)**
 
 ```{r}
 data_selected$predicciones <- predict(modelo1, newdata = data_selected)
-# Visualizar valores reales vs predichos
+
 ggplot(data_selected, aes(x = Exam_Score, y = predicciones)) +
   geom_point(color = "blue") + # Puntos que muestran la relación
   geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
@@ -862,10 +861,9 @@ Este gráfico compara los valores reales de **`Exam_Score`** (eje X) con los val
 data_selected <- st_clean %>%
   select(Attendance, Hours_Studied, Previous_Scores, Exam_Score,Tutoring_Sessions)
 
-# Crear el modelo de Regresión Lineal Múltiple
+
 modelo2 <- lm(Exam_Score ~ Attendance + Hours_Studied + Previous_Scores + Tutoring_Sessions, data = data_selected)
 
-# Mostrar el resumen del modelo
 cat("Resumen del modelo de Regresión Lineal Múltiple:\n")
 summary(modelo2)
 
@@ -888,17 +886,15 @@ La diferencia entre la baja correlación de **`Tutoring_Sessions`** con **`Exam_
 ### Comparación de ambos modelos
 
 ```{r}
-# Calcular RMSE y R² del primer modelo
 pred1 <- predict(modelo1, newdata = data_selected)
 rmse1 <- sqrt(mean((data_selected$Exam_Score - pred1)^2))
 r2_1 <- summary(modelo1)$r.squared
 
-# Calcular RMSE y R² del segundo modelo
 pred2 <- predict(modelo2, newdata = data_selected)
 rmse2 <- sqrt(mean((data_selected$Exam_Score - pred2)^2))
 r2_2 <- summary(modelo2)$r.squared
 
-# Mostrar resultados
+
 cat("Modelo 1 - RMSE:", rmse1, "R²:", r2_1, "\n")
 cat("Modelo 2 - RMSE:", rmse2, "R²:", r2_2, "\n")
 
@@ -907,16 +903,12 @@ cat("Modelo 2 - RMSE:", rmse2, "R²:", r2_2, "\n")
 El **Modelo 2**, que incluye la variable **`Tutoring_Sessions`**, es mejor que el **Modelo 1** porque tiene un **RMSE menor** (2.47 frente a 2.54), lo que indica predicciones más precisas, y un **R² mayor** (59.67% frente a 57.21%), lo que significa que explica mejor la variabilidad de **`Exam_Score`**. Aunque la mejora es moderada, demuestra que **`Tutoring_Sessions`** aporta información útil al modelo.
 
 ```{r}
-# Definir margen de error aceptable
 margen <- 3
 
-# Calcular porcentaje de aciertos para el primer modelo
 aciertos1 <- mean(abs(data_selected$Exam_Score - pred1) <= margen) * 100
 
-# Calcular porcentaje de aciertos para el segundo modelo
 aciertos2 <- mean(abs(data_selected$Exam_Score - pred2) <= margen) * 100
 
-# Mostrar resultados
 cat("Porcentaje de aciertos (±3 puntos) - Modelo 1:", round(aciertos1, 2), "%\n")
 cat("Porcentaje de aciertos (±3 puntos) - Modelo 2:", round(aciertos2, 2), "%\n")
 
@@ -929,15 +921,11 @@ como hemos predicho en el análisis anterior el modelo 2 es superior al modelo u
 Hemos elegido un margen de error de **±3 puntos** porque se ajusta a la **variabilidad de los residuos** observada en el modelo. En concreto, el **residual standard error** (error estándar residual) para ambos modelos está alrededor de **2.5 puntos**, lo cual representa la desviación promedio entre las predicciones y los valores reales. Al establecer un margen de **3 puntos**, cubrimos un rango ligeramente superior a este error estándar, lo que nos permite capturar una gran parte de las predicciones **razonablemente precisas** sin ser ni demasiado estrictos (como un ±2, que dejaría fuera muchas predicciones aceptables) ni demasiado permisivos (como un ±4, que incluiría predicciones con errores considerables). Además, este margen tiene sentido práctico en el contexto de las puntuaciones de un examen, donde pequeñas diferencias de 2 o 3 puntos son aceptables, especialmente si el rango total de calificaciones es amplio (por ejemplo, de 0 a 100). Por lo tanto, el margen de **±3 puntos** equilibra adecuadamente la **precisión estadística** del modelo con la **interpretación práctica** de los resultados.
 
 ```{r}
-# Generar predicciones para ambos modelos
+
 data_selected$pred_modelo1 <- predict(modelo1, newdata = data_selected)
 data_selected$pred_modelo2 <- predict(modelo2, newdata = data_selected)
 
-# Cargar librería para visualización
-library(ggplot2)
-library(gridExtra) # Para mostrar gráficos en paralelo
 
-# Gráfico del Modelo 1
 plot_modelo1 <- ggplot(data_selected, aes(x = Exam_Score, y = pred_modelo1)) +
   geom_point(color = "blue", alpha = 0.6) +
   geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
@@ -946,7 +934,6 @@ plot_modelo1 <- ggplot(data_selected, aes(x = Exam_Score, y = pred_modelo1)) +
        y = "Exam Score Predicho") +
   theme_minimal()
 
-# Gráfico del Modelo 2
 plot_modelo2 <- ggplot(data_selected, aes(x = Exam_Score, y = pred_modelo2)) +
   geom_point(color = "green", alpha = 0.6) +
   geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
@@ -955,7 +942,6 @@ plot_modelo2 <- ggplot(data_selected, aes(x = Exam_Score, y = pred_modelo2)) +
        y = "Exam Score Predicho") +
   theme_minimal()
 
-# Mostrar ambos gráficos lado a lado
 grid.arrange(plot_modelo1, plot_modelo2, ncol = 2)
 
 ```
