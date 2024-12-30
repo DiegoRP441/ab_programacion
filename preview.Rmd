@@ -7,7 +7,7 @@ output: html_notebook
 
 Diego Romero Puyal.
 
-El dataset ha sido sacado de la pagina kaggle: <https://www.kaggle.com/>. De la sección de datasets, específicamente hemos escogido este dataset: <https://www.kaggle.com/datasets/lainguyn123/student-performance-factors>. Este conjunto de datos ofrece una visión completa de diversos factores que afectan al rendimiento de los estudiantes en los exámenes. Incluye información sobre hábitos de estudio, asistencia, participación de los padres y otros aspectos que influyen en el éxito académico.
+El dataset ha sido obtenido de la página **Kaggle**: <https://www.kaggle.com/>. De la sección de datasets, específicamente hemos seleccionado este dataset: <https://www.kaggle.com/datasets/lainguyn123/student-performance-factors>. Este conjunto de datos ofrece una visión completa de diversos factores que afectan el rendimiento de los estudiantes en los exámenes. Incluye información sobre hábitos de estudio, asistencia, participación de los padres y otros aspectos que influyen en el éxito académico.
 
 # Parte 1: carga y exploración de datos.
 
@@ -27,7 +27,7 @@ library(reticulate)
 
 ```
 
-primero importamos el dataset, ademas importamos la librería skimr para la mejor visualización de los datos
+Primero importamos el dataset, ademas importamos la librería skimr para la mejor visualización de los datos.
 
 ```{r message=FALSE, warning=TRUE, paged.print=TRUE, show_col_types=}
 st <- read_csv("estudiantes.csv", show_col_types = FALSE)
@@ -36,7 +36,7 @@ head(st,10, show_col_types = FALSE)
 
 Tras un primer vistazo podemos observar que tenemos 20 columnas y tenemos tanto valores numéricos como no numéricos. Ademas sospechamos que hay bastantes valores categóricos. Vamos a analizarlo mas a fondo.
 
-separamos las columnas numéricas de las no numéricas para mejor observación de los datos
+Separamos las columnas numéricas de las no numéricas para mejor observación de los datos.
 
 ```{r}
 numeric_columns <- sapply(st, is.numeric)
@@ -47,11 +47,11 @@ lapply(st[!numeric_columns], unique)
 
 ```
 
-Aquí podemos ver que todos las columnas no numéricas son categóricas. esto lo tendremos en cuenta para el análisis y la limpieza mas adelante
+Aquí podemos ver que todos las columnas no numéricas son categóricas. esto lo tendremos en cuenta para el análisis y la limpieza mas adelante.
 
-Ahora buscamos los valores nulos dentro de las columnas
+Ahora buscamos los valores nulos dentro de las columnas.
 
-Usamos skim mejor que `summary()` porque da mas información y presentada de forma mas limpia
+Usamos skim mejor que `summary()` porque da mas información y presentada de forma mas limpia.
 
 ```{r}
 skim(st[!numeric_columns])
@@ -67,8 +67,14 @@ En los datos numéricos al contrario que pasaba en los no numéricos no tenemos 
 
 # Parte 2: Limpieza de datos
 
-vemos que tenemos valores nulos en 3 columnas:`Parental_Education_Level`, `Teacher_Quality`, `Distance_from_Home`\
+Vemos que tenemos valores nulos en 3 columnas:`Parental_Education_Level`, `Teacher_Quality`, `Distance_from_Home`\
 Como las 3 columnas que contienen nulos son categóricas vamos a limpiarlas usando la librería `pandas` de python para una mayor facilidad a la hora de trabajar con la moda, debido a que R no tiene una función especifica para calcular la moda.
+
+Enviamos la variable a python.
+
+```{r}
+py$st <- r_to_py(st)
+```
 
 ```{python}
 import pandas as pd
@@ -76,16 +82,20 @@ import pandas as pd
 st['Teacher_Quality'] = st['Teacher_Quality'].fillna(st['Teacher_Quality'].mode()[0])
 st['Parental_Education_Level'] = st['Parental_Education_Level'].fillna(st['Parental_Education_Level'].mode()[0])
 st['Distance_from_Home'] = st['Distance_from_Home'].fillna(st['Distance_from_Home'].mode()[0])
+
+print("las modas usadas para rellenar los nulos son los siguientes:",st['Teacher_Quality'].mode()[0],",",st['Parental_Education_Level'].mode()[0],"," ,st['Distance_from_Home'].mode()[0])
 ```
 
 ```{python}
 print(st.isnull().sum())
 ```
 
+Vemos que hemos eliminado correctamente los valores nulos, tras esto devolvemos el csv limpio y empezaremos a analizarlo y trabajar con el en futuros modelos.
+
 Devolvemos el csv limpio y trabajaremos con él.
 
-```{r}
-write.csv(st, "st_clean.csv", row.names = FALSE)
+```{python}
+st.to_csv("st_clean.csv", index=False)
 
 ```
 
@@ -727,11 +737,68 @@ Como podemos comprobar viendo la recta de regresión y el mapa de puntos como no
 
 ## Objetivo de los datos
 
-Según vemos en el mapa de correlaciones y analizando el resto de variables y las rectas de regresión correspondientes concluimos que vamos a utilizar una **Regresión lineal múltiple** para predecir el `exam_score`. las variables que incluiremos en esta regresión lineal múltiple serán las siguientes: `attendance`, `hours_studied` y `Previous_score` por orden de peso.
+Según vemos en el mapa de correlaciones y analizando el resto de variables y las rectas de regresión correspondientes concluimos que vamos a utilizar una **Regresión lineal múltiple** para predecir el `exam_score`. las variables que incluiremos en esta regresión lineal múltiple serán las siguientes: `attendance`, `hours_studied` y `Previous_score` por orden de peso. \### ¿Es necesario aplicar un submuestreo? Como hemos visto al principio del análisis hay algunas variables categóricas que están desbalanceadas, vamos a comprobar si estas tienen relación con las variables continuas que usaremos para el modelo.
 
-### Creacion de modelo con 3 variables
+```{r}
+# Para ANOVA: Extraer solo el p-valor
+anova_family_income <- aov(Attendance ~ Family_Income, data = st_clean)
+summary(anova_family_income)[[1]]["Pr(>F)"]
 
-Elegimos la data para el modelos
+anova_school_type <- aov(Attendance ~ School_Type, data = st_clean)
+summary(anova_school_type)[[1]]["Pr(>F)"]
+
+anova_learning_disabilities <- aov(Attendance ~ Learning_Disabilities, data = st_clean)
+summary(anova_learning_disabilities)[[1]]["Pr(>F)"]
+
+# Para t-test: Extraer solo el p-valor
+t_gender <- t.test(Attendance ~ Gender, data = st_clean)
+t_gender$p.value
+
+anova_family_income <- aov(Hours_Studied ~ Family_Income, data = st_clean)
+summary(anova_family_income)[[1]]["Pr(>F)"]
+
+anova_school_type <- aov(Hours_Studied ~ School_Type, data = st_clean)
+summary(anova_school_type)[[1]]["Pr(>F)"]
+
+anova_learning_disabilities <- aov(Hours_Studied ~ Learning_Disabilities, data = st_clean)
+summary(anova_learning_disabilities)[[1]]["Pr(>F)"]
+
+# Para t-test: Extraer solo el p-valor
+t_gender <- t.test(Hours_Studied ~ Gender, data = st_clean)
+t_gender$p.value
+
+anova_family_income <- aov(Previous_Scores ~ Family_Income, data = st_clean)
+summary(anova_family_income)[[1]]["Pr(>F)"]
+
+anova_school_type <- aov(Previous_Scores ~ School_Type, data = st_clean)
+summary(anova_school_type)[[1]]["Pr(>F)"]
+
+anova_learning_disabilities <- aov(Previous_Scores ~ Learning_Disabilities, data = st_clean)
+summary(anova_learning_disabilities)[[1]]["Pr(>F)"]
+
+# Para t-test: Extraer solo el p-valor
+t_gender <- t.test(Previous_Scores ~ Gender, data = st_clean)
+t_gender$p.value
+
+anova_family_income <- aov(Tutoring_Sessions ~ Family_Income, data = st_clean)
+summary(anova_family_income)[[1]]["Pr(>F)"]
+
+anova_school_type <- aov(Tutoring_Sessions ~ School_Type, data = st_clean)
+summary(anova_school_type)[[1]]["Pr(>F)"]
+
+anova_learning_disabilities <- aov(Tutoring_Sessions ~ Learning_Disabilities, data = st_clean)
+summary(anova_learning_disabilities)[[1]]["Pr(>F)"]
+
+# Para t-test: Extraer solo el p-valor
+t_gender <- t.test(Tutoring_Sessions ~ Gender, data = st_clean)
+t_gender$p.value
+```
+
+Dado que las pruebas estadísticas respaldan la independencia entre las variables categóricas y las continuas, y considerando que las variables categóricas no aportan una relación significativa al análisis, no es necesario ni justificado realizar submuestreo en este caso. Proceder con el conjunto de datos original asegura la máxima retención de información y la construcción de un modelo más robusto.
+
+### Creación de modelo con 3 variables
+
+Elegimos los datos para el modelo.
 
 ```{r}
 # Seleccionar las variables relevantes
@@ -739,7 +806,7 @@ data_selected <- st_clean %>%
   select(Attendance, Hours_Studied, Previous_Scores, Exam_Score)
 ```
 
-Entrenamos modelo
+Entrenamos modelo.
 
 ```{r}
 
@@ -847,11 +914,11 @@ cat("Porcentaje de aciertos (±2.4 puntos) - Modelo 2:", round(aciertos2, 2), "%
 
 ```
 
-como hemos predicho en el análisis anterior el modelo 2 es superior al modelo uno, con una precisión del 95.55% frente a la del modelo 1 de un 94.55%
+como hemos predicho en el análisis anterior el modelo 2 es superior al modelo uno, con una precisión del 95.55% frente a la del modelo 1 de un 94.55%.
 
 #### Elección del margen de error
 
-Hemos elegido un margen de error de **±3 puntos** porque se ajusta a la **variabilidad de los residuos** observada en el modelo. En concreto, el **residual standard error** (error estándar residual) para ambos modelos está alrededor de **2.5 puntos**, lo cual representa la desviación promedio entre las predicciones y los valores reales. Al establecer un margen de **3 puntos**, cubrimos un rango ligeramente superior a este error estándar, lo que nos permite capturar una gran parte de las predicciones **razonablemente precisas** sin ser ni demasiado estrictos (como un ±2, que dejaría fuera muchas predicciones aceptables) ni demasiado permisivos (como un ±4, que incluiría predicciones con errores considerables). Además, este margen tiene sentido práctico en el contexto de las puntuaciones de un examen, donde pequeñas diferencias de 2 o 3 puntos son aceptables, especialmente si el rango total de calificaciones es amplio (por ejemplo, de 0 a 100). Por lo tanto, el margen de **±3 puntos** equilibra adecuadamente la **precisión estadística** del modelo con la **interpretación práctica** de los resultados.
+Hemos elegido un margen de error de **±2.4 puntos** porque se ajusta a la **variabilidad de los residuos** observada en el modelo. En concreto, el **residual standard error** (error estándar residual)
 
 ```{r}
 
@@ -880,3 +947,85 @@ grid.arrange(plot_modelo1, plot_modelo2, ncol = 2)
 ```
 
 El **Modelo 2** supera al **Modelo 1** en todas las métricas evaluadas: tiene un menor error (RMSE), un mayor ajuste (R²) y una mayor precisión en las predicciones dentro de un margen de ±3 puntos. Por tanto, la inclusión de la variable **`Tutoring_Sessions`** ha mejorado el rendimiento general del modelo.
+
+## Validación cruzada.
+
+Estos modelos están diseñados y entrenados con todos los datos del dataset. Esto no se debe de hacer para ello vamos a entrenar ahora otro modelo con las 4 variables pero vamos a separar en dos: testing data, training data. Usaremos el sistema de validación cruzada y dentro de esto usaremos el `10 folds cross validation`, Como el dataset tiene bastante filas de datos es el mas adecuado si hubiese sido mas pequeño el dataset hubiéramos escogido el `leave-one-out`.
+
+Primero elegimos las columnas que nos interesan, tanto la variable dependiente como las variables predictoras.
+
+```{r}
+data <- st_clean %>%
+  select(Attendance, Hours_Studied, Previous_Scores, Exam_Score,Tutoring_Sessions)
+
+```
+
+Con el paquete caret configuramos el 10-fold cross validation.
+
+```{r}
+control <- trainControl(method = "cv", number = 10) 
+
+```
+
+Entrenamos al modelo con validación cruzada.
+
+```{r}
+
+modelo_cv <- train(
+  Exam_Score ~ Attendance + Hours_Studied + Previous_Scores + Tutoring_Sessions,
+  data = data,
+  method = "lm",            
+  trControl = control      
+)
+print(modelo_cv)
+```
+
+```{r}
+cat("RMSE promedio:", modelo_cv$results$RMSE, "\n")
+cat("R² promedio:", modelo_cv$results$Rsquared, "\n")
+
+```
+
+```{r}
+predicciones <- predict(modelo_cv, newdata = data)
+
+data$predicciones <- predict(modelo_cv, newdata = data)
+
+ggplot(data, aes(x = Exam_Score, y = predicciones)) +
+  geom_point(color = "blue") +
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+  labs(title = "Valores Reales vs Predichos con 10-fold Cross Validation",
+       x = "Valores Reales",
+       y = "Valores Predichos") +
+  theme_minimal()
+
+```
+
+### Comparamos los modelos con y sin validación cruzada
+
+Modelo 2 no tiene la validación cruzada y modelo_cv si tiene validación cruzada con el modelo de 10-fold cross validation.
+
+```{r}
+cat("Modelo 2 - RMSE:", rmse2, "R²:", r2_2, "\n")
+cat("RMSE promedio:", modelo_cv$results$RMSE, "R² promedio:", modelo_cv$results$Rsquared)
+```
+
+Vemos que mejora pero nada relevante un 0,01321.
+
+```{r}
+
+predicciones <- predict(modelo_cv, data)
+
+resultados <- data.frame(
+  Real = data$Exam_Score,
+  Predicho = predicciones
+)
+
+margen <- 2.4
+resultados$Exito <- abs(resultados$Real - resultados$Predicho) <= margen
+
+porcentaje_exito <- mean(resultados$Exito) * 100
+
+print(resultados)
+cat("Porcentaje de éxito:", round(porcentaje_exito, 2), "%\n")
+```
