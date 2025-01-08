@@ -3,6 +3,10 @@ title: "AB programación: Dataset de estudiantes"
 output: html_notebook
 ---
 
+![](images/clipboard-3608310708.png)
+
+![](images/clipboard-660723890.png)
+
 ## Explicación del dataset
 
 Diego Romero Puyal.
