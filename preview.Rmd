@@ -3,10 +3,6 @@ title: "AB programación: Dataset de estudiantes"
 output: html_notebook
 ---
 
-![](images/clipboard-3608310708.png)
-
-![](images/clipboard-660723890.png)
-
 ## Explicación del dataset
 
 Diego Romero Puyal.
@@ -74,24 +70,26 @@ En los datos numéricos al contrario que pasaba en los no numéricos no tenemos 
 Vemos que tenemos valores nulos en 3 columnas:`Parental_Education_Level`, `Teacher_Quality`, `Distance_from_Home`\
 Como las 3 columnas que contienen nulos son categóricas vamos a limpiarlas usando la librería `pandas` de python para una mayor facilidad a la hora de trabajar con la moda, debido a que R no tiene una función especifica para calcular la moda.
 
-Enviamos la variable a python.
-
-```{r}
-py$st <- r_to_py(st)
-```
-
 ```{python}
 import pandas as pd
 
-st['Teacher_Quality'] = st['Teacher_Quality'].fillna(st['Teacher_Quality'].mode()[0])
-st['Parental_Education_Level'] = st['Parental_Education_Level'].fillna(st['Parental_Education_Level'].mode()[0])
-st['Distance_from_Home'] = st['Distance_from_Home'].fillna(st['Distance_from_Home'].mode()[0])
+df = pd.read_csv("estudiantes.csv")
 
-print("las modas usadas para rellenar los nulos son los siguientes:",st['Teacher_Quality'].mode()[0],",",st['Parental_Education_Level'].mode()[0],"," ,st['Distance_from_Home'].mode()[0])
+
 ```
 
 ```{python}
-print(st.isnull().sum())
+
+df["Parental_Education_Level"].fillna(df["Parental_Education_Level"].mode()[0], inplace=True)
+df["Teacher_Quality"].fillna(df["Teacher_Quality"].mode()[0], inplace=True)
+df["Distance_from_Home"].fillna(df["Distance_from_Home"].mode()[0], inplace=True)
+
+
+```
+
+```{python}
+
+print(df[["Parental_Education_Level", "Teacher_Quality", "Distance_from_Home"]].isnull().sum())
 ```
 
 Vemos que hemos eliminado correctamente los valores nulos, tras esto devolvemos el csv limpio y empezaremos a analizarlo y trabajar con el en futuros modelos.
@@ -99,7 +97,7 @@ Vemos que hemos eliminado correctamente los valores nulos, tras esto devolvemos 
 Devolvemos el csv limpio y trabajaremos con él.
 
 ```{python}
-st.to_csv("st_clean.csv", index=False)
+df.to_csv("st_clean.csv", index=False)
 
 ```
 
@@ -741,65 +739,7 @@ Como podemos comprobar viendo la recta de regresión y el mapa de puntos como no
 
 ## Objetivo de los datos
 
-Según vemos en el mapa de correlaciones y analizando el resto de variables y las rectas de regresión correspondientes concluimos que vamos a utilizar una **Regresión lineal múltiple** para predecir el `exam_score`. las variables que incluiremos en esta regresión lineal múltiple serán las siguientes: `attendance`, `hours_studied` y `Previous_score` por orden de peso. \### ¿Es necesario aplicar un submuestreo? Como hemos visto al principio del análisis hay algunas variables categóricas que están desbalanceadas, vamos a comprobar si estas tienen relación con las variables continuas que usaremos para el modelo.
-
-### ¿Submuestreo?
-
-Para ver si es necesario hacer un submuestreo debido al desequilibrio en los datos comprobamos el p valor entre las categóricas: `family_income, school_type, learning_disabilities, gender` con las variables predictoras que vamos a usar: `Attendance, Hours_Studied, Previous_Scores, Tutoring_Sessions`.
-
-El **ANOVA** (Análisis de Varianza) y el **t-test** (Prueba t de Student) son herramientas estadísticas utilizadas para comparar las medias de una variable continua entre grupos categóricos. El ANOVA se aplica cuando hay tres o más grupos, mientras que el t-test se utiliza para comparar dos grupos. Ambas pruebas determinan si las diferencias observadas entre las medias de los grupos son estadísticamente significativas. Si los resultados arrojan un **p-valor mayor a 0.05**, se concluye que no hay diferencias significativas entre los grupos, lo que indica que las variables categóricas no influyen en las continuas. En este caso, esto justifica no realizar submuestreo, ya que el desbalance de las categorías no afecta el análisis ni el modelo predictivo.
-
-```{r}
-anova_family_income <- aov(Attendance ~ Family_Income, data = st_clean)
-summary(anova_family_income)[[1]]["Pr(>F)"]
-
-anova_school_type <- aov(Attendance ~ School_Type, data = st_clean)
-summary(anova_school_type)[[1]]["Pr(>F)"]
-
-anova_learning_disabilities <- aov(Attendance ~ Learning_Disabilities, data = st_clean)
-summary(anova_learning_disabilities)[[1]]["Pr(>F)"]
-
-t_gender <- t.test(Attendance ~ Gender, data = st_clean)
-t_gender$p.value
-
-anova_family_income <- aov(Hours_Studied ~ Family_Income, data = st_clean)
-summary(anova_family_income)[[1]]["Pr(>F)"]
-
-anova_school_type <- aov(Hours_Studied ~ School_Type, data = st_clean)
-summary(anova_school_type)[[1]]["Pr(>F)"]
-
-anova_learning_disabilities <- aov(Hours_Studied ~ Learning_Disabilities, data = st_clean)
-summary(anova_learning_disabilities)[[1]]["Pr(>F)"]
-
-t_gender <- t.test(Hours_Studied ~ Gender, data = st_clean)
-t_gender$p.value
-
-anova_family_income <- aov(Previous_Scores ~ Family_Income, data = st_clean)
-summary(anova_family_income)[[1]]["Pr(>F)"]
-
-anova_school_type <- aov(Previous_Scores ~ School_Type, data = st_clean)
-summary(anova_school_type)[[1]]["Pr(>F)"]
-
-anova_learning_disabilities <- aov(Previous_Scores ~ Learning_Disabilities, data = st_clean)
-summary(anova_learning_disabilities)[[1]]["Pr(>F)"]
-
-t_gender <- t.test(Previous_Scores ~ Gender, data = st_clean)
-t_gender$p.value
-
-anova_family_income <- aov(Tutoring_Sessions ~ Family_Income, data = st_clean)
-summary(anova_family_income)[[1]]["Pr(>F)"]
-
-anova_school_type <- aov(Tutoring_Sessions ~ School_Type, data = st_clean)
-summary(anova_school_type)[[1]]["Pr(>F)"]
-
-anova_learning_disabilities <- aov(Tutoring_Sessions ~ Learning_Disabilities, data = st_clean)
-summary(anova_learning_disabilities)[[1]]["Pr(>F)"]
-
-t_gender <- t.test(Tutoring_Sessions ~ Gender, data = st_clean)
-t_gender$p.value
-```
-
-Dado que las pruebas estadísticas respaldan la independencia entre las variables categóricas y las continuas, y considerando que las variables categóricas no aportan una relación significativa al análisis, no es necesario ni justificado realizar submuestreo en este caso. Proceder con el conjunto de datos original asegura la máxima retención de información y la construcción de un modelo más robusto.
+Según vemos en el mapa de correlaciones y analizando el resto de variables y las rectas de regresión correspondientes concluimos que vamos a utilizar una **Regresión lineal múltiple** para predecir el `exam_score`. las variables que incluiremos en esta regresión lineal múltiple serán las siguientes: `attendance`, `hours_studied` y `Previous_score` por orden de peso.
 
 ### Creación de modelo con 3 variables
 
@@ -907,24 +847,6 @@ cat("Modelo 2 - RMSE:", rmse2, "R²:", r2_2, "\n")
 El **Modelo 2**, que incluye la variable **`Tutoring_Sessions`**, es mejor que el **Modelo 1** porque tiene un **RMSE menor** (2.47 frente a 2.54), lo que indica predicciones más precisas, y un **R² mayor** (59.67% frente a 57.21%), lo que significa que explica mejor la variabilidad de **`Exam_Score`**. Aunque la mejora es moderada, demuestra que **`Tutoring_Sessions`** aporta información útil al modelo.
 
 ```{r}
-margen <- 2
-
-aciertos1 <- mean(abs(data_selected$Exam_Score - pred1) <= margen) * 100
-
-aciertos2 <- mean(abs(data_selected$Exam_Score - pred2) <= margen) * 100
-
-cat("Porcentaje de aciertos (±2.4 puntos) - Modelo 1:", round(aciertos1, 2), "%\n")
-cat("Porcentaje de aciertos (±2.4 puntos) - Modelo 2:", round(aciertos2, 2), "%\n")
-
-```
-
-como hemos predicho en el análisis anterior el modelo 2 es superior al modelo uno, con una precisión del 95.55% frente a la del modelo 1 de un 94.55%.
-
-#### Elección del margen de error
-
-Hemos elegido un margen de error de **±2.4 puntos** porque se ajusta a la **variabilidad de los residuos** observada en el modelo. En concreto, el **residual standard error** (error estándar residual)
-
-```{r}
 
 data_selected$pred_modelo1 <- predict(modelo1, newdata = data_selected)
 data_selected$pred_modelo2 <- predict(modelo2, newdata = data_selected)
@@ -1014,22 +936,39 @@ cat("Modelo 2 - RMSE:", rmse2, "R²:", r2_2, "\n")
 cat("RMSE promedio:", modelo_cv$results$RMSE, "R² promedio:", modelo_cv$results$Rsquared)
 ```
 
+```{r}
+cat("Modelo 2 - RMSE:", rmse2, "R²:", r2_2, "\n")
+cat("RMSE promedio:", modelo_cv$results$RMSE, "R² promedio:", modelo_cv$results$Rsquared)
+```
+
 Vemos que mejora pero nada relevante un 0,01321.
 
-```{r}
+## Naive Bayes
 
-predicciones <- predict(modelo_cv, data)
+cosas para hacer limpiar el dataset para que entre en un naive bayes, y hacerlo.
 
-resultados <- data.frame(
-  Real = data$Exam_Score,
-  Predicho = predicciones
+-   cambiar todas las notas por "no pass", "pass" "merit" "distinction"
+
+-   mirar si alguna categorica es importante a parte de las otras.
+
+```{python}
+data = pd.read_csv("st_clean.csv")
+```
+
+```{python}
+# Crear una nueva columna con las categorías basadas en Exam_Score
+data['Exam_Grade'] = pd.cut(
+    data['Exam_Score'],
+    bins=[0, 49, 59, 79, 100],
+    labels=["suspenso", "pass", "merit", "distinction"],
+    include_lowest=True
 )
 
-margen <- 2.4
-resultados$Exito <- abs(resultados$Real - resultados$Predicho) <= margen
+# Verificar los cambios
+print(data)
+```
 
-porcentaje_exito <- mean(resultados$Exito) * 100
-
-print(resultados)
-cat("Porcentaje de éxito:", round(porcentaje_exito, 2), "%\n")
+```{python}
+distribucion = data["Exam_Grade"].value_counts()
+print(distribucion)
 ```

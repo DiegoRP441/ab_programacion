@@ -1,5 +1,5 @@
 Version: 1.0
-ProjectId: d821614a-95ac-4921-91d2-7485c0172e46
+ProjectId: c7288454-0974-4c34-9664-1588fb3fa1e7
 
 RestoreWorkspace: Default
 SaveWorkspace: Default
@@ -13,6 +13,6 @@ Encoding: UTF-8
 RnwWeave: Sweave
 LaTeX: pdfLaTeX
 
-PythonType: system
-PythonVersion: 3.12.5
-PythonPath: C:/Users/Diego/AppData/Local/Programs/Python/Python312/python.exe
+PythonType: conda
+PythonVersion: 3.12.4
+PythonPath: C:/Users/Diego/anaconda3/python.exe
