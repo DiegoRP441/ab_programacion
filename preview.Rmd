@@ -31,9 +31,13 @@ library(reticulate)
 import pandas as pd
 import scipy.stats as stats
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-from sklearn.naive_bayes import CategoricalNB
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.naive_bayes import CategoricalNB, GaussianNB
+from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from imblearn.over_sampling import SMOTE
+
 ```
 
 Primero importamos el dataset, ademas importamos la librería skimr para la mejor visualización de los datos.
@@ -303,7 +307,7 @@ motivacion_por_genero <- st_clean %>%
 grafico_motivacion <- ggplot(motivacion_por_genero, aes(x = Gender, y = Percentage, fill = Motivation_Level)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Distribución porcentual de Motivación por Género",
+  labs(title = "Distribución porcentual de Motivación",
        x = "Género",
        y = "Porcentaje",
        fill = "Motivación") +
@@ -316,7 +320,7 @@ promedio_tutoria_por_genero <- st_clean %>%
 grafico_tutoria <- ggplot(promedio_tutoria_por_genero, aes(x = Gender, y = Promedio_Tutoring_Sessions, fill = Gender)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Promedio de Horas de Tutoría por Género",
+  labs(title = "Promedio de Horas de Tutoría",
        x = "Género",
        y = "Promedio de Horas",
        fill = "Género") +
@@ -332,7 +336,7 @@ promedio_estudio_por_genero <- st_clean %>%
 grafico_estudio <- ggplot(promedio_estudio_por_genero, aes(x = Gender, y = Promedio_Study_Hours, fill = Gender)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Promedio de Horas de Estudio por Género",
+  labs(title = "Promedio de Horas de Estudio",
        x = "Género",
        y = "Promedio de Horas",
        fill = "Género") +
@@ -348,7 +352,7 @@ promedio_asistencia_por_genero <- st_clean %>%
 grafico_asistencia <- ggplot(promedio_asistencia_por_genero, aes(x = Gender, y = Promedio_Attendance, fill = Gender)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Promedio de Asistencia por Género",
+  labs(title = "Promedio de Asistencia",
        x = "Género",
        y = "Promedio de Asistencia",
        fill = "Género") +
@@ -369,7 +373,7 @@ Se distribuyen de igual manera entre chicos y chicas. El genero no tiene relevan
 boxplot_exam <- ggplot(st_clean, aes(x = Learning_Disabilities, y = Exam_Score, fill = Learning_Disabilities)) +
   geom_boxplot() +
   theme_minimal() +
-  labs(title = "Distribución de Exam_Score por Learning Disabilities",
+  labs(title = "Distribución de Exam_Score",
        x = "Learning Disabilities",
        y = "Notas del Examen") +
   theme(legend.position = "none",
@@ -381,7 +385,7 @@ barplot_exam <- st_clean %>%
   ggplot(aes(x = Learning_Disabilities, y = Media_Exam_Score, fill = Learning_Disabilities)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Media de Exam_Score por Learning Disabilities",
+  labs(title = "Media de Exam_Score",
        x = "Learning Disabilities",
        y = "Media de Notas del Examen") +
   theme(legend.position = "none",
@@ -390,7 +394,7 @@ barplot_exam <- st_clean %>%
 boxplot_previous <- ggplot(st_clean, aes(x = Learning_Disabilities, y = Previous_Scores, fill = Learning_Disabilities)) +
   geom_boxplot() +
   theme_minimal() +
-  labs(title = "Distribución de Previous_Scores por Learning Disabilities",
+  labs(title = "Distribución de Previous_Scores",
        x = "Learning Disabilities",
        y = "Notas Previas") +
   theme(legend.position = "none",
@@ -402,7 +406,7 @@ barplot_previous <- st_clean %>%
   ggplot(aes(x = Learning_Disabilities, y = Media_Previous_Scores, fill = Learning_Disabilities)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Media de Previous_Scores por Learning Disabilities",
+  labs(title = "Media de Previous_Scores",
        x = "Learning Disabilities",
        y = "Media de Notas Previas") +
   theme(legend.position = "none",
@@ -428,7 +432,7 @@ motivacion_por_disabilities <- st_clean %>%
 grafico_motivacion <- ggplot(motivacion_por_disabilities, aes(x = Learning_Disabilities, y = Percentage, fill = Motivation_Level)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Distribución porcentual de Motivación por Learning Disabilities",
+  labs(title = "Distribución porcentual de Motivación",
        x = "Learning Disabilities",
        y = "Porcentaje",
        fill = "Motivación") +
@@ -441,7 +445,7 @@ promedio_tutoria_por_disabilities <- st_clean %>%
 grafico_tutoria <- ggplot(promedio_tutoria_por_disabilities, aes(x = Learning_Disabilities, y = Promedio_Tutoring_Sessions, fill = Learning_Disabilities)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Promedio de Horas de Tutoría por Learning Disabilities",
+  labs(title = "Promedio de Horas de Tutoría",
        x = "Learning Disabilities",
        y = "Promedio de Horas",
        fill = "Learning Disabilities") +
@@ -457,7 +461,7 @@ promedio_estudio_por_disabilities <- st_clean %>%
 grafico_estudio <- ggplot(promedio_estudio_por_disabilities, aes(x = Learning_Disabilities, y = Promedio_Study_Hours, fill = Learning_Disabilities)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Promedio de Horas de Estudio por Learning Disabilities",
+  labs(title = "Promedio de Horas de Estudio",
        x = "Learning Disabilities",
        y = "Promedio de Horas",
        fill = "Learning Disabilities") +
@@ -473,7 +477,7 @@ promedio_asistencia_por_disabilities <- st_clean %>%
 grafico_asistencia <- ggplot(promedio_asistencia_por_disabilities, aes(x = Learning_Disabilities, y = Promedio_Attendance, fill = Learning_Disabilities)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Promedio de Asistencia por Learning Disabilities",
+  labs(title = "Promedio de Asistencia",
        x = "Learning Disabilities",
        y = "Promedio de Asistencia",
        fill = "Learning Disabilities") +
@@ -494,7 +498,7 @@ grafico_peer_influence <- st_clean %>%
   ggplot(aes(x = Learning_Disabilities, y = Percentage, fill = Peer_Influence)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Porcentaje de Peer Influence por Learning Disabilities",
+  labs(title = "Porcentaje de Peer Influence",
        x = "Learning Disabilities",
        y = "Porcentaje",
        fill = "Peer Influence") +
@@ -507,7 +511,7 @@ grafico_parental_involvement <- st_clean %>%
   ggplot(aes(x = Learning_Disabilities, y = Percentage, fill = Parental_Involvement)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Porcentaje de Parental Involvement por Learning Disabilities",
+  labs(title = "Porcentaje de Parental Involvement",
        x = "Learning Disabilities",
        y = "Porcentaje",
        fill = "Parental Involvement") +
@@ -526,7 +530,7 @@ No hay grandes diferencias entre tener o no tener problemas de aprendizaje
 boxplot_exam <- ggplot(st_clean, aes(x = School_Type, y = Exam_Score, fill = School_Type)) +
   geom_boxplot() +
   theme_minimal() +
-  labs(title = "Distribución de Exam_Score por School Type",
+  labs(title = "Distribución de Exam_Score",
        x = "School Type",
        y = "Notas del Examen") +
   theme(legend.position = "none",
@@ -547,7 +551,7 @@ barplot_exam <- st_clean %>%
 boxplot_previous <- ggplot(st_clean, aes(x = School_Type, y = Previous_Scores, fill = School_Type)) +
   geom_boxplot() +
   theme_minimal() +
-  labs(title = "Distribución de Previous_Scores por School Type",
+  labs(title = "Distribución de Previous_Scores",
        x = "School Type",
        y = "Notas Previas") +
   theme(legend.position = "none",
@@ -559,7 +563,7 @@ barplot_previous <- st_clean %>%
   ggplot(aes(x = School_Type, y = Media_Previous_Scores, fill = School_Type)) +
   geom_bar(stat = "identity", position = "dodge") +
   theme_minimal() +
-  labs(title = "Media de Previous_Scores por School Type",
+  labs(title = "Media de Previous_Scores",
        x = "School Type",
        y = "Media de Notas Previas") +
   theme(legend.position = "none",
@@ -581,7 +585,7 @@ grafico_family_income <- st_clean %>%
   ggplot(aes(x = School_Type, y = Percentage, fill = Family_Income)) +
   geom_bar(stat = "identity", position = "fill") +
   theme_minimal() +
-  labs(title = "Distribución de Family Income por School Type",
+  labs(title = "Distribución de Family Income",
        x = "School Type",
        y = "Porcentaje",
        fill = "Family Income") +
@@ -595,7 +599,7 @@ grafico_teacher_quality <- st_clean %>%
   ggplot(aes(x = School_Type, y = Percentage, fill = Teacher_Quality)) +
   geom_bar(stat = "identity", position = "fill") +
   theme_minimal() +
-  labs(title = "Distribución de Teacher Quality por School Type",
+  labs(title = "Distribución de Teacher Quality",
        x = "School Type",
        y = "Porcentaje",
        fill = "Teacher Quality") +
@@ -1018,7 +1022,7 @@ print(anova_results_df)
 
 ```
 
-Tras los resultados del examen de ANOVA concluimos que podemos quedarnos con 10 de 13
+Tras los resultados del examen de ANOVA concluimos que podemos quedarnos con 11 de 13
 
 -   **Parental_Involvement**
 
@@ -1076,13 +1080,7 @@ print(data.isnull().sum())
 Una vez tenemos el dataset preparado vamos a preparar el modelo. `X` Serán las variables predictoras e `y` será la variable a la que predecir.
 
 ```{python}
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.compose import ColumnTransformer
-from sklearn.naive_bayes import GaussianNB
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import classification_report, accuracy_score
+
 
 # Separar las características (X) y la variable objetivo (y)
 X = data[['Parental_Involvement', 'Access_to_Resources', 'Extracurricular_Activities',
@@ -1119,10 +1117,10 @@ pipeline = Pipeline([
     ('classifier', GaussianNB())
 ])
 
-# Entrenar el modelo
+# aqui se entrana
 pipeline.fit(X_train, y_train)
 
-# Realizar predicciones en el conjunto de prueba
+# Predicciones 
 y_pred = pipeline.predict(X_test)
 
 # Evaluar el modelo
@@ -1131,18 +1129,19 @@ print("Classification Report:\n", classification_report(y_test, y_pred))
 
 ```
 
+Nos da una precisión del 0.98, es un dato que indica que hay un **overfitting**, ademas vemos que la clase `distinction` tiene un rendimiento de 0. Esto puede significar un desbalanceo de clases.
+
+Vamos a observar como están las clases de desbalanceadas.
+
 ```{python}
 print(y.value_counts())
 
 
 ```
 
-```{python}
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from imblearn.over_sampling import SMOTE
-import pandas as pd
+Podemos observar que las clases están muy desbalanceadas. Vamos a realizar un sobremuestreo para igualar las clases.
 
+```{python}
 # Supongamos que 'categorical_features' y 'numerical_features' ya están definidas
 categorical_features = ['Parental_Involvement', 'Access_to_Resources', 'Extracurricular_Activities',
                         'Motivation_Level', 'Internet_Access', 'Parental_Education_Level',
@@ -1172,15 +1171,14 @@ print(pd.Series(y_resampled).value_counts())
 
 ```
 
+Tras el sobremuestreo los datos son devueltos como arrays de NumPy y por ello lo convertimos en un dataframe para poder usarlo con mayor facilidad.
+
 ```{python}
-# Crear un DataFrame a partir de los datos sobremuestreados
 X_resampled_df = pd.DataFrame(X_resampled, columns=preprocessor.get_feature_names_out())
 y_resampled_df = pd.DataFrame(y_resampled, columns=['Exam_Grade'])
 
-# Combinar las características y las etiquetas en un solo DataFrame
 resampled_data = pd.concat([X_resampled_df, y_resampled_df], axis=1)
 
-# Guardar el DataFrame en un archivo CSV
 resampled_data.to_csv('resampled_dataset.csv', index=False)
 print("Dataset sobremuestreado guardado como 'resampled_dataset.csv'")
 
@@ -1214,3 +1212,5 @@ print("Classification Report:\n", classification_report(y_test, y_pred))
 
 
 ```
+
+Tras el sobremuestreo realizado nos da una precisión de 0.8 que es un buen dato de precisión
