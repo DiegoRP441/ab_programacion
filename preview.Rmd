@@ -11,6 +11,8 @@ El dataset ha sido obtenido de la página **Kaggle**: <https://www.kaggle.com/>.
 
 # Parte 1: carga y exploración de datos.
 
+Primero cargamos las librerías que usaremos en R
+
 ```{r}
 library(readr)
 library(skimr)
@@ -27,6 +29,8 @@ library(reticulate)
 
 ```
 
+Luego cargamos las librerías que usaremos en python
+
 ```{python}
 import pandas as pd
 import scipy.stats as stats
@@ -40,7 +44,7 @@ from imblearn.over_sampling import SMOTE
 
 ```
 
-Primero importamos el dataset, ademas importamos la librería skimr para la mejor visualización de los datos.
+Importamos el dataset y mostramos las 10 primeras filas de nuestro dataset
 
 ```{r message=FALSE, warning=TRUE, paged.print=TRUE, show_col_types=}
 st <- read_csv("estudiantes.csv", show_col_types = FALSE)
@@ -64,7 +68,7 @@ Aquí podemos ver que todos las columnas no numéricas son categóricas. esto lo
 
 Ahora buscamos los valores nulos dentro de las columnas.
 
-Usamos skim mejor que `summary()` porque da mas información y presentada de forma mas limpia.
+Usamos `skim` mejor que `summary()` porque da mas información y presentada de forma mas limpia.
 
 ```{r}
 skim(st[!numeric_columns])
@@ -81,14 +85,10 @@ En los datos numéricos al contrario que pasaba en los no numéricos no tenemos 
 # Parte 2: Limpieza de datos
 
 Vemos que tenemos valores nulos en 3 columnas:`Parental_Education_Level`, `Teacher_Quality`, `Distance_from_Home`\
-Como las 3 columnas que contienen nulos son categóricas vamos a limpiarlas usando la librería `pandas` de python para una mayor facilidad a la hora de trabajar con la moda, debido a que R no tiene una función especifica para calcular la moda.
+Como las 3 columnas que contienen nulos son categóricas vamos a limpiarlas usando la librería `pandas` de python para una mayor facilidad a la hora de trabajar con la moda.
 
 ```{python}
-
-
 df = pd.read_csv("estudiantes.csv")
-
-
 ```
 
 ```{python}
@@ -96,8 +96,6 @@ df = pd.read_csv("estudiantes.csv")
 df["Parental_Education_Level"].fillna(df["Parental_Education_Level"].mode()[0], inplace=True)
 df["Teacher_Quality"].fillna(df["Teacher_Quality"].mode()[0], inplace=True)
 df["Distance_from_Home"].fillna(df["Distance_from_Home"].mode()[0], inplace=True)
-
-
 ```
 
 ```{python}
@@ -116,12 +114,11 @@ df.to_csv("st_clean.csv", index=False)
 
 ```{r message=FALSE, warning=TRUE, paged.print=TRUE, show_col_types=}
 st_clean <- read_csv("st_clean.csv", show_col_types = FALSE)
-head(st_clean,10, show_col_types = FALSE)
 ```
 
 # Parte 3: Análisis de los datos
 
-Primero comprobamos si existe algún tipo de sesgo en los datos que tenemos en genero y recursos.
+primero veremos si existe algún tipo de desequilibrio en los datos
 
 ```{r}
 categorical_vars <- c("Gender", "Family_Income", "School_Type", "Learning_Disabilities")
@@ -144,9 +141,9 @@ grid.arrange(grobs = plots, nrow = 2, ncol = 2)
 
 Sesgo:
 
--   **Género**: La distribución es equilibrada, lo que sugiere un bajo riesgo de sesgo.
--   **Ingreso Familiar**: Predominan las clases media y baja, lo que puede influir en los análisis.
--   **Tipo de Escuela**: Mayor representación de escuelas públicas, lo cual podría sesgar los resultados si queremos extrapolarlos hacia grupos donde haya una mayoría de escuela privada.
+-   **Género**: La distribución es equilibrada.
+-   **Ingreso Familiar**: Predominan las clases media y baja.
+-   **Tipo de Escuela**: Mayor representación de escuelas públicas.
 -   **Discapacidades de Aprendizaje**: Baja representación de estudiantes con discapacidades, lo que podría limitar la representatividad de los análisis en este aspecto.
 
 Podríamos concluir que es un análisis que se podría extrapolar hacia el conjunto mayoritario de la población, es decir, gente de clase media sin `learning_disabilities` y que van a la escuela pública sin tener en cuenta el género.
@@ -227,7 +224,6 @@ Exam_Score,Previous_Scores, Motivation_Level, Tutoring_Sessions, Hours_Studied, 
 ### Notas según género
 
 ```{r}
-# Crear boxplot para Exam_Score por Gender
 boxplot_exam <- ggplot(st_clean, aes(x = Gender, y = Exam_Score, fill = Gender)) +
   geom_boxplot() +
   theme_minimal() +
@@ -237,7 +233,6 @@ boxplot_exam <- ggplot(st_clean, aes(x = Gender, y = Exam_Score, fill = Gender))
   theme(legend.position = "none",
         axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Crear barplot para Exam_Score por Gender
 barplot_exam <- st_clean %>%
   group_by(Gender) %>%
   summarise(Media_Exam_Score = mean(Exam_Score, na.rm = TRUE)) %>%
@@ -250,7 +245,6 @@ barplot_exam <- st_clean %>%
   theme(legend.position = "none",
         axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Crear boxplot para Previous_Scores por Gender
 boxplot_previous <- ggplot(st_clean, aes(x = Gender, y = Previous_Scores, fill = Gender)) +
   geom_boxplot() +
   theme_minimal() +
@@ -260,7 +254,6 @@ boxplot_previous <- ggplot(st_clean, aes(x = Gender, y = Previous_Scores, fill =
   theme(legend.position = "none",
         axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Crear barplot para Previous_Scores por Gender
 barplot_previous <- st_clean %>%
   group_by(Gender) %>%
   summarise(Media_Previous_Scores = mean(Previous_Scores, na.rm = TRUE)) %>%
@@ -611,6 +604,8 @@ grid.arrange(grafico_family_income, grafico_teacher_quality, nrow = 1, ncol = 2)
 
 ```
 
+Bien sea público o privado el tipo de escuela no parece tener relevancia las notas.
+
 ## Análisis de horas dormidas
 
 ```{r}
@@ -662,13 +657,29 @@ grid.arrange(grafico_dispersion, grafico_circular, nrow = 1, ncol = 2)
 
 ```
 
-Las horas de sueño no tienen gran importancia.
+No parece existir ningún tipo de correlación entre las horas de sueño con las notas del examen.
 
 ## Conclusión de los análisis de los gráficos
 
-Todos los análisis los mirases por donde los mirasen daban siempre lo mismo, indicando que o bien no tiene ningún tipo de relevancia o el dataset estaba preparado para que solo las 3/4 columnas que mencionamos después sean importantes.
+Tras el análisis de varios factores desde múltiples perspectivas, los resultados que se obtuvieron en las todas las comparaciones fueron consistentes. Esto nos sugiere que las variables evaluadas no tienen un impacto significativo en el desempeño de los estudiantes, o bien el dataset ha sido diseñado de manera que solo una pocas variables, específicamente las 3/4 columnas numéricas que luego especificaremos, poseen una influencia real en los resultados.
 
 ## Análisis de las 4 correlaciones mayores
+
+Si observamos los resultados del mapa de correlaciones nos da que hay 4 variables numéricas que tienen una relación significativa con la variable a predecir.
+
+variables predictivas serán:
+
+-   `Hours_Studied`
+
+-   `Previous_Scores`
+
+-   `Attendance`
+
+-   `Tutoring_Sessions`
+
+y la variable a predecir será: `Exam_Score.`
+
+Analicemos visualmente la distribución de estas 4 variables.
 
 ```{r}
 var1 <- "Hours_Studied"
@@ -713,7 +724,9 @@ grid.arrange(grafico_var1, grafico_var2, grafico_var3, grafico_var4, nrow = 2, n
 
 ```
 
-### añadimos la recta de regresión
+Se observa que la distribución de los datos sigue una tendencia lineal en la mayoría de los casos, lo que sugiere una posible relación proporcional entre las variables analizadas. Para evaluar con mayor precisión el grado de ajuste de esta relación, sera necesario incorporar una línea de regresión que permita visualizar cómo se alinean los datos con respecto a una tendencia esperada.
+
+### Añadimos la recta de regresión
 
 ```{r}
 var1 <- "Hours_Studied"
@@ -798,20 +811,6 @@ Todos los valores son por debajo de 0.001, lo que indica que las variables son *
 
 Las **métricas del modelo** indican su rendimiento y ajuste. El **R² (0.572)** muestra que el modelo explica el **57.2%** de la variabilidad en **Exam_Score** a partir de las variables **Attendance**, **Hours_Studied** y **Previous_Scores**, mientras que el restante **42.8%** se debe a factores no considerados en el modelo. El **error estándar residual (2.545)** indica que, en promedio, las predicciones del modelo se desvían de los valores reales en aproximadamente **2.55 puntos**. Finalmente, el **F-statistic (2943)** y su p-valor (\<2.2e-16) confirman que el modelo es **estadísticamente significativo**, es decir, al menos una de las variables incluidas tiene un efecto real sobre la predicción de **Exam_Score**.
 
-```{r}
-data_selected$predicciones <- predict(modelo1, newdata = data_selected)
-
-ggplot(data_selected, aes(x = Exam_Score, y = predicciones)) +
-  geom_point(color = "blue") + # Puntos que muestran la relación
-  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
-  labs(title = "Comparación: Valores Reales vs Predichos",
-       x = "Exam Score Real",
-       y = "Exam Score Predicho") +
-  theme_minimal()
-```
-
-Este gráfico compara los valores reales de **`Exam_Score`** (eje X) con los valores predichos por el modelo (eje Y). La **línea roja discontinua** representa el ajuste perfecto donde los valores reales y predichos serían iguales. Los **puntos azules** muestran que, en general, el modelo realiza buenas predicciones en valores bajos e intermedios, ya que los puntos están cerca de la línea roja. Sin embargo, a medida que los valores reales aumentan (por encima de 75-80), los puntos presentan **mayor dispersión**, lo que indica que el modelo tiene más errores en valores extremos. Esto concuerda con el **R² del 57.2%**, que sugiere un ajuste moderado del modelo, pero con espacio para mejorar en la predicción de valores atípicos o extremos.
-
 ### Creación de modelo con 4 variables
 
 ```{r}
@@ -824,18 +823,6 @@ modelo2 <- lm(Exam_Score ~ Attendance + Hours_Studied + Previous_Scores + Tutori
 cat("Resumen del modelo de Regresión Lineal Múltiple:\n")
 summary(modelo2)
 
-```
-
-```{r}
-data_selected$predicciones <- predict(modelo2, newdata = data_selected)
-
-ggplot(data_selected, aes(x = Exam_Score, y = predicciones)) +
-  geom_point(color = "blue") + # Puntos que muestran la relación
-  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
-  labs(title = "Comparación: Valores Reales vs Predichos",
-       x = "Exam Score Real",
-       y = "Exam Score Predicho") +
-  theme_minimal()
 ```
 
 La diferencia entre la baja correlación de **`Tutoring_Sessions`** con **`Exam_Score`** en el mapa de correlaciones y su mayor peso en el modelo de regresión se debe a que el mapa muestra únicamente **relaciones bivariadas** (directas entre dos variables), mientras que el modelo de regresión lineal múltiple analiza la **relación conjunta** de todas las variables explicativas con la variable dependiente. Aunque **`Tutoring_Sessions`** no tenga una correlación fuerte por sí sola, puede aportar información relevante cuando se consideran simultáneamente las demás variables (**`Attendance`**, **`Hours_Studied`** y **`Previous_Scores`**) y se ajusta por ellas. Esto refleja que su efecto en **`Exam_Score`** puede ser **condicional** y no evidente en la correlación simple, mostrando así una mayor contribución dentro del modelo final.
@@ -857,7 +844,7 @@ cat("Modelo 2 - RMSE:", rmse2, "R²:", r2_2, "\n")
 
 ```
 
-El **Modelo 2**, que incluye la variable **`Tutoring_Sessions`**, es mejor que el **Modelo 1** porque tiene un **RMSE menor** (2.47 frente a 2.54), lo que indica predicciones más precisas, y un **R² mayor** (59.67% frente a 57.21%), lo que significa que explica mejor la variabilidad de **`Exam_Score`**. Aunque la mejora es moderada, demuestra que **`Tutoring_Sessions`** aporta información útil al modelo.
+El **Modelo 2**, que incluye la variable **`Tutoring_Sessions`**, es mejor que el **Modelo 1** porque tiene un **R² mayor** (59.67% frente a 57.21%), lo que significa que explica mejor la variabilidad de **`Exam_Score`**. Aunque la mejora es moderada, demuestra que **`Tutoring_Sessions`** aporta información útil al modelo.
 
 ```{r}
 
@@ -885,7 +872,7 @@ grid.arrange(plot_modelo1, plot_modelo2, ncol = 2)
 
 ```
 
-El **Modelo 2** supera al **Modelo 1** en todas las métricas evaluadas: tiene un menor error (RMSE), un mayor ajuste (R²) y una mayor precisión en las predicciones dentro de un margen de ±3 puntos. Por tanto, la inclusión de la variable **`Tutoring_Sessions`** ha mejorado el rendimiento general del modelo.
+Este gráfico compara los valores reales de **`Exam_Score`** (eje X) con los valores predichos por el modelo (eje Y). La **línea roja discontinua** representa el ajuste perfecto donde los valores reales y predichos serían iguales. Los **puntos azules** muestran que, en general, el modelo realiza buenas predicciones en valores bajos e intermedios, ya que los puntos están cerca de la línea roja. Sin embargo, a medida que los valores reales aumentan (por encima de 75-80), los puntos presentan **mayor dispersión**, lo que indica que el modelo tiene más errores en valores extremos. Esto concuerda con el **R² del 57.2%**, que sugiere un ajuste moderado del modelo, pero con espacio para mejorar en la predicción de valores atípicos o extremos.
 
 ## Validación cruzada.
 
@@ -899,7 +886,7 @@ data <- st_clean %>%
 
 ```
 
-Con el paquete caret configuramos el 10-fold cross validation.
+Con el paquete `caret` configuramos el 10-fold cross validation.
 
 ```{r}
 control <- trainControl(method = "cv", number = 10) 
@@ -940,6 +927,8 @@ ggplot(data, aes(x = Exam_Score, y = predicciones)) +
 
 ```
 
+El modelo nos da un R2 un poco superior, 0.61
+
 ### Comparamos los modelos con y sin validación cruzada
 
 Modelo 2 no tiene la validación cruzada y modelo_cv si tiene validación cruzada con el modelo de 10-fold cross validation.
@@ -956,13 +945,9 @@ cat("RMSE promedio:", modelo_cv$results$RMSE, "R² promedio:", modelo_cv$results
 
 Vemos que mejora pero nada relevante un 0,01321.
 
+Al ver que el r2 de los modelos probados usando la regresión lineal es muy baja probaremos a usar otro modelo, en este caso usaremos `Naive Bayes`
+
 ## Naive Bayes
-
-cosas para hacer limpiar el dataset para que entre en un naive bayes, y hacerlo.
-
--   cambiar todas las notas por "no pass", "pass" "merit" "distinction"
-
--   mirar si alguna categorica es importante a parte de las otras.
 
 ```{python}
 data = pd.read_csv("st_clean.csv")
@@ -1213,4 +1198,8 @@ print("Classification Report:\n", classification_report(y_test, y_pred))
 
 ```
 
-Tras el sobremuestreo realizado nos da una precisión de 0.8 que es un buen dato de precisión
+Tras el sobremuestreo realizado nos da una precisión de 0.8 que es un buen dato de precisión.
+
+## Conclusión
+
+Tras realizar varias pruebas con un par de modelos hemos concluido que el mejor modelo es Naive Bayes ya que nos da una `accuracy` del 0.8 bastante superior a la obtenido con la regresión lineal de 0.6
