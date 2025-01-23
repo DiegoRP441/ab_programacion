@@ -3,6 +3,8 @@ title: "AB programación: Dataset de estudiantes"
 output: html_notebook
 ---
 
+![![](images/clipboard-1662967905.png)](images/clipboard-212070460.png)
+
 ## Explicación del dataset
 
 Diego Romero Puyal.
@@ -809,7 +811,7 @@ valor Pr(\>\|t\|)
 
 Todos los valores son por debajo de 0.001, lo que indica que las variables son **estadisticamente significativas**
 
-Las **métricas del modelo** indican su rendimiento y ajuste. El **R² (0.572)** muestra que el modelo explica el **57.2%** de la variabilidad en **Exam_Score** a partir de las variables **Attendance**, **Hours_Studied** y **Previous_Scores**, mientras que el restante **42.8%** se debe a factores no considerados en el modelo. El **error estándar residual (2.545)** indica que, en promedio, las predicciones del modelo se desvían de los valores reales en aproximadamente **2.55 puntos**. Finalmente, el **F-statistic (2943)** y su p-valor (\<2.2e-16) confirman que el modelo es **estadísticamente significativo**, es decir, al menos una de las variables incluidas tiene un efecto real sobre la predicción de **Exam_Score**.
+Las **métricas del modelo** indican su rendimiento y ajuste. El **R² (0.572)** muestra que el modelo explica el **57.2%** de la variabilidad en **Exam_Score** a partir de las variables **Attendance**, **Hours_Studied** y **Previous_Scores**, mientras que el restante **42.8%** se debe a factores no considerados en el modelo.
 
 ### Creación de modelo con 4 variables
 
@@ -825,7 +827,7 @@ summary(modelo2)
 
 ```
 
-La diferencia entre la baja correlación de **`Tutoring_Sessions`** con **`Exam_Score`** en el mapa de correlaciones y su mayor peso en el modelo de regresión se debe a que el mapa muestra únicamente **relaciones bivariadas** (directas entre dos variables), mientras que el modelo de regresión lineal múltiple analiza la **relación conjunta** de todas las variables explicativas con la variable dependiente. Aunque **`Tutoring_Sessions`** no tenga una correlación fuerte por sí sola, puede aportar información relevante cuando se consideran simultáneamente las demás variables (**`Attendance`**, **`Hours_Studied`** y **`Previous_Scores`**) y se ajusta por ellas. Esto refleja que su efecto en **`Exam_Score`** puede ser **condicional** y no evidente en la correlación simple, mostrando así una mayor contribución dentro del modelo final.
+Vemos que al añadir la variable extra de `Tutoring_Sessions` mejora el r2.
 
 ### Comparación de ambos modelos
 
@@ -953,8 +955,9 @@ Al ver que el r2 de los modelos probados usando la regresión lineal es muy baja
 data = pd.read_csv("st_clean.csv")
 ```
 
+Convertimos la columna `Exam_Score` en una columna categórica.
+
 ```{python}
-# Crear una nueva columna con las categorías basadas en Exam_Score
 data['Exam_Grade'] = pd.cut(
     data['Exam_Score'],
     bins=[0, 49, 59, 79, 100],
@@ -962,21 +965,12 @@ data['Exam_Grade'] = pd.cut(
     include_lowest=True
 )
 
-# Verificar los cambios
 print(data)
 ```
 
-```{python}
-distribucion = data["Exam_Grade"].value_counts()
-print(distribucion)
-```
-
-Vamos a realizar el ANOVA de las variables categóricas en relación con`exam_score`. Si el p-valor es inferior a 0,05 la relación es significativa, si es superior la relación no es significativa
+Vamos a realizar el ANOVA de las variables categóricas en relación con `exam_score`. Si el p-valor es inferior a 0,05 la relación es significativa, si es superior la relación no es significativa. Usaremos todas las variables que salgan con una relación significativa en el modelo, ademas de las 4 numéricas que ya hemos comprado antes en el mapa de correlaciones que tienen relación.
 
 ```{python}
-import pandas as pd
-import scipy.stats as stats
-# Especificar las 13 columnas categóricas manualmente
 categorical_columns = [
     'Parental_Involvement', 'Access_to_Resources', 'Extracurricular_Activities', 
     'Motivation_Level', 'Internet_Access', 'Parental_Education_Level', 
@@ -984,12 +978,10 @@ categorical_columns = [
     'Teacher_Quality', 'Family_Income', 'Gender', 'Distance_from_Home'
 ]
 
-# Calcular ANOVA entre las variables categóricas y Exam_Score
 anova_results = {}
 
 for col in categorical_columns:
     try:
-        # Agrupar las puntuaciones de Exam_Score por cada categoría
         unique_values = data[col].unique()
         groups = [data[data[col] == val]['Exam_Score'].dropna() for val in unique_values]
         
@@ -999,10 +991,8 @@ for col in categorical_columns:
     except Exception as e:
         anova_results[col] = {'Error': str(e)}
 
-# Crear un DataFrame para mostrar los resultados
 anova_results_df = pd.DataFrame(anova_results).T
 
-# Mostrar los resultados de ANOVA
 print(anova_results_df)
 
 ```
@@ -1037,6 +1027,8 @@ y eliminaremos del dataset
 
 -   **Gender**
 
+Ademas eliminamos `Exam_Score` porque la hemos cambiado por `Exam_Grade`
+
 ```{python}
 drop = ["School_Type", "Gender","Exam_Score" ]
 data = data.drop(columns = drop)
@@ -1046,13 +1038,13 @@ data = data.drop(columns = drop)
 data.head()
 ```
 
-Comprobamos si hay algun valor nulo antes de crear el modelo para evitar errores
+Comprobamos si hay algún valor nulo antes de crear el modelo para evitar errores.
 
 ```{python}
 print(data.isnull().sum())
 ```
 
-Vemos que hay un nulo en exam_grade, vamos a rellenar con la moda para evitar errores
+Vemos que hay un nulo en exam_grade, vamos a rellenar con la moda para evitar errores.
 
 ```{python}
 data["Exam_Grade"].fillna(data["Exam_Grade"].mode()[0], inplace=True)
@@ -1065,9 +1057,6 @@ print(data.isnull().sum())
 Una vez tenemos el dataset preparado vamos a preparar el modelo. `X` Serán las variables predictoras e `y` será la variable a la que predecir.
 
 ```{python}
-
-
-# Separar las características (X) y la variable objetivo (y)
 X = data[['Parental_Involvement', 'Access_to_Resources', 'Extracurricular_Activities',
           'Motivation_Level', 'Internet_Access', 'Parental_Education_Level',
           'Learning_Disabilities', 'Teacher_Quality', 'Family_Income',
@@ -1078,7 +1067,6 @@ y = data['Exam_Grade']
 # Dividir los datos en conjuntos de entrenamiento y prueba
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
-# Identificar las columnas categóricas y numéricas
 categorical_features = ['Parental_Involvement', 'Access_to_Resources', 'Extracurricular_Activities',
                         'Motivation_Level', 'Internet_Access', 'Parental_Education_Level',
                         'Learning_Disabilities', 'Teacher_Quality', 'Family_Income',
@@ -1096,19 +1084,15 @@ preprocessor = ColumnTransformer(
         ('num', numerical_transformer, numerical_features)
     ])
 
-# Crear un pipeline que incluye el preprocesamiento y el modelo
 pipeline = Pipeline([
     ('preprocessor', preprocessor),
     ('classifier', GaussianNB())
 ])
 
-# aqui se entrana
 pipeline.fit(X_train, y_train)
 
-# Predicciones 
 y_pred = pipeline.predict(X_test)
 
-# Evaluar el modelo
 print("Accuracy:", accuracy_score(y_test, y_pred))
 print("Classification Report:\n", classification_report(y_test, y_pred))
 
@@ -1127,29 +1111,25 @@ print(y.value_counts())
 Podemos observar que las clases están muy desbalanceadas. Vamos a realizar un sobremuestreo para igualar las clases.
 
 ```{python}
-# Supongamos que 'categorical_features' y 'numerical_features' ya están definidas
 categorical_features = ['Parental_Involvement', 'Access_to_Resources', 'Extracurricular_Activities',
                         'Motivation_Level', 'Internet_Access', 'Parental_Education_Level',
                         'Learning_Disabilities', 'Teacher_Quality', 'Family_Income',
                         'Distance_from_Home', 'Peer_Influence']
 numerical_features = ['Attendance', 'Hours_Studied', 'Previous_Scores', 'Tutoring_Sessions']
 
-# Aplicar OneHotEncoder a las columnas categóricas
+# Esto lo usamos para convertir las columnas categoricas a númericas y poder usarlas.
 preprocessor = ColumnTransformer(
     transformers=[
         ('cat', OneHotEncoder(drop='first', handle_unknown='ignore'), categorical_features)
     ],
-    remainder='passthrough'  # Mantener las columnas numéricas como están
+    remainder='passthrough' 
 )
-
-# Transformar los datos
 X_transformed = preprocessor.fit_transform(X)
 
 # Aplicar SMOTE
 smote = SMOTE(random_state=42)
 X_resampled, y_resampled = smote.fit_resample(X_transformed, y)
 
-# Verificar las nuevas distribuciones
 print(pd.Series(y_resampled).value_counts())
 
 
@@ -1175,23 +1155,17 @@ data2 = pd.read_csv("resampled_dataset.csv")
 
 ```{python}
 
-# Separar características (X) y la variable objetivo (y)
-X = data2.drop(columns=['Exam_Grade'])  # Todas las columnas excepto 'Exam_Grade'
+X = data2.drop(columns=['Exam_Grade'])
 y = data2['Exam_Grade']
 
-# Dividir los datos en conjuntos de entrenamiento y prueba
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
-# Crear el modelo GaussianNB
 model = GaussianNB()
 
-# Entrenar el modelo
 model.fit(X_train, y_train)
 
-# Realizar predicciones en el conjunto de prueba
 y_pred = model.predict(X_test)
 
-# Evaluar el modelo
 print("Accuracy:", accuracy_score(y_test, y_pred))
 print("Classification Report:\n", classification_report(y_test, y_pred))
 
@@ -1200,6 +1174,6 @@ print("Classification Report:\n", classification_report(y_test, y_pred))
 
 Tras el sobremuestreo realizado nos da una precisión de 0.8 que es un buen dato de precisión.
 
-## Conclusión
+## Conclusión de los modelos.
 
-Tras realizar varias pruebas con un par de modelos hemos concluido que el mejor modelo es Naive Bayes ya que nos da una `accuracy` del 0.8 bastante superior a la obtenido con la regresión lineal de 0.6
+Tras realizar varias pruebas con los modelos de regresión lineal y Naive Bayes hemos concluido que el mejor modelo es Naive Bayes ya que nos da una `accuracy` del 0.8 bastante superior a la obtenido con la regresión lineal de un r2 de 0.6.
